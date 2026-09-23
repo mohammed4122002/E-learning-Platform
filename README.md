@@ -12,7 +12,7 @@ npm run dev          # development server
 npm run build        # production build
 npm run lint         # ESLint
 npm run typecheck    # next typegen + tsc
-npm run fetch:covers # download the course-cover images from Figma (needs FIGMA_TOKEN)
+npm run fetch:covers # re-download the original course covers from Figma (needs FIGMA_TOKEN)
 ```
 
 ## Structure
@@ -25,15 +25,18 @@ src/components/ui/       Button, Icon, Pill, ProgressBar, SectionHeader
 src/lib/                 dashboard content (copied from Figma), asset helpers
 src/types/               shared types
 public/assets/icons/     SVG icons exported from Figma
-public/assets/images/    course covers (run `npm run fetch:covers`)
+public/assets/images/    course covers exported from Figma
 ```
 
 ## Course covers
 
-The six cover photos are image fills in Figma. Download them with a Figma personal access token:
+The six cover photos are image fills in Figma (originals: 2752×1536 PNG, ~7 MB each). They are committed in
+`public/assets/images/` as 1376×768 JPGs (same aspect ratio, so the Figma crop percentages in
+`src/lib/dashboard-data.ts` still apply). To re-download the originals, use a Figma personal access token:
 
 ```bash
 FIGMA_TOKEN=xxxx npm run fetch:covers
 ```
 
-Until they are present, the covers render the Figma "Media / Image Placeholder" frame (tint + dashed stroke).
+`.jpg` files take precedence over the `.png` originals the script writes, so delete the JPGs to use the originals.
+When a cover file is missing, the card renders the Figma "Media / Image Placeholder" frame (tint + dashed stroke).
