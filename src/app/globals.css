@@ -241,3 +241,12 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Compare Bar (TRN-DSC-01 · 4134:1119): inverse (dark) floating surface — same values in both themes. */
+@theme {
+  --color-bg-inverse: #1a1633;
+  --color-bg-inverse-chip: #302a4e;
+  --color-text-on-inverse-muted: #b4acd0;
+  --color-text-on-accent-strong: #342608;
+  --shadow-inverse: 0px 8px 24px 0px rgba(15, 8, 51, 0.32);
+}
