@@ -1974,6 +1974,35 @@ export type Database = {
           },
         ]
       }
+      terms_acceptances: {
+        Row: {
+          accepted_at: string
+          id: string
+          user_id: string
+          version: string
+        }
+        Insert: {
+          accepted_at?: string
+          id?: string
+          user_id: string
+          version: string
+        }
+        Update: {
+          accepted_at?: string
+          id?: string
+          user_id?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "terms_acceptances_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trainee_preferences: {
         Row: {
           category_ids: string[]
