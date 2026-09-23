@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — copied from the Figma variables of file
+ * "تسليم المشروع بوابة اتدريب" (frame TRN-DSH-01). Names mirror the Figma
+ * variable paths (e.g. action/primary → --color-action-primary).
+ */
+@theme {
+  --font-sans: var(--font-tajawal), system-ui, sans-serif;
+
+  --color-action-primary: #5b3cc4;
+  --color-action-accent: #ffd400;
+  --color-action-secondary-bg: #ffffff;
+
+  --color-bg-page: #f8f8fc;
+  --color-bg-surface: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-brand-tint: #efebfb;
+  --color-bg-sidebar: #f8f8fc;
+  --color-bg-sidebar-hover: #f1f0f7;
+  --color-bg-sidebar-active: #efebfb;
+  --color-bg-disabled: #f1f0f7;
+
+  --color-border-default: #e2e0ee;
+  --color-border-divider: #edebf7;
+  --color-border-sidebar: #e2e0ee;
+  --color-border-focus: #5b3cc4;
+
+  --color-text-primary: #111111;
+  --color-text-secondary: #55555f;
+  --color-text-muted: #6b6b78;
+  --color-text-disabled: #a9a4c4;
+  --color-text-brand: #5b3cc4;
+  --color-text-on-brand: #ffffff;
+  --color-text-on-accent: #111111;
+
+  --color-state-success: #1b7a3d;
+  --color-state-success-bg: #e6f6ec;
+  --color-state-info: #1e5b8c;
+  --color-state-info-bg: #e8f0f7;
+  --color-state-warning: #8a6d00;
+  --color-state-warning-bg: #fff6cc;
+  --color-state-error: #c43535;
+
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-22: 22px;
+
+  --shadow-card: 0px 2px 14px 0px rgba(17, 17, 17, 0.06);
+  --shadow-hero: 0px 6px 18px 0px rgba(91, 60, 196, 0.28);
+  --drop-shadow-button: 0px 6px 9px rgba(91, 60, 196, 0.28);
+  --drop-shadow-milestone: 0px 2px 7px rgba(17, 17, 17, 0.06);
+}
+
+/* Figma text styles (Type/*) */
+@utility type-display {
+  font-size: 48px;
+  line-height: 1.15;
+  font-weight: 700;
+}
+@utility type-h2 {
+  font-size: 26px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+@utility type-h3 {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+@utility type-title {
+  font-size: 19px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+@utility type-h4 {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+@utility type-body-lg {
+  font-size: 18px;
+  line-height: 1.75;
+  font-weight: 400;
+}
+@utility type-body {
+  font-size: 17px;
+  line-height: 1.75;
+  font-weight: 400;
+}
+@utility type-subtitle {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+@utility type-button {
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 500;
+}
+@utility type-small {
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+@utility type-caption {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+/*
+ * Figma "inside" strokes: drawn on top of the node without changing its size.
+ * Set --stroke-w / --stroke-c through the istroke-* helpers below.
+ */
+@utility inner-stroke {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--stroke-w, 1px) solid var(--stroke-c, var(--color-border-default));
+    border-radius: inherit;
+    pointer-events: none;
+  }
+}
+@utility istroke-w-* {
+  --stroke-w: --value([length]);
+}
+@utility istroke-c-* {
+  --stroke-c: --value(--color-*);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
