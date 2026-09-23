@@ -96,7 +96,7 @@ export function PaymentForm({ enrollmentId, total, currency, summary }: { enroll
       <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
       <input type="hidden" name="simulateDecline" value={number === "4000000000000002" ? "1" : "0"} />
 
-      <div className="flex w-full flex-col gap-5 lg:w-[380px] lg:shrink-0">
+      <div className="order-last flex w-full flex-col gap-5 lg:order-none lg:w-[380px] lg:shrink-0">
         {summary}
         <Button type="submit" size="l" fullWidth loading={pending}>
           {pending ? "جارٍ تنفيذ العملية…" : `ادفع ${formatPrice(total, currency)}`}

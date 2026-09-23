@@ -6,7 +6,10 @@ import { ChoiceStep, ProfessionalStep } from "@/components/onboarding/StepForm";
 import { requireTrainee } from "@/lib/auth";
 import { getLearningFields, getOnboarding } from "@/lib/data/onboarding";
 import { EXPERIENCE_YEARS, FIELD_ICONS, GOALS, HOURS, LEVELS, MODES, STEPS, SUGGESTED_SKILLS, modeValueFrom } from "@/lib/onboarding";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid, type LucideIcon } from "lucide-react";
+
+const withIcons = (opts: { value: string; title: string; hint?: string; icon: LucideIcon }[]) =>
+  opts.map((o) => ({ ...o, icon: <Glyph icon={o.icon} size={20} /> }));
 
 const COPY: Record<number, { title: string; subtitle: string }> = {
   1: { title: "ماذا تريد أن تطوّر؟", subtitle: "اختر مجالًا أو أكثر — سنبني عليها مقترحاتك. يمكنك تغييرها لاحقًا من صفحة المتابعات في ملفك" },
@@ -37,18 +40,18 @@ export default async function OnboardingStepPage(props: PageProps<"/onboarding/[
         columns={4}
         countNoun={["مجالًا واحدًا", "مجالين", "مجالات", "مجالًا"]}
         initial={state.fieldSlugs}
-        options={fields.map((f) => ({ value: f.slug, title: f.name, icon: FIELD_ICONS[f.icon] ?? LayoutGrid }))}
+        options={withIcons(fields.map((f) => ({ value: f.slug, title: f.name, icon: FIELD_ICONS[f.icon] ?? LayoutGrid })))}
       />
     );
   } else if (step === 2) {
-    body = <ChoiceStep step={2} name="goal" columns={3} options={GOALS} initial={state.goal ? [state.goal] : []} />;
+    body = <ChoiceStep step={2} name="goal" columns={3} options={withIcons(GOALS)} initial={state.goal ? [state.goal] : []} />;
   } else if (step === 3) {
-    body = <ChoiceStep step={3} name="level" columns={4} options={LEVELS} initial={state.experienceLevel ? [state.experienceLevel] : []} />;
+    body = <ChoiceStep step={3} name="level" columns={4} options={withIcons(LEVELS)} initial={state.experienceLevel ? [state.experienceLevel] : []} />;
   } else if (step === 4) {
     const current = modeValueFrom(state.modes);
-    body = <ChoiceStep step={4} name="mode" columns={3} options={MODES} initial={current ? [current] : []} />;
+    body = <ChoiceStep step={4} name="mode" columns={3} options={withIcons(MODES)} initial={current ? [current] : []} />;
   } else if (step === 5) {
-    body = <ChoiceStep step={5} name="hours" columns={4} options={HOURS} initial={state.weeklyHours ? [state.weeklyHours] : []} />;
+    body = <ChoiceStep step={5} name="hours" columns={4} options={withIcons(HOURS)} initial={state.weeklyHours ? [state.weeklyHours] : []} />;
   } else {
     body = (
       <ProfessionalStep

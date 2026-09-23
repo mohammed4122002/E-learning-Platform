@@ -270,7 +270,7 @@ export default async function CheckoutRefPage(props: PageProps<"/checkout/[ref]"
                         <Glyph icon={r.icon} size={16} />
                         {r.label}
                       </dt>
-                      <dd dir={r.icon === User ? undefined : "ltr"} className="type-subtitle text-text-primary">
+                      <dd dir={r.icon === User ? undefined : "ltr"} className="min-w-0 break-all type-subtitle text-text-primary">
                         {r.value}
                       </dd>
                     </div>
@@ -283,8 +283,10 @@ export default async function CheckoutRefPage(props: PageProps<"/checkout/[ref]"
                   </p>
                 ) : (
                   <p className="flex items-center gap-2.5 rounded-8 bg-state-info-bg px-3 py-2.5 type-caption text-state-info">
-                    <Glyph icon={Info} size={16} />
-                    توثيق الهوية اختياري للتسجيل — <Link href="/trainee/verification" className="underline">وثّق هويتك</Link> لتظهر شهاداتك موثَّقة.
+                    <Glyph icon={Info} size={16} className="shrink-0" />
+                    <span>
+                      توثيق الهوية اختياري للتسجيل — <Link href="/trainee/verification" className="underline">وثّق هويتك</Link> لتظهر شهاداتك موثَّقة.
+                    </span>
                   </p>
                 )}
               </section>

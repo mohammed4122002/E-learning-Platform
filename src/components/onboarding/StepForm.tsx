@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useState, type ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
 import { Check, Plus, X } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Feedback";
@@ -11,7 +10,8 @@ import { saveOnboardingStep } from "@/app/onboarding/actions";
 import { initialFormState } from "@/lib/validation/auth";
 import { pluralAr } from "@/lib/format";
 
-export type CardOption = { value: string; title: string; hint?: string; icon: LucideIcon };
+/** `icon` is a rendered element (e.g. `<Glyph icon={…} size={20} />`) so options can come from Server Components. */
+export type CardOption = { value: string; title: string; hint?: string; icon: ReactNode };
 
 /*
  * Option card (TRN-ONB-01): 16px radius, p 22/18, gap 10. Default = surface + 1.5px border/default + page tile.
@@ -26,7 +26,7 @@ function OptionCard({ option, name, type, checked, onChange }: { option: CardOpt
     >
       <input type={type} name={name} value={option.value} checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
       <span className={`flex size-[52px] items-center justify-center rounded-12 ${checked ? "bg-action-primary text-text-on-brand" : "bg-bg-page text-text-secondary"}`}>
-        <Glyph icon={option.icon} size={20} />
+        {option.icon}
       </span>
       <span className={`type-title ${checked ? "text-text-brand" : "text-text-primary"}`}>{option.title}</span>
       {option.hint && <span className="type-caption text-text-muted">{option.hint}</span>}

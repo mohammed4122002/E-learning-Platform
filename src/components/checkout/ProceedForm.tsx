@@ -31,7 +31,7 @@ export function ProceedForm({
       <input type="hidden" name="courseId" value={courseId} />
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="code" value={code ?? ""} />
-      <div className="flex w-full flex-col gap-5 lg:w-[380px] lg:shrink-0">
+      <div className="order-last flex w-full flex-col gap-5 lg:order-none lg:w-[380px] lg:shrink-0">
         {side}
         <Button type="submit" size="l" fullWidth loading={pending}>
           {cta}
