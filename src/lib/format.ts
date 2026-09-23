@@ -99,3 +99,8 @@ export function pluralAr(n: number, [one, two, few, many]: [string, string, stri
   if (n >= 3 && n <= 10) return `${d} ${few}`;
   return `${d} ${many}`;
 }
+
+/** "مارس ٢٠٢٦" */
+export function formatMonthYear(d: string | Date): string {
+  return new Intl.DateTimeFormat("ar-SA-u-ca-gregory-nu-arab", { month: "long", year: "numeric", timeZone: "Asia/Riyadh" }).format(asDate(d));
+}

@@ -1,11 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Check, ChevronRight, Clock, CircleUserRound, Star, TrendingUp, Users } from "lucide-react";
+import { ChevronRight, Clock, CircleUserRound, Star, TrendingUp, Users } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import { RatingStars } from "@/components/ui/Rating";
 import { createClient } from "@/lib/supabase/server";
-import { toArabicDigits } from "@/lib/format";
 
 type PanelContent = {
   stats: { icon: string; value: string; label: string }[];
@@ -171,37 +170,4 @@ export function BackToLogin() {
 
 export const RECOVERY_STEPS = ["أدخل بريدك", "أدخل رمز التحقق", "كلمة مرور جديدة"];
 
-/* Figma "Nav / Stepper Step" (90:710): 48px marker (Complete = success + check · Current = brand + number ·
-   Upcoming = white + 1.5px border), 16 Medium title, 14 Regular status. Connectors 1px border/divider. */
-export function Stepper({ steps, current }: { steps: string[]; current: number }) {
-  return (
-    <ol className="flex items-start justify-center">
-      {steps.map((label, i) => {
-        const n = i + 1;
-        const state = n < current ? "complete" : n === current ? "current" : "upcoming";
-        return (
-          <li key={label} className="flex items-start" aria-current={state === "current" ? "step" : undefined}>
-            {i > 0 && <span aria-hidden className="mt-6 h-px w-4 bg-border-divider sm:w-[25px]" />}
-            <div className="flex w-[92px] flex-col items-center gap-2.5 text-center sm:w-[170px]">
-              <span
-                className={`flex size-12 items-center justify-center rounded-full ${
-                  state === "complete"
-                    ? "bg-state-success text-text-on-brand"
-                    : state === "current"
-                      ? "bg-action-primary text-text-on-brand"
-                      : "border-[1.5px] border-border-default bg-bg-surface text-text-muted"
-                }`}
-              >
-                {state === "complete" ? <Glyph icon={Check} size={20} /> : <span className="type-title">{toArabicDigits(n)}</span>}
-              </span>
-              <span className={`type-subtitle ${state === "upcoming" ? "text-text-muted" : "text-text-primary"}`}>{label}</span>
-              <span className={`type-caption ${state === "complete" ? "text-state-success" : state === "current" ? "text-text-brand" : "text-text-muted"}`}>
-                {state === "complete" ? "مكتمل" : state === "current" ? "جارٍ التنفيذ" : "لم يبدأ"}
-              </span>
-            </div>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
+export { Stepper } from "@/components/ui/Stepper";
