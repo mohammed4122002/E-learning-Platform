@@ -50,6 +50,10 @@ const MESSAGES: Record<string, string> = {
   over_request_rate_limit: "محاولات كثيرة خلال وقت قصير. انتظر قليلًا ثم أعد المحاولة.",
   otp_expired: "انتهت صلاحية الرمز أو أنه غير صحيح. اطلب رمزًا جديدًا.",
   same_password: "كلمة المرور الجديدة يجب أن تختلف عن الحالية.",
+  // learning experience (quizzes & assignments)
+  attempts_exhausted: "استنفدت عدد المحاولات المتاحة. تواصل مع المدرب إن احتجت محاولة إضافية.",
+  already_passed: "اجتزت هذا الاختبار مسبقًا — لا حاجة لمحاولة جديدة.",
+  already_accepted: "اعتُمد هذا الواجب مسبقًا، ولا يمكن تسليم نسخة جديدة.",
 };
 
 export const GENERIC_ERROR = "حدث خطأ غير متوقع. أعد المحاولة، وإن تكرر تواصل مع الدعم.";
