@@ -16,29 +16,35 @@ export type Database = {
     Tables: {
       account_settings: {
         Row: {
+          arabic_digits: boolean
           locale: string
           notification_prefs: Json
           phone: string | null
           show_certificates: boolean
           show_learning_record: boolean
+          timezone: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          arabic_digits?: boolean
           locale?: string
           notification_prefs?: Json
           phone?: string | null
           show_certificates?: boolean
           show_learning_record?: boolean
+          timezone?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          arabic_digits?: boolean
           locale?: string
           notification_prefs?: Json
           phone?: string | null
           show_certificates?: boolean
           show_learning_record?: boolean
+          timezone?: string
           updated_at?: string
           user_id?: string
         }
@@ -71,10 +77,13 @@ export type Database = {
         Row: {
           assignment_id: string
           feedback: string | null
+          file_name: string | null
           file_path: string | null
+          file_size: number | null
           id: string
           note: string | null
           reviewed_at: string | null
+          rubric_scores: Json
           score: number | null
           status: Database["public"]["Enums"]["submission_status"]
           submitted_at: string
@@ -83,10 +92,13 @@ export type Database = {
         Insert: {
           assignment_id: string
           feedback?: string | null
+          file_name?: string | null
           file_path?: string | null
+          file_size?: number | null
           id?: string
           note?: string | null
           reviewed_at?: string | null
+          rubric_scores?: Json
           score?: number | null
           status?: Database["public"]["Enums"]["submission_status"]
           submitted_at?: string
@@ -95,10 +107,13 @@ export type Database = {
         Update: {
           assignment_id?: string
           feedback?: string | null
+          file_name?: string | null
           file_path?: string | null
+          file_size?: number | null
           id?: string
           note?: string | null
           reviewed_at?: string | null
+          rubric_scores?: Json
           score?: number | null
           status?: Database["public"]["Enums"]["submission_status"]
           submitted_at?: string
@@ -123,28 +138,55 @@ export type Database = {
       }
       assignments: {
         Row: {
+          accepted_formats: string
           course_id: string
           due_at: string | null
           id: string
           instructions: string | null
+          max_attempts: number
+          max_file_mb: number
           max_score: number
+          module_id: string | null
+          opens_at: string
+          pass_score: number | null
+          requirements: string[]
+          rubric: Json
           title: string
+          weight_percent: number | null
         }
         Insert: {
+          accepted_formats?: string
           course_id: string
           due_at?: string | null
           id?: string
           instructions?: string | null
+          max_attempts?: number
+          max_file_mb?: number
           max_score?: number
+          module_id?: string | null
+          opens_at?: string
+          pass_score?: number | null
+          requirements?: string[]
+          rubric?: Json
           title: string
+          weight_percent?: number | null
         }
         Update: {
+          accepted_formats?: string
           course_id?: string
           due_at?: string | null
           id?: string
           instructions?: string | null
+          max_attempts?: number
+          max_file_mb?: number
           max_score?: number
+          module_id?: string | null
+          opens_at?: string
+          pass_score?: number | null
+          requirements?: string[]
+          rubric?: Json
           title?: string
+          weight_percent?: number | null
         }
         Relationships: [
           {
@@ -152,6 +194,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "course_modules"
             referencedColumns: ["id"]
           },
         ]
@@ -223,24 +272,35 @@ export type Database = {
       }
       categories: {
         Row: {
+          field_slug: string | null
           id: string
           name: string
           position: number
           slug: string
         }
         Insert: {
+          field_slug?: string | null
           id?: string
           name: string
           position?: number
           slug: string
         }
         Update: {
+          field_slug?: string | null
           id?: string
           name?: string
           position?: number
           slug?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_field_slug_fkey"
+            columns: ["field_slug"]
+            isOneToOne: false
+            referencedRelation: "learning_fields"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       certificates: {
         Row: {
@@ -333,16 +393,19 @@ export type Database = {
         Row: {
           conversation_id: string
           last_read_at: string | null
+          muted_at: string | null
           user_id: string
         }
         Insert: {
           conversation_id: string
           last_read_at?: string | null
+          muted_at?: string | null
           user_id: string
         }
         Update: {
           conversation_id?: string
           last_read_at?: string | null
+          muted_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -1071,6 +1134,7 @@ export type Database = {
       }
       identity_verifications: {
         Row: {
+          document_back_path: string | null
           document_number_last4: string | null
           document_path: string
           document_type: string
@@ -1083,6 +1147,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          document_back_path?: string | null
           document_number_last4?: string | null
           document_path: string
           document_type: string
@@ -1095,6 +1160,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          document_back_path?: string | null
           document_number_last4?: string | null
           document_path?: string
           document_type?: string
@@ -1163,6 +1229,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      learning_fields: {
+        Row: {
+          icon: string
+          name: string
+          position: number
+          slug: string
+        }
+        Insert: {
+          icon: string
+          name: string
+          position: number
+          slug: string
+        }
+        Update: {
+          icon?: string
+          name?: string
+          position?: number
+          slug?: string
+        }
+        Relationships: []
       }
       lesson_progress: {
         Row: {
@@ -1317,6 +1404,7 @@ export type Database = {
       }
       notifications: {
         Row: {
+          archived_at: string | null
           body: string | null
           created_at: string
           id: string
@@ -1327,6 +1415,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          archived_at?: string | null
           body?: string | null
           created_at?: string
           id?: string
@@ -1337,6 +1426,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          archived_at?: string | null
           body?: string | null
           created_at?: string
           id?: string
@@ -1505,6 +1595,7 @@ export type Database = {
           bio: string | null
           city: string | null
           created_at: string
+          deletion_requested_at: string | null
           frozen_at: string | null
           full_name: string
           headline: string | null
@@ -1518,6 +1609,7 @@ export type Database = {
           bio?: string | null
           city?: string | null
           created_at?: string
+          deletion_requested_at?: string | null
           frozen_at?: string | null
           full_name?: string
           headline?: string | null
@@ -1531,6 +1623,7 @@ export type Database = {
           bio?: string | null
           city?: string | null
           created_at?: string
+          deletion_requested_at?: string | null
           frozen_at?: string | null
           full_name?: string
           headline?: string | null
@@ -1643,6 +1736,35 @@ export type Database = {
           },
         ]
       }
+      queue_dismissals: {
+        Row: {
+          created_at: string
+          hidden_until: string | null
+          item_key: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hidden_until?: string | null
+          item_key: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hidden_until?: string | null
+          item_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "queue_dismissals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_attempts: {
         Row: {
           answers: Json
@@ -1696,6 +1818,7 @@ export type Database = {
           course_id: string
           id: string
           lesson_id: string | null
+          max_attempts: number
           pass_percent: number
           questions: Json
           time_limit_minutes: number | null
@@ -1705,6 +1828,7 @@ export type Database = {
           course_id: string
           id?: string
           lesson_id?: string | null
+          max_attempts?: number
           pass_percent?: number
           questions?: Json
           time_limit_minutes?: number | null
@@ -1714,6 +1838,7 @@ export type Database = {
           course_id?: string
           id?: string
           lesson_id?: string | null
+          max_attempts?: number
           pass_percent?: number
           questions?: Json
           time_limit_minutes?: number | null
@@ -1777,6 +1902,7 @@ export type Database = {
       refund_requests: {
         Row: {
           amount: number
+          cancelled_at: string | null
           created_at: string
           decided_at: string | null
           decision_note: string | null
@@ -1790,6 +1916,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          cancelled_at?: string | null
           created_at?: string
           decided_at?: string | null
           decision_note?: string | null
@@ -1803,6 +1930,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          cancelled_at?: string | null
           created_at?: string
           decided_at?: string | null
           decision_note?: string | null
@@ -1836,10 +1964,15 @@ export type Database = {
           category_ids: string[]
           completed_at: string | null
           employer: string | null
+          experience_level: string | null
+          experience_years: string | null
+          field_slugs: string[]
           goal: string | null
           job_title: string | null
           level: Database["public"]["Enums"]["course_level"] | null
           modes: Database["public"]["Enums"]["course_mode"][]
+          skills: string[]
+          step: number
           updated_at: string
           user_id: string
           weekly_hours: string | null
@@ -1848,10 +1981,15 @@ export type Database = {
           category_ids?: string[]
           completed_at?: string | null
           employer?: string | null
+          experience_level?: string | null
+          experience_years?: string | null
+          field_slugs?: string[]
           goal?: string | null
           job_title?: string | null
           level?: Database["public"]["Enums"]["course_level"] | null
           modes?: Database["public"]["Enums"]["course_mode"][]
+          skills?: string[]
+          step?: number
           updated_at?: string
           user_id: string
           weekly_hours?: string | null
@@ -1860,10 +1998,15 @@ export type Database = {
           category_ids?: string[]
           completed_at?: string | null
           employer?: string | null
+          experience_level?: string | null
+          experience_years?: string | null
+          field_slugs?: string[]
           goal?: string | null
           job_title?: string | null
           level?: Database["public"]["Enums"]["course_level"] | null
           modes?: Database["public"]["Enums"]["course_mode"][]
+          skills?: string[]
+          step?: number
           updated_at?: string
           user_id?: string
           weekly_hours?: string | null
@@ -2043,6 +2186,7 @@ export type Database = {
         }
         Returns: string
       }
+      cancel_refund_request: { Args: { p_refund: string }; Returns: undefined }
       check_in: {
         Args: { p_code: string }
         Returns: {
@@ -2071,6 +2215,25 @@ export type Database = {
           completed: number
           percent: number
           total: number
+        }[]
+      }
+      course_quizzes: {
+        Args: { p_course: string }
+        Returns: {
+          id: string
+          lesson_id: string
+          max_attempts: number
+          pass_percent: number
+          question_count: number
+          time_limit_minutes: number
+          title: string
+        }[]
+      }
+      course_rating_breakdown: {
+        Args: { p_course: string }
+        Returns: {
+          count: number
+          stars: number
         }[]
       }
       course_seats_left: { Args: { p_course: string }; Returns: number }
@@ -2102,13 +2265,32 @@ export type Database = {
       }
       invite_next_waitlisted: { Args: { p_course: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
+      is_conversation_folder: {
+        Args: { object_name: string }
+        Returns: boolean
+      }
       is_conversation_member: { Args: { c: string }; Returns: boolean }
       is_enrolled: { Args: { c: string }; Returns: boolean }
       is_org_member: { Args: { org: string }; Returns: boolean }
       issue_certificate: { Args: { p_enrollment: string }; Returns: string }
+      join_live_session: {
+        Args: { p_session: string }
+        Returns: {
+          checked_in_at: string
+          meeting_url: string
+        }[]
+      }
       join_waitlist: { Args: { p_course: string }; Returns: string }
       leave_waitlist: { Args: { p_entry: string }; Returns: undefined }
       manages_course: { Args: { c: string }; Returns: boolean }
+      my_waitlist_positions: {
+        Args: never
+        Returns: {
+          entry_id: string
+          queue_position: number
+          total: number
+        }[]
+      }
       notify: {
         Args: { b: string; k: string; l: string; t: string; u: string }
         Returns: undefined
@@ -2116,6 +2298,18 @@ export type Database = {
       open_dispute: {
         Args: { p_details: string; p_payment: string; p_reason: string }
         Returns: string
+      }
+      public_profile: { Args: { p_user: string }; Returns: Json }
+      quiz_attempt_review: {
+        Args: { p_attempt: string }
+        Returns: {
+          chosen: string
+          correct_answer: string
+          is_correct: boolean
+          options: Json
+          question: string
+          question_id: string
+        }[]
       }
       quote_enrollment: {
         Args: { p_code?: string; p_course: string }
@@ -2146,6 +2340,21 @@ export type Database = {
           course_percent: number
         }[]
       }
+      refund_quote: {
+        Args: { p_enrollment: string }
+        Returns: {
+          amount: number
+          currency: string
+          days_before: number
+          paid: number
+          percent: number
+          reference_at: string
+          starts_at: string
+          tier: string
+          window_ends_at: string
+        }[]
+      }
+      request_account_deletion: { Args: never; Returns: undefined }
       request_refund: {
         Args: { p_details: string; p_enrollment: string; p_reason: string }
         Returns: string
@@ -2182,6 +2391,25 @@ export type Database = {
         Args: { p_assignment: string; p_file_path: string; p_note: string }
         Returns: string
       }
+      submit_assignment_file: {
+        Args: {
+          p_assignment: string
+          p_file_name: string
+          p_file_path: string
+          p_file_size: number
+          p_note: string
+        }
+        Returns: string
+      }
+      submit_identity_documents: {
+        Args: {
+          p_back_path: string
+          p_front_path: string
+          p_last4: string
+          p_type: string
+        }
+        Returns: string
+      }
       submit_identity_verification: {
         Args: {
           p_document_path: string
@@ -2201,6 +2429,27 @@ export type Database = {
           total: number
         }[]
       }
+      submit_quiz_attempt: {
+        Args: { p_answers: Json; p_quiz: string }
+        Returns: {
+          attempt_id: string
+          attempt_no: number
+          correct: number
+          max_attempts: number
+          passed: boolean
+          score_percent: number
+          total: number
+        }[]
+      }
+      trainer_public_stats: {
+        Args: { p_trainer: string }
+        Returns: {
+          courses: number
+          learners: number
+          rating: number
+          ratings: number
+        }[]
+      }
       vat_rate: { Args: never; Returns: number }
       verify_certificate: {
         Args: { p_code: string }
@@ -2216,6 +2465,7 @@ export type Database = {
           trainer_name: string
         }[]
       }
+      withdraw_dispute: { Args: { p_dispute: string }; Returns: undefined }
       withdraw_enrollment: {
         Args: { p_enrollment: string; p_reason: string }
         Returns: undefined
