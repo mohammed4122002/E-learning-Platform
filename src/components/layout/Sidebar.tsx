@@ -37,7 +37,7 @@ export function Sidebar({ onCollapse }: { onCollapse?: () => void }) {
 
       <nav aria-label="القائمة الرئيسية" className="flex w-full flex-col gap-1.5">
         {TRAINEE_NAV.map((item) => {
-          const active = isActive(pathname, item.href);
+          const active = isActive(pathname, item);
           const badge = item.badgeKey ? data[item.badgeKey] : 0;
           return (
             <Link
