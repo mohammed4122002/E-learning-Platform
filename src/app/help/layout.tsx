@@ -12,14 +12,14 @@ export default async function PublicHelpLayout({ children }: LayoutProps<"/help"
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 focus:rounded-12 focus:bg-bg-surface focus:p-3">
         تخطَّ إلى المحتوى
       </a>
-      <header className="sticky top-0 z-20 flex h-[76px] w-full items-center gap-3 border-b border-border-divider bg-bg-surface px-4 sm:px-8">
-        <Link href={user ? homePathFor(user) : "/login"} className="flex items-center gap-3 rounded-12 focus-ring">
-          <span className="flex size-11 items-center justify-center rounded-12 bg-action-primary text-text-on-brand">
+      <header className="sticky top-0 z-20 flex h-[76px] w-full items-center gap-2 border-b border-border-divider bg-bg-surface px-4 sm:gap-3 sm:px-8">
+        <Link href={user ? homePathFor(user) : "/login"} className="flex min-w-0 items-center gap-3 rounded-12 focus-ring">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-action-primary text-text-on-brand">
             <Glyph icon={GraduationCap} size={20} />
           </span>
-          <span className="flex flex-col">
-            <span className="type-title text-text-primary">بوابة التدريب</span>
-            <span className="type-caption text-text-muted">مركز المساعدة</span>
+          <span className="flex min-w-0 flex-col">
+            <span className="truncate type-title text-text-primary">بوابة التدريب</span>
+            <span className="hidden type-caption text-text-muted sm:block">مركز المساعدة</span>
           </span>
         </Link>
         <div className="flex-1" />
@@ -39,6 +39,7 @@ export default async function PublicHelpLayout({ children }: LayoutProps<"/help"
         )}
       </header>
       <main id="main" tabIndex={-1} className="mx-auto flex w-full max-w-[1160px] flex-1 flex-col gap-6 px-4 pt-8 pb-14 outline-none sm:px-6 lg:px-12">
+        <h1 className="sr-only">مركز المساعدة — بوابة التدريب</h1>
         {children}
       </main>
     </div>
