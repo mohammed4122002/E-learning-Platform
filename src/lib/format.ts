@@ -104,3 +104,24 @@ export function pluralAr(n: number, [one, two, few, many]: [string, string, stri
 export function formatMonthYear(d: string | Date): string {
   return new Intl.DateTimeFormat("ar-SA-u-ca-gregory-nu-arab", { month: "long", year: "numeric", timeZone: "Asia/Riyadh" }).format(asDate(d));
 }
+
+/** "الأحد ١٥ مارس – الخميس ١٩ مارس ٢٠٢٦" (TRN-DSC-03 session cards). */
+export function formatDateRange(start: string | Date, end?: string | Date | null): string {
+  const s = asDate(start);
+  const head = `${weekdayFmt.format(s)} ${dayMonth.format(s)}`;
+  if (!end) return `${weekdayFmt.format(s)} ${dayMonthYear.format(s)}`;
+  const e = asDate(end);
+  return `${head} – ${weekdayFmt.format(e)} ${dayMonthYear.format(e)}`;
+}
+
+/** "٥:٠٠ م – ٩:٠٠ م" */
+export function formatTimeRange(start: string | Date, end: string | Date): string {
+  return `${formatTime(start)} – ${formatTime(end)}`;
+}
+
+/** "مارس ٢٠٢٦" with its sortable key "2026-03" (Asia/Riyadh). */
+export function monthGroup(d: string | Date): { key: string; label: string } {
+  const date = asDate(d);
+  const key = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", timeZone: TIME_ZONE }).format(date).slice(0, 7);
+  return { key, label: new Intl.DateTimeFormat(LOCALE, { month: "long", year: "numeric", timeZone: TIME_ZONE }).format(date) };
+}
