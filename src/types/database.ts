@@ -71,10 +71,13 @@ export type Database = {
         Row: {
           assignment_id: string
           feedback: string | null
+          file_name: string | null
           file_path: string | null
+          file_size: number | null
           id: string
           note: string | null
           reviewed_at: string | null
+          rubric_scores: Json
           score: number | null
           status: Database["public"]["Enums"]["submission_status"]
           submitted_at: string
@@ -83,10 +86,13 @@ export type Database = {
         Insert: {
           assignment_id: string
           feedback?: string | null
+          file_name?: string | null
           file_path?: string | null
+          file_size?: number | null
           id?: string
           note?: string | null
           reviewed_at?: string | null
+          rubric_scores?: Json
           score?: number | null
           status?: Database["public"]["Enums"]["submission_status"]
           submitted_at?: string
@@ -95,10 +101,13 @@ export type Database = {
         Update: {
           assignment_id?: string
           feedback?: string | null
+          file_name?: string | null
           file_path?: string | null
+          file_size?: number | null
           id?: string
           note?: string | null
           reviewed_at?: string | null
+          rubric_scores?: Json
           score?: number | null
           status?: Database["public"]["Enums"]["submission_status"]
           submitted_at?: string
@@ -123,28 +132,55 @@ export type Database = {
       }
       assignments: {
         Row: {
+          accepted_formats: string
           course_id: string
           due_at: string | null
           id: string
           instructions: string | null
+          max_attempts: number
+          max_file_mb: number
           max_score: number
+          module_id: string | null
+          opens_at: string
+          pass_score: number | null
+          requirements: string[]
+          rubric: Json
           title: string
+          weight_percent: number | null
         }
         Insert: {
+          accepted_formats?: string
           course_id: string
           due_at?: string | null
           id?: string
           instructions?: string | null
+          max_attempts?: number
+          max_file_mb?: number
           max_score?: number
+          module_id?: string | null
+          opens_at?: string
+          pass_score?: number | null
+          requirements?: string[]
+          rubric?: Json
           title: string
+          weight_percent?: number | null
         }
         Update: {
+          accepted_formats?: string
           course_id?: string
           due_at?: string | null
           id?: string
           instructions?: string | null
+          max_attempts?: number
+          max_file_mb?: number
           max_score?: number
+          module_id?: string | null
+          opens_at?: string
+          pass_score?: number | null
+          requirements?: string[]
+          rubric?: Json
           title?: string
+          weight_percent?: number | null
         }
         Relationships: [
           {
@@ -152,6 +188,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "course_modules"
             referencedColumns: ["id"]
           },
         ]
@@ -223,24 +266,35 @@ export type Database = {
       }
       categories: {
         Row: {
+          field_slug: string | null
           id: string
           name: string
           position: number
           slug: string
         }
         Insert: {
+          field_slug?: string | null
           id?: string
           name: string
           position?: number
           slug: string
         }
         Update: {
+          field_slug?: string | null
           id?: string
           name?: string
           position?: number
           slug?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_field_slug_fkey"
+            columns: ["field_slug"]
+            isOneToOne: false
+            referencedRelation: "learning_fields"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       certificates: {
         Row: {
@@ -1164,6 +1218,27 @@ export type Database = {
           },
         ]
       }
+      learning_fields: {
+        Row: {
+          icon: string
+          name: string
+          position: number
+          slug: string
+        }
+        Insert: {
+          icon: string
+          name: string
+          position: number
+          slug: string
+        }
+        Update: {
+          icon?: string
+          name?: string
+          position?: number
+          slug?: string
+        }
+        Relationships: []
+      }
       lesson_progress: {
         Row: {
           completed_at: string | null
@@ -1696,6 +1771,7 @@ export type Database = {
           course_id: string
           id: string
           lesson_id: string | null
+          max_attempts: number
           pass_percent: number
           questions: Json
           time_limit_minutes: number | null
@@ -1705,6 +1781,7 @@ export type Database = {
           course_id: string
           id?: string
           lesson_id?: string | null
+          max_attempts?: number
           pass_percent?: number
           questions?: Json
           time_limit_minutes?: number | null
@@ -1714,6 +1791,7 @@ export type Database = {
           course_id?: string
           id?: string
           lesson_id?: string | null
+          max_attempts?: number
           pass_percent?: number
           questions?: Json
           time_limit_minutes?: number | null
@@ -1836,10 +1914,15 @@ export type Database = {
           category_ids: string[]
           completed_at: string | null
           employer: string | null
+          experience_level: string | null
+          experience_years: string | null
+          field_slugs: string[]
           goal: string | null
           job_title: string | null
           level: Database["public"]["Enums"]["course_level"] | null
           modes: Database["public"]["Enums"]["course_mode"][]
+          skills: string[]
+          step: number
           updated_at: string
           user_id: string
           weekly_hours: string | null
@@ -1848,10 +1931,15 @@ export type Database = {
           category_ids?: string[]
           completed_at?: string | null
           employer?: string | null
+          experience_level?: string | null
+          experience_years?: string | null
+          field_slugs?: string[]
           goal?: string | null
           job_title?: string | null
           level?: Database["public"]["Enums"]["course_level"] | null
           modes?: Database["public"]["Enums"]["course_mode"][]
+          skills?: string[]
+          step?: number
           updated_at?: string
           user_id: string
           weekly_hours?: string | null
@@ -1860,10 +1948,15 @@ export type Database = {
           category_ids?: string[]
           completed_at?: string | null
           employer?: string | null
+          experience_level?: string | null
+          experience_years?: string | null
+          field_slugs?: string[]
           goal?: string | null
           job_title?: string | null
           level?: Database["public"]["Enums"]["course_level"] | null
           modes?: Database["public"]["Enums"]["course_mode"][]
+          skills?: string[]
+          step?: number
           updated_at?: string
           user_id?: string
           weekly_hours?: string | null
@@ -2073,6 +2166,25 @@ export type Database = {
           total: number
         }[]
       }
+      course_quizzes: {
+        Args: { p_course: string }
+        Returns: {
+          id: string
+          lesson_id: string
+          max_attempts: number
+          pass_percent: number
+          question_count: number
+          time_limit_minutes: number
+          title: string
+        }[]
+      }
+      course_rating_breakdown: {
+        Args: { p_course: string }
+        Returns: {
+          count: number
+          stars: number
+        }[]
+      }
       course_seats_left: { Args: { p_course: string }; Returns: number }
       course_seats_taken: { Args: { c: string }; Returns: number }
       create_payment: {
@@ -2116,6 +2228,17 @@ export type Database = {
       open_dispute: {
         Args: { p_details: string; p_payment: string; p_reason: string }
         Returns: string
+      }
+      quiz_attempt_review: {
+        Args: { p_attempt: string }
+        Returns: {
+          chosen: string
+          correct_answer: string
+          is_correct: boolean
+          options: Json
+          question: string
+          question_id: string
+        }[]
       }
       quote_enrollment: {
         Args: { p_code?: string; p_course: string }
@@ -2182,6 +2305,16 @@ export type Database = {
         Args: { p_assignment: string; p_file_path: string; p_note: string }
         Returns: string
       }
+      submit_assignment_file: {
+        Args: {
+          p_assignment: string
+          p_file_name: string
+          p_file_path: string
+          p_file_size: number
+          p_note: string
+        }
+        Returns: string
+      }
       submit_identity_verification: {
         Args: {
           p_document_path: string
@@ -2199,6 +2332,27 @@ export type Database = {
           passed: boolean
           score_percent: number
           total: number
+        }[]
+      }
+      submit_quiz_attempt: {
+        Args: { p_answers: Json; p_quiz: string }
+        Returns: {
+          attempt_id: string
+          attempt_no: number
+          correct: number
+          max_attempts: number
+          passed: boolean
+          score_percent: number
+          total: number
+        }[]
+      }
+      trainer_public_stats: {
+        Args: { p_trainer: string }
+        Returns: {
+          courses: number
+          learners: number
+          rating: number
+          ratings: number
         }[]
       }
       vat_rate: { Args: never; Returns: number }
