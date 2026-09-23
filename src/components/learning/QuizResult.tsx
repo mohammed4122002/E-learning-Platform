@@ -166,7 +166,7 @@ export function QuizResult({
                 <NextItem
                   icon={ClipboardList}
                   tone="warning"
-                  title={pendingAssignments === 1 ? "واجب عملي بانتظارك" : `${toArabicDigits(pendingAssignments)} واجبات بانتظارك`}
+                  title={`${pluralAr(pendingAssignments, ["واجب عملي", "واجبان", "واجبات", "واجبًا"])} بانتظارك`}
                   description="في هذه الدورة — لم يُسلَّم بعد"
                 />
               )}

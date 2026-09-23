@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useMemo, useRef, useState, type DragEvent, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { CircleCheck, Upload } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Field";
@@ -142,6 +143,7 @@ function Dropzone({ title, hint, onFile, accept, disabled }: { title: string; hi
 }
 
 export function SubmissionFlow({ assignment, userId, mode }: { assignment: FlowAssignment; userId: string; mode: Mode }) {
+  const router = useRouter();
   const [step, setStep] = useState<Step>("idle");
   const [file, setFile] = useState<File | null>(null);
   const [path, setPath] = useState<string | null>(null);
@@ -211,8 +213,18 @@ export function SubmissionFlow({ assignment, userId, mode }: { assignment: FlowA
           setStep("failed");
         }
       };
-      req.onerror = () => {
+      req.onerror = async () => {
         xhr.current = null;
+        // The connection can drop after the object was stored — check before reporting a failure.
+        const dir = objectPath.slice(0, objectPath.lastIndexOf("/"));
+        const leaf = objectPath.slice(objectPath.lastIndexOf("/") + 1);
+        const { data: found } = await createClient().storage.from("submissions").list(dir, { search: leaf, limit: 1 }).catch(() => ({ data: null }));
+        if (found?.some((o) => o.name === leaf)) {
+          setPath(objectPath);
+          setProgress(100);
+          setStep("review");
+          return;
+        }
         setUploadError("حدث خلل أثناء الرفع. تحقّق من اتصالك ثم أعد المحاولة.");
         setStep("failed");
       };
@@ -349,6 +361,9 @@ export function SubmissionFlow({ assignment, userId, mode }: { assignment: FlowA
         />
         <div className="flex flex-wrap gap-3">
           <ButtonLink href="/trainee/assignments">عد إلى الواجبات</ButtonLink>
+          <Button variant="secondary" onClick={() => router.refresh()}>
+            اعرض حالة الواجب
+          </Button>
         </div>
       </div>
     );
