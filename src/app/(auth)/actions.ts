@@ -47,6 +47,14 @@ export async function signIn(_: FormState, formData: FormData): Promise<FormStat
   redirect(safeNext(formData.get("next"), "/"));
 }
 
+/**
+ * Supabase Auth gives up after 10 s while its SMTP server is still sending (504 `request_timeout`).
+ * The user and the e-mail have been created by then, so the flow continues as if it succeeded.
+ */
+function isSlowEmailSend(error: { status?: number; code?: string } | null) {
+  return Boolean(error && (error.status === 504 || error.code === "request_timeout"));
+}
+
 /** PUB-AUT-01 · إنشاء حساب */
 export async function signUp(_: FormState, formData: FormData): Promise<FormState> {
   const parsed = registerSchema.safeParse(Object.fromEntries(formData));
@@ -63,12 +71,12 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
       emailRedirectTo: `${env.siteUrl}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   });
-  if (error) return { status: "error", message: toArabicError(error), values: kept };
+  if (error && !isSlowEmailSend(error)) return { status: "error", message: toArabicError(error), values: kept };
   // Supabase returns a user without identities when the e-mail is already registered.
-  if (data.user && data.user.identities?.length === 0) {
+  if (data?.user && data.user.identities?.length === 0) {
     return { status: "error", fieldErrors: { email: toArabicError({ code: "user_already_exists" }) }, values: kept };
   }
-  if (data.session) redirect(next);
+  if (data?.session) redirect(next);
   redirect(`/verify-email?email=${encodeURIComponent(parsed.data.email)}&next=${encodeURIComponent(next)}`);
 }
 
@@ -87,7 +95,7 @@ export async function resendSignupCode(email: string): Promise<FormState> {
   if (!parsed.success) return { status: "error", message: "تحقق من صيغة البريد الإلكتروني" };
   const supabase = await createClient();
   const { error } = await supabase.auth.resend({ type: "signup", email: parsed.data.email });
-  if (error) return { status: "error", message: toArabicError(error) };
+  if (error && !isSlowEmailSend(error)) return { status: "error", message: toArabicError(error) };
   return { status: "success", message: "أرسلنا رمزًا جديدًا إلى بريدك." };
 }
 
@@ -113,7 +121,7 @@ export async function resendRecoveryCode(email: string): Promise<FormState> {
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${env.siteUrl}/auth/confirm?next=/forgot-password/new`,
   });
-  if (error && errorCode(error)) return { status: "error", message: toArabicError(error) };
+  if (error && errorCode(error) && !isSlowEmailSend(error)) return { status: "error", message: toArabicError(error) };
   return { status: "success", message: "أرسلنا رمزًا جديدًا إلى بريدك." };
 }
 
