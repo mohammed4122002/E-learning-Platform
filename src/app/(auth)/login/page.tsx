@@ -16,6 +16,7 @@ export default async function LoginPage(props: PageProps<"/login">) {
   const sp = await props.searchParams;
   const next = typeof sp.next === "string" ? safeNext(sp.next, "") : "";
   const linkExpired = sp.error === "link_expired";
+  const confirmed = sp.confirmed === "1";
   return (
     <AuthSplitLayout>
       <AuthTitle
@@ -23,6 +24,11 @@ export default async function LoginPage(props: PageProps<"/login">) {
         subtitle="سجّل دخولك لمتابعة دوراتك واستكمال رحلة تعلّمك."
         badge={<SuccessPill icon={ShieldCheck}>منصة معتمدة وآمنة</SuccessPill>}
       />
+      {confirmed && (
+        <Alert tone="success" title="تم تأكيد بريدك الإلكتروني">
+          سجّل دخولك الآن لإكمال إعداد حسابك.
+        </Alert>
+      )}
       {linkExpired && (
         <Alert tone="warning" title="انتهت صلاحية الرابط">
           اطلب رابطًا أو رمزًا جديدًا ثم أعد المحاولة.

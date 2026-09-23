@@ -12,7 +12,7 @@ export default async function ForgotVerifyPage(props: PageProps<"/forgot-passwor
   const email = typeof sp.email === "string" ? sp.email : "";
   if (!email.includes("@")) redirect("/forgot-password");
   return (
-    <AuthCenteredLayout icon={LockOpen} title="أدخل رمز التحقق" subtitle="أرسلنا رمزًا من ٦ أرقام إلى بريدك. الرمز صالح لمدة ١٠ دقائق.">
+    <AuthCenteredLayout icon={LockOpen} title="أدخل رمز التحقق" subtitle="أرسلنا رسالة إلى بريدك. اضغط الرابط فيها من هذا المتصفح، أو أدخل الرمز المكوَّن من ٦ أرقام إن ظهر في الرسالة.">
       <AuthCard>
         <Stepper steps={RECOVERY_STEPS} current={2} />
         <hr className="border-border-divider" />
