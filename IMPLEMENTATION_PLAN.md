@@ -21,11 +21,11 @@ real screens backed by the database (no mock data), with loading, empty and erro
 | Onboarding | 6 steps + done | ✅ |
 | Course sale page + preview | TRN-CRS-06 | ✅ |
 | Checkout | TRN-ENR-01/02 review + discount, 03 payment, 04 confirmation, 05 hold summary, 07 receipt | ✅ |
-| Trainings & money | list, details, withdraw, refund, dispute, waitlist | agent |
-| Learning | player, quiz, assignments, attendance, learning record | agent |
-| Engagement | certificates, ratings, favorites, following, help centre | agent |
-| Account | profile, settings, notifications, messages, identity verification, terms | agent |
-| Discovery | search, program pages, compare | agent |
+| Trainings & money | list, details, withdraw, refund, dispute, waitlist | ✅ |
+| Learning | player, quiz, assignments, attendance, learning record | ✅ |
+| Engagement | certificates, ratings, favorites, following, help centre | ✅ |
+| Account | profile, settings, notifications, messages, identity verification, terms | ✅ |
+| Discovery | search, program pages, compare | ✅ |
 
 ## Wave 3 — Other workspaces (not started)
 

@@ -1,42 +1,87 @@
 # بوابة التدريب — E-learning Platform
 
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Arabic-first RTL UI.
+Arabic-first (RTL) training platform. **Next.js 16** (App Router, Server Components, Server Actions) ·
+React 19 · TypeScript · Tailwind CSS 4 · **Supabase** (Postgres + RLS, Auth, Storage, pg_cron).
 
-The UI is implemented from the project's Figma file, which is the single source of truth.
-Implemented so far: **Trainee dashboard** — frame `TRN-DSH-01 · لوحة المتدرب · الإصدار ٢` (node `102:529`).
+The UI is built from the project's Figma file, which is the single source of truth. Every screen reads
+and writes real data through Supabase — there is no mock data.
 
-## Scripts
-
-```bash
-npm run dev          # development server
-npm run build        # production build
-npm run lint         # ESLint
-npm run typecheck    # next typegen + tsc
-npm run fetch:covers # re-download the original course covers from Figma (needs FIGMA_TOKEN)
-```
-
-## Structure
-
-```
-src/app/                 layout (lang="ar" dir="rtl", Tajawal font), page, design tokens (globals.css)
-src/components/layout/   AppShell, Sidebar, SidebarNavItem, TopBar
-src/components/dashboard/ dashboard sections and cards
-src/components/ui/       Button, Icon, Pill, ProgressBar, SectionHeader
-src/lib/                 dashboard content (copied from Figma), asset helpers
-src/types/               shared types
-public/assets/icons/     SVG icons exported from Figma
-public/assets/images/    course covers exported from Figma
-```
-
-## Course covers
-
-The six cover photos are image fills in Figma (originals: 2752×1536 PNG, ~7 MB each). They are committed in
-`public/assets/images/` as 1376×768 JPGs (same aspect ratio, so the Figma crop percentages in
-`src/lib/dashboard-data.ts` still apply). To re-download the originals, use a Figma personal access token:
+## Getting started
 
 ```bash
-FIGMA_TOKEN=xxxx npm run fetch:covers
+cp .env.example .env.local   # fill in the Supabase URL and publishable key
+npm install
+npm run dev                  # http://localhost:3000
 ```
 
-`.jpg` files take precedence over the `.png` originals the script writes, so delete the JPGs to use the originals.
-When a cover file is missing, the card renders the Figma "Media / Image Placeholder" frame (tint + dashed stroke).
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` / `npm start` | Production build / server |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `next typegen` + `tsc --noEmit` |
+| `npm run fetch:covers` | Re-download the original course covers from Figma (needs `FIGMA_TOKEN`) |
+
+### Environment
+
+| Variable | Where | Notes |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | browser + server | Project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | browser + server | Publishable key; all access is enforced by RLS |
+| `NEXT_PUBLIC_SITE_URL` | server | Origin used in auth e-mails and OpenGraph URLs |
+| `SUPABASE_SERVICE_ROLE_KEY` | server only | Not used by the app today. Reserved for the payment webhook. Never prefix with `NEXT_PUBLIC_`. |
+
+## What is implemented
+
+The trainee workspace end to end, plus shared and public pages. Other workspaces (trainer, provider,
+studio, requester, admin) are the next waves — see [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+
+| Area | Routes |
+| --- | --- |
+| Auth | `/login`, `/register`, `/verify-email`, `/forgot-password` (`/verify`, `/new`), `/auth/confirm`, `/select-workspace` |
+| Onboarding | `/onboarding`, `/onboarding/[step]` (1–6), `/onboarding/done` |
+| Dashboard & queue | `/trainee`, `/trainee/queue` |
+| Discovery | `/trainee/discover`, `/trainee/programs/[slug]`, `/trainee/programs/[slug]/courses`, `/trainee/compare` |
+| Course page | `/courses/[slug]`, `/courses/[slug]/preview` (public, SEO + JSON-LD) |
+| Checkout | `/checkout/[course-slug]` (review + discount), `/checkout/[enrollment]` (seat hold), `/checkout/[enrollment]/pay`, `/checkout/[enrollment]/done`, `/trainee/receipts/[id]` |
+| My trainings | `/trainee/trainings`, `/trainee/trainings/[id]` (+ `session`, `check-in`, `withdraw`, `refund`, `calendar`), `/trainee/refunds/[id]`, `/trainee/disputes/new`, `/trainee/disputes/[id]`, `/trainee/waitlist`, `/trainee/waitlist/[id]` |
+| Learning | `/trainee/learn/[enrollment]` (+ `journey`, `lessons/[lesson]`), `/trainee/learn/quiz/[quiz]`, `/trainee/assignments`, `/trainee/assignments/[id]`, `/trainee/learning-record` (+ `report`) |
+| Certificates & ratings | `/trainee/certificates`, `/trainee/certificates/[id]` (+ `print`), `/trainee/certificates/external/new`, `/trainee/certificates/external/[id]`, `/trainee/ratings`, `/trainee/ratings/new` |
+| Engagement & support | `/trainee/favorites`, `/trainee/following`, `/trainee/help`, `/trainee/help/[slug]`, `/trainee/inquiry`, `/trainee/report` |
+| Profile | `/trainee/profile` (+ `edit`, `photo`, `experience`), `/trainee/verification`, `/u/[id]` (public profile) |
+| Account | `/account`, `/account/security`, `/account/notifications`, `/account/privacy`, `/account/export` |
+| Inbox | `/notifications`, `/messages`, `/messages/[id]`, `/messages/new` |
+| Public | `/help`, `/help/[slug]`, `/terms`, `/verify`, `/verify/[code]` |
+
+Every dynamic route has `loading.tsx`, `error.tsx` (Arabic message + retry) and empty states.
+
+## Project structure
+
+```
+src/app/                  routes (App Router). (auth), (workspace) and (print) are route groups
+src/proxy.ts              session refresh + route protection (Next 16 "proxy", formerly middleware)
+src/components/ui/        design-system components that mirror the Figma library
+src/components/<area>/    feature components (checkout, learning, trainings, discover, …)
+src/lib/data/             server-only data access (Supabase queries/RPCs, mapped to view types)
+src/lib/actions/          shared Server Actions
+src/lib/supabase/         browser/server clients and cookie options
+src/lib/validation/       Zod schemas with Arabic messages
+src/lib/errors.ts         database error codes → Arabic messages
+src/lib/format.ts         Arabic digits, SAR prices, Gregorian dates in Asia/Riyadh
+src/types/database.ts     generated from the live schema — do not edit by hand
+supabase/migrations/      every schema change, applied in order
+```
+
+## Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) — layers, conventions, business-rule map
+- [DATABASE.md](DATABASE.md) — schema, RLS model, RPCs, pricing, jobs, seed data
+- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — waves and status
+- [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) — decisions and credentials still needed (payment gateway, SMS, SMTP…)
+
+## Payments
+
+Card details never reach our server. Real card payments need a payment gateway (see OPEN_QUESTIONS #1).
+Until one is connected, payment attempts fail safely with an Arabic message and the seat hold is kept.
+For local testing only, `app_settings.payments_sandbox = true` enables a sandbox. In the sandbox, the card
+`4000 0000 0000 0002` is declined and any other valid card number is accepted. Keep it `false` in production.

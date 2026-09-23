@@ -16,3 +16,10 @@ the app does today, so nothing is silently faked.
 | 9 | **Legal copy** | Final terms, privacy and refund policy text. | Pages exist with the text from Figma. |
 | 10 | **Certificates** | Official template and signing authority. | Certificates are issued by the database (`issue_certificate`) with a public verification code. |
 | 11 | **Leaked password protection** | Turn on in Supabase Dashboard → Authentication → Passwords (checks HaveIBeenPwned). Needs a paid plan. | Our own rules still require 8+ characters with upper, lower and a digit. |
+| 12 | **Support tickets** | A ticketing system (own table or Zendesk/Freshdesk). | "افتح تذكرة دعم" opens the inquiry form; "تذاكري" lists the user's inquiries and reports. |
+| 13 | **Provider replies to reviews, provider announcements, per-course alerts** | Product decision; they belong to the provider/trainer workspaces. | Not shown. |
+| 14 | **Two-factor auth, device list, activity log** | Supabase MFA setup; a session list needs the service role. | "End all other sessions" works; the rest is labelled as not available yet. |
+| 15 | **Permanent account deletion** | A server job with the service role to purge data after the grace period. | Deletion request freezes the account and records `deletion_requested_at` (BR-S3 blockers enforced). |
+| 16 | **Blended mode, trainer years of experience, birth date / nationality** | Fields do not exist in the schema yet. | Not shown. |
+| 17 | **Certificate code format** | Figma shows `CRT-YYYY-NNNNN`; the database issues a 12-hex code. | 12-hex code; the verify page also accepts a `CRT-` prefix and dashes. |
+| 18 | **Test data** | Deleting it was blocked by this session's permission settings; needs the owner to allow it or run the cleanup in the SQL editor. | QA accounts `qa.trainee@`, `qa.discover*@`, `qa.certs@`, `qa.trainings@`, `qa.profile@bawaba-qa.dev` and their rows exist in the database; `qa-discover-*` programs are visible in discovery. |

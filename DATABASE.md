@@ -24,7 +24,7 @@ TypeScript types: `src/types/database.ts`, generated from the live schema
   status, identity status or freeze flags. Trusted RPCs set the transaction-local `app.trusted_op`.
 - **Storage** (`…100700_storage.sql`): public buckets `avatars`, `course-covers`; private
   `lesson-media`, `submissions`, `identity-documents`, `dispute-attachments`,
-  `external-certificates`. Objects live under `<user-id>/…` and policies only allow the owner (plus
+  `external-certificates`, `report-evidence`, `message-attachments`. Objects live under `<user-id>/…` (message attachments under the conversation id) and policies only allow the owner (plus
   course managers for submissions). Preview lessons are readable by anyone (`…115100`).
 - The service-role key is never used by the web app.
 
@@ -36,7 +36,7 @@ TypeScript types: `src/types/database.ts`, generated from the live schema
 | Catalog | `categories`, `learning_fields`, `programs`, `program_versions` (immutable snapshot, BR-L1), `courses`, `course_modules`, `lessons`, `course_sessions` |
 | Enrollment & money | `discount_codes`, `enrollments` (price lock BR-L3, `hold_expires_at` BR-L7, `vat_amount`), `payments` (unique `idempotency_key` BR-L12), `receipts` (`RC-` sequence), `waitlist_entries`, `refund_requests`, `disputes`, `dispute_attachments` |
 | Learning | `lesson_progress`, `attendance`, `attendance_codes`, `quizzes`, `quiz_attempts`, `assignments`, `assignment_submissions`, `certificates` (12-hex public code), `external_certificates`, `course_ratings` |
-| Engagement & support | `trainee_preferences`, `experiences`, `favorites`, `follows`, `inquiries`, `notifications`, `conversations`, `conversation_participants`, `messages`, `violation_reports`, `identity_verifications`, `help_articles` |
+| Engagement & support | `trainee_preferences`, `experiences`, `favorites`, `follows`, `inquiries`, `notifications`, `conversations`, `conversation_participants`, `messages`, `violation_reports`, `identity_verifications`, `help_articles`, `queue_dismissals`, `terms_acceptances` |
 | Config | `app_settings` (VAT rate, sandbox flag, auth value panel) |
 
 ## Main RPCs
@@ -47,7 +47,10 @@ TypeScript types: `src/types/database.ts`, generated from the live schema
 | Waitlist | `join_waitlist`, `leave_waitlist`, `accept_waitlist_invite`, `invite_next_waitlisted` |
 | Learning | `course_outline`, `course_progress`, `record_lesson_progress`, `get_quiz`, `submit_quiz`, `submit_assignment`, `check_in`, `issue_certificate`, `rate_course`, `verify_certificate` |
 | Catalog | `course_seats_left`, `course_rating_breakdown`, `trainer_public_stats` |
-| Account | `add_workspace`, `submit_identity_verification`, `account_deletion_blockers`, `freeze_account`, `start_conversation` |
+| Money | `refund_quote`, `cancel_refund_request`, `withdraw_enrollment`, `withdraw_dispute`, `my_waitlist_positions` |
+| Live & learning extras | `join_live_session`, `course_quizzes`, `quiz_attempt_review`, `submit_quiz_attempt`, `submit_assignment_file`, `certificate_conditions` |
+| Discovery | `discover_courses`, `discover_facets`, `discover_suggest`, `course_public_facts` |
+| Account | `add_workspace`, `submit_identity_verification`, `submit_identity_documents`, `account_deletion_blockers`, `freeze_account`, `request_account_deletion`, `public_profile`, `start_conversation`, `withdraw_violation_report` |
 
 ## Pricing
 
