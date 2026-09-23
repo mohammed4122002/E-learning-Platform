@@ -8,39 +8,46 @@
 @theme {
   --font-sans: var(--font-tajawal), system-ui, sans-serif;
 
-  --color-action-primary: #5b3cc4;
+  /* Semantic colours (TG · Semantic, Light mode). Dark values are set on :root[data-theme="dark"]. */
+  --color-action-primary: var(--tg-action-primary);
+  --color-action-primary-hover: var(--tg-action-primary-hover);
+  --color-action-primary-pressed: var(--tg-action-primary-pressed);
   --color-action-accent: #ffd400;
-  --color-action-secondary-bg: #ffffff;
+  --color-action-secondary-bg: var(--tg-surface-elevated);
 
-  --color-bg-page: #f8f8fc;
-  --color-bg-surface: #ffffff;
-  --color-bg-card: #ffffff;
-  --color-bg-brand-tint: #efebfb;
-  --color-bg-sidebar: #f8f8fc;
-  --color-bg-sidebar-hover: #f1f0f7;
-  --color-bg-sidebar-active: #efebfb;
-  --color-bg-disabled: #f1f0f7;
+  --color-bg-page: var(--tg-bg-page);
+  --color-bg-surface: var(--tg-surface);
+  --color-bg-surface-elevated: var(--tg-surface-elevated);
+  --color-bg-card: var(--tg-surface);
+  --color-bg-brand-tint: var(--tg-brand-tint);
+  --color-bg-sidebar: var(--tg-bg-page);
+  --color-bg-sidebar-hover: var(--tg-disabled-bg);
+  --color-bg-sidebar-active: var(--tg-brand-tint);
+  --color-bg-disabled: var(--tg-disabled-bg);
 
-  --color-border-default: #e2e0ee;
-  --color-border-divider: #edebf7;
-  --color-border-sidebar: #e2e0ee;
-  --color-border-focus: #5b3cc4;
+  --color-border-default: var(--tg-border);
+  --color-border-divider: var(--tg-divider);
+  --color-border-sidebar: var(--tg-border);
+  --color-border-focus: var(--tg-action-primary);
 
-  --color-text-primary: #111111;
-  --color-text-secondary: #55555f;
-  --color-text-muted: #6b6b78;
-  --color-text-disabled: #a9a4c4;
-  --color-text-brand: #5b3cc4;
+  --color-text-primary: var(--tg-text-primary);
+  --color-text-secondary: var(--tg-text-secondary);
+  --color-text-muted: var(--tg-text-muted);
+  --color-text-disabled: var(--tg-text-disabled);
+  --color-text-brand: var(--tg-text-brand);
   --color-text-on-brand: #ffffff;
   --color-text-on-accent: #111111;
 
-  --color-state-success: #1b7a3d;
-  --color-state-success-bg: #e6f6ec;
-  --color-state-info: #1e5b8c;
-  --color-state-info-bg: #e8f0f7;
-  --color-state-warning: #8a6d00;
-  --color-state-warning-bg: #fff6cc;
-  --color-state-error: #c43535;
+  --color-state-success: var(--tg-success);
+  --color-state-success-bg: var(--tg-success-bg);
+  --color-state-info: var(--tg-info);
+  --color-state-info-bg: var(--tg-info-bg);
+  --color-state-warning: var(--tg-warning);
+  --color-state-warning-bg: var(--tg-warning-bg);
+  --color-state-error: var(--tg-error);
+  --color-state-error-bg: var(--tg-error-bg);
+  --color-state-rating: #ffc400;
+  --color-scrim: rgb(17 17 17 / 0.24);
 
   --radius-8: 8px;
   --radius-12: 12px;
@@ -49,8 +56,64 @@
 
   --shadow-card: 0px 2px 14px 0px rgba(17, 17, 17, 0.06);
   --shadow-hero: 0px 6px 18px 0px rgba(91, 60, 196, 0.28);
+  --shadow-float: 0px 8px 40px 0px rgba(17, 17, 17, 0.1);
+  --shadow-knob: 0px 1px 3px 0px rgba(17, 17, 17, 0.18);
   --drop-shadow-button: 0px 6px 9px rgba(91, 60, 196, 0.28);
   --drop-shadow-milestone: 0px 2px 7px rgba(17, 17, 17, 0.06);
+}
+
+/* TG · Primitives → Semantic, Light / Dark */
+:root {
+  --tg-action-primary: #5b3cc4;
+  --tg-action-primary-hover: #6d4bd1;
+  --tg-action-primary-pressed: #4a2fa8;
+  --tg-bg-page: #f8f8fc;
+  --tg-surface: #ffffff;
+  --tg-surface-elevated: #ffffff;
+  --tg-brand-tint: #efebfb;
+  --tg-disabled-bg: #f1f0f7;
+  --tg-border: #e2e0ee;
+  --tg-divider: #edebf7;
+  --tg-text-primary: #111111;
+  --tg-text-secondary: #55555f;
+  --tg-text-muted: #6b6b78;
+  --tg-text-disabled: #a9a4c4;
+  --tg-text-brand: #5b3cc4;
+  --tg-success: #1b7a3d;
+  --tg-success-bg: #e6f6ec;
+  --tg-info: #1e5b8c;
+  --tg-info-bg: #e8f0f7;
+  --tg-warning: #8a6d00;
+  --tg-warning-bg: #fff6cc;
+  --tg-error: #c43535;
+  --tg-error-bg: #fbe9e9;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --tg-action-primary: #6d4bd1;
+  --tg-action-primary-hover: #7c5ce0;
+  --tg-action-primary-pressed: #5b3cc4;
+  --tg-bg-page: #12101a;
+  --tg-surface: #1a1725;
+  --tg-surface-elevated: #232032;
+  --tg-brand-tint: #241e3d;
+  --tg-disabled-bg: #262238;
+  --tg-border: #322d45;
+  --tg-divider: #262238;
+  --tg-text-primary: #f5f4fa;
+  --tg-text-secondary: #b9b5c9;
+  --tg-text-muted: #9691ac;
+  --tg-text-disabled: #6e6884;
+  --tg-text-brand: #9b83ee;
+  --tg-success: #4ade80;
+  --tg-success-bg: #16301f;
+  --tg-info: #6fb3e8;
+  --tg-info-bg: #14283a;
+  --tg-warning: #ffc94d;
+  --tg-warning-bg: #33290a;
+  --tg-error: #ff7a7a;
+  --tg-error-bg: #3a1f1f;
+  color-scheme: dark;
 }
 
 /* Figma text styles (Type/*) */
@@ -137,7 +200,53 @@ html {
 }
 
 body {
-  background: var(--color-bg-surface);
+  background: var(--color-bg-page);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
+}
+
+/* Keyboard focus ring (Figma focus state: 4px action/primary @10% + 2px border). */
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    box-shadow: 0 0 0 4px rgb(91 60 196 / 0.18);
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+@keyframes tg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes tg-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+@utility animate-shimmer {
+  background: linear-gradient(90deg, var(--color-bg-disabled) 25%, var(--color-bg-brand-tint) 50%, var(--color-bg-disabled) 75%);
+  background-size: 200% 100%;
+  animation: tg-shimmer 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Compare Bar (TRN-DSC-01 · 4134:1119): inverse (dark) floating surface — same values in both themes. */
+@theme {
+  --color-bg-inverse: #1a1633;
+  --color-bg-inverse-chip: #302a4e;
+  --color-text-on-inverse-muted: #b4acd0;
+  --color-text-on-accent-strong: #342608;
+  --shadow-inverse: 0px 8px 24px 0px rgba(15, 8, 51, 0.32);
 }
