@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState, type ReactNode } from "react";
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { CircleQuestionMark, Landmark, Lock, Smartphone, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -101,10 +102,10 @@ export function PaymentForm({ enrollmentId, total, currency, summary }: { enroll
         <Button type="submit" size="l" fullWidth loading={pending}>
           {pending ? "جارٍ تنفيذ العملية…" : `ادفع ${formatPrice(total, currency)}`}
         </Button>
-        <a href="/trainee/help" className="flex items-center gap-2.5 rounded-8 type-caption text-text-brand hover:underline focus-ring">
+        <Link href="/trainee/help" className="flex items-center gap-2.5 rounded-8 type-caption text-text-brand hover:underline focus-ring">
           <Glyph icon={CircleQuestionMark} size={16} />
           تحتاج مساعدة في الدفع؟ تواصل مع الدعم
-        </a>
+        </Link>
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-6">
