@@ -223,9 +223,8 @@ export function NotificationCenter({
           ) : (
             groups.map((g) => (
               <section key={g.key} aria-labelledby={`grp-${g.key}`} className="flex flex-col gap-3">
-                <h2 id={`grp-${g.key}`} className="type-small text-text-secondary">
-                  {selecting ? "" : GROUP_LABEL[g.key]}
-                  {selecting && <span className="sr-only">{GROUP_LABEL[g.key]}</span>}
+                <h2 id={`grp-${g.key}`} className={selecting ? "sr-only" : "type-small text-text-secondary"}>
+                  {GROUP_LABEL[g.key]}
                 </h2>
                 <ul className="flex flex-col gap-3">
                   {g.items.map((n) => {

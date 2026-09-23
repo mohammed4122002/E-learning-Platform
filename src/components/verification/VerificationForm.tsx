@@ -120,7 +120,9 @@ export function VerificationForm({ userId, resubmit }: { userId: string; resubmi
   const [front, setFront] = useState<Slot>({ status: "empty" });
   const [back, setBack] = useState<Slot>({ status: "empty" });
   const [consent, setConsent] = useState(false);
-  const [last4, setLast4] = useState("");
+  const [docNumber, setDocNumber] = useState("");
+  // Only the last four characters ever leave the browser.
+  const last4 = docNumber.length >= 4 ? docNumber.slice(-4) : "";
   const needsBack = docType !== "passport";
 
   const upload = async (file: File | undefined, set: (s: Slot) => void) => {
@@ -181,14 +183,15 @@ export function VerificationForm({ userId, resubmit }: { userId: string; resubmi
             })}
           </div>
           <Input
-            label="آخر ٤ خانات من رقم المستند (اختياري)"
+            label="رقم المستند (اختياري)"
             inputMode="text"
             dir="ltr"
-            maxLength={4}
-            placeholder="1234"
-            value={last4}
-            onChange={(e) => setLast4(asciiDigits(e.target.value).toUpperCase().replace(/[^0-9A-Z]/g, "").slice(-4))}
-            hint="نحفظ آخر ٤ خانات فقط لمطابقة المستند — لا نطلب الرقم كاملًا ولا نعرضه."
+            autoComplete="off"
+            maxLength={30}
+            placeholder="1234567890"
+            value={docNumber}
+            onChange={(e) => setDocNumber(asciiDigits(e.target.value).toUpperCase().replace(/[^0-9A-Z]/g, "").slice(0, 30))}
+            hint="لا يُرسل الرقم كاملًا — نحفظ آخر ٤ خانات فقط لمطابقة المستند، ولا نعرضه لأي جهة."
             error={state.fieldErrors?.last4}
           />
         </section>

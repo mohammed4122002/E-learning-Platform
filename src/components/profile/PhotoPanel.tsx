@@ -337,10 +337,10 @@ export function PhotoPanel({ userId, fullName, currentPath, currentUrl }: { user
         </div>
       )}
 
-      {(phase.kind === "idle" || phase.kind === "success") && (
+      {((phase.kind === "idle" && currentPath) || phase.kind === "success") && (
         <div className="flex items-center gap-4">
           <Avatar name={fullName || "؟"} src={currentUrl} size="xl" />
-          {phase.kind === "idle" && currentPath && (
+          {phase.kind === "idle" && (
             <button type="button" onClick={() => setConfirmRemove(true)} className="cursor-pointer rounded-8 type-subtitle text-state-error hover:underline focus-ring">
               إزالة الصورة الحالية
             </button>
