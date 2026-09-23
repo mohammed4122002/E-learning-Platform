@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { toArabicError } from "@/lib/errors";
 
@@ -49,8 +48,7 @@ export async function submitAssignment(_: SubmitState, formData: FormData): Prom
     p_file_size: d.fileSize,
   });
   if (error || !data) return { status: "error", message: toArabicError(error) };
-  // The list is refreshed now; the detail page keeps the client's "تم الإرسال" confirmation until the
-  // trainee asks for the updated view (SubmissionFlow → router.refresh()).
-  revalidatePath("/trainee/assignments");
+  // No revalidation here: pages are rendered per request, and re-rendering now would unmount the client's
+  // "أُرسل واجبك" confirmation. The trainee refreshes the detail view from that panel (router.refresh()).
   return { status: "success", message: "أُرسل واجبك إلى المدرب.", submission: { id: data, submittedAt: new Date().toISOString() } };
 }
