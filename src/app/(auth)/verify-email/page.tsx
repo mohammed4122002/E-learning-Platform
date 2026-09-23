@@ -25,7 +25,7 @@ export default async function VerifyEmailPage(props: PageProps<"/verify-email">)
         title="تحقّق من هويتك"
         subtitle={
           <>
-            أرسلنا رمزًا من ٦ أرقام إلى بريدك <bdi dir="ltr">{maskEmail(email)}</bdi>. أدخله لإكمال إنشاء حسابك.
+            أرسلنا رسالة تفعيل إلى بريدك <bdi dir="ltr">{maskEmail(email)}</bdi>. اضغط رابط التفعيل فيها من هذا المتصفح، أو أدخل الرمز المكوَّن من ٦ أرقام إن ظهر في الرسالة.
           </>
         }
         badge={<SuccessPill icon={ShieldCheck}>الرمز صالح لمدة ١٠ دقائق</SuccessPill>}
