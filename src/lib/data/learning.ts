@@ -265,6 +265,8 @@ export const getCourseContent = cache(async (userId: string, enrollmentId: strin
   const total = cp?.total ?? lessons.length;
   const percent = cp?.percent ?? (total ? Math.floor((completed * 100) / total) : 0);
 
+  // Content that existed before the purchase defines the baseline; if nothing did, nothing is "added".
+  if (lessons.every((l) => l.isNew)) lessons.forEach((l) => (l.isNew = false));
   const newLessons = lessons.filter((l) => l.isNew);
   const pendingNew = newLessons.filter((l) => l.status !== "done");
   let before: CourseContent["before"] = null;

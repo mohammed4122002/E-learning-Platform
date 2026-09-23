@@ -49,7 +49,8 @@ export async function submitAssignment(_: SubmitState, formData: FormData): Prom
     p_file_size: d.fileSize,
   });
   if (error || !data) return { status: "error", message: toArabicError(error) };
+  // The list is refreshed now; the detail page keeps the client's "تم الإرسال" confirmation until the
+  // trainee asks for the updated view (SubmissionFlow → router.refresh()).
   revalidatePath("/trainee/assignments");
-  revalidatePath(`/trainee/assignments/${d.assignmentId}`);
   return { status: "success", message: "أُرسل واجبك إلى المدرب.", submission: { id: data, submittedAt: new Date().toISOString() } };
 }

@@ -329,7 +329,7 @@ function MetaRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-12 bg-bg-page px-4 py-3.5">
       <dt className="type-small text-text-secondary">{label}</dt>
-      <dd className="type-small text-text-primary tabular-nums" dir="auto">
+      <dd className="type-small font-medium text-text-primary tabular-nums" dir="auto">
         {value}
       </dd>
     </div>
