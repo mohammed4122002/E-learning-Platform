@@ -8,14 +8,13 @@ import { Glyph } from "@/components/ui/Icon";
 import { Meta, PHASE_STYLE, PhasePill, ProgramModePill } from "@/components/trainer-programs/bits";
 import { ProgramsSort } from "@/components/trainer-programs/ProgramsSort";
 import { requireTrainer } from "@/lib/auth";
-import { listTrainerPrograms, type ProgramListItem } from "@/lib/data/trainer-programs";
+import { latestProgramCourseId, listTrainerPrograms, type ProgramListItem } from "@/lib/data/trainer-programs";
 import { formatNumber, formatRating, formatRelative, pluralAr, toArabicDigits } from "@/lib/format";
 import { LEVEL_LABELS } from "@/lib/labels";
 import {
   MISSING_FIELDS,
   businessDaysWord,
   filesWord,
-  fixDaysLeft,
   hoursWord,
   lessonsWord,
   missingSummary,
@@ -69,7 +68,7 @@ function headline(items: ProgramListItem[]): string {
 export default async function TrainerProgramsPage({ searchParams }: PageProps<"/trainer/programs">) {
   const user = await requireTrainer("/trainer/programs");
   const sp = await searchParams;
-  const all = await listTrainerPrograms(user.id);
+  const [all, certCourse] = await Promise.all([listTrainerPrograms(user.id), latestProgramCourseId(user.id)]);
 
   if (all.length === 0) return <EmptyPrograms />;
 
@@ -90,6 +89,17 @@ export default async function TrainerProgramsPage({ searchParams }: PageProps<"/
     <>
       <TopBar title="برامجي" subtitle="المنتج التعليمي — تُنشأ منه الدورات" />
       <PageBody className="!gap-6">
+        {/* Entry row (4257:2297) → TRR-CRT-02 of the latest course run from these programs. */}
+        <div className="flex flex-col items-start gap-1.5">
+          <ButtonLink href={certCourse ? `/trainer/courses/${certCourse}/certificates/program` : "/trainer/courses"} disabled={!certCourse} aria-describedby={certCourse ? undefined : "cert-entry-note"}>
+            شهادات إتمام البرنامج
+          </ButtonLink>
+          {!certCourse && (
+            <p id="cert-entry-note" className="type-caption text-text-muted">
+              تُصدر الشهادات من دورة منفَّذة — لا دورات من برامجك بعد.
+            </p>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-5">
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <h2 className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">برامجي</h2>
@@ -247,8 +257,11 @@ function ProgramCard({ p, mostWanted }: { p: ProgramListItem; mostWanted: boolea
         {subtitle && <p className="line-clamp-2 type-body text-text-secondary">{subtitle}</p>}
 
         <div className={`flex flex-wrap items-center gap-x-2.5 gap-y-2 rounded-8 px-3 py-2.5 ${tinted ? "bg-bg-surface" : "bg-bg-page"}`}>
+          {/* Item order follows Figma 262:2211 from the start edge; inside an item the label precedes its value. */}
           {p.phase === "published" || p.phase === "suspended" ? (
             <>
+              {p.courses.rating !== null && <Meta icon={Star} label={formatRating(p.courses.rating)} value={`من ${pluralAr(p.courses.ratings, ["تقييم واحد", "تقييمين", "تقييمات", "تقييمًا"])}`} valueClass="text-state-warning" />}
+              <Meta icon={Users} label={formatNumber(p.courses.learners)} value="مسجّلًا" />
               <Meta
                 icon={CalendarDays}
                 value={p.courses.published ? pluralAr(p.courses.published, ["دورة واحدة", "دورتان", "دورات", "دورة"]) : "لا دورات بعد"}
@@ -259,27 +272,24 @@ function ProgramCard({ p, mostWanted }: { p: ProgramListItem; mostWanted: boolea
               ) : p.courses.upcoming > 0 ? (
                 <span className="type-caption text-text-primary">{p.courses.upcoming === 1 ? "واحدة قادمة" : `${toArabicDigits(p.courses.upcoming)} قادمة`}</span>
               ) : null}
-              <Meta icon={Users} label={formatNumber(p.courses.learners)} value="مسجّلًا" />
-              {p.courses.rating !== null && <Meta icon={Star} label={formatRating(p.courses.rating)} value={`من ${pluralAr(p.courses.ratings, ["تقييم واحد", "تقييمين", "تقييمات", "تقييمًا"])}`} valueClass="text-state-warning" />}
             </>
           ) : p.phase === "draft" ? (
             <>
+              <Meta icon={FileText} label="النسخة:" value={versionLabelAr(p.revision)} />
+              <Meta icon={Upload} label="المواد:" value={filesWord(p.files)} />
               {p.missing.length > 0 ? (
-                <Meta icon={CircleAlert} label="ناقص:" value={missingSummary(p.missing.slice(0, 2))} valueClass="text-state-error" />
+                <Meta icon={CircleAlert} label="ناقص:" value={missingSummary(p.missing.slice(0, 2), true)} valueClass="text-state-error" />
               ) : (
                 <Meta icon={CircleCheck} value="جاهزة للإقرار" valueClass="text-state-success" />
               )}
-              <Meta icon={Upload} label="المواد:" value={filesWord(p.files)} />
-              <Meta icon={FileText} label="النسخة:" value={versionLabelAr(p.revision)} />
             </>
           ) : (
             <>
-              <Meta icon={CalendarDays} label="النسخة:" value={versionLabelAr(p.revision)} />
-              {p.phase === "under_review" && p.submittedAt && <Meta icon={Hourglass} label="متبقٍ:" value={businessDaysWord(reviewDaysLeft(p.submittedAt))} />}
               {p.phase === "under_review" && <Meta icon={Upload} label="المواد:" value={filesWord(p.files)} />}
-              {p.phase === "needs_changes" && p.decidedAt && <Meta icon={Clock} label="رُدّ قبل:" value={formatRelative(p.decidedAt).replace(/^منذ /, "")} />}
-              {p.phase === "needs_changes" && p.decidedAt && <Meta icon={Hourglass} label="متبقٍ للتعديل:" value={pluralAr(fixDaysLeft(p.decidedAt), ["يوم واحد", "يومان", "أيام", "يومًا"])} />}
+              {p.phase === "under_review" && p.submittedAt && <Meta icon={Hourglass} label="متبقٍ:" value={businessDaysWord(reviewDaysLeft(p.submittedAt))} />}
               {p.phase !== "under_review" && <Meta icon={FileText} label="الدورات:" value={p.courses.published ? toArabicDigits(p.courses.published) : "—"} />}
+              {p.phase === "needs_changes" && p.decidedAt && <Meta icon={Clock} label="رُدّ قبل:" value={formatRelative(p.decidedAt).replace(/^منذ /, "")} />}
+              <Meta icon={CalendarDays} label="النسخة:" value={versionLabelAr(p.revision)} />
             </>
           )}
         </div>
@@ -344,12 +354,12 @@ function EmptyPrograms() {
           <h2 className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">برامجي</h2>
           <p className="type-body-lg text-text-secondary">لم تنشئ أي برنامج بعد. البرنامج هو أول خطوة نحو أول دورة وأول إيراد.</p>
         </div>
-        <section className="flex flex-col items-center gap-6 rounded-22 bg-bg-brand-tint px-5 py-11 text-center sm:px-12">
+        <section className="flex flex-col items-center gap-6 rounded-22 bg-bg-brand-tint px-5 py-11 text-center sm:px-10">
           <span className="flex size-[88px] items-center justify-center rounded-22 bg-bg-surface text-text-brand">
             <Glyph icon={BookOpen} size={32} />
           </span>
           <h3 className="text-[32px] leading-[1.2] font-bold text-text-primary sm:text-[48px]">أنشئ برنامجك الأول</h3>
-          <p className="max-w-3xl type-body-lg text-text-secondary">
+          <p className="type-body-lg text-text-secondary">
             البرنامج هو المحتوى المعتمد الذي تبيعه. بعد اعتماده تنشئ منه دورات بتواريخ وأماكن مختلفة — دون إعادة كتابة المحتوى في كل مرة.
           </p>
           <ButtonLink href="/trainer/programs/new" size="l" className="min-w-[300px] max-sm:w-full max-sm:min-w-0">
@@ -361,7 +371,7 @@ function EmptyPrograms() {
           {/* Figma places the journey right-to-left from «منشور»; DOM keeps the logical order. */}
           <ol className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:flex xl:flex-row-reverse xl:gap-10">
             {journey.map((j) => (
-              <li key={j.title} className="flex flex-1 flex-col items-center gap-3 rounded-12 bg-bg-page px-5 py-5 text-center">
+              <li key={j.title} className="flex flex-1 flex-col items-center gap-3 rounded-12 bg-bg-page px-4 py-5 text-center">
                 <span className={`flex size-12 items-center justify-center rounded-12 bg-bg-brand-tint ${j.tone ?? "text-text-brand"}`}>
                   <Glyph icon={j.icon} size={20} />
                 </span>

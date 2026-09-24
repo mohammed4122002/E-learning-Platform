@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
-import { BookOpen, CircleAlert, CircleCheck, CircleX, Lightbulb, Menu, Pencil, Plus, Trash2, X } from "lucide-react";
+import { BookOpen, CircleAlert, CircleCheck, CircleX, Lightbulb, Menu, Plus, SquarePen, Trash2, X } from "lucide-react";
 import { autosaveProgram, saveGoals } from "@/app/(trainer)/trainer/programs/actions";
 import { announceSaved, announceSaving } from "@/components/trainer-programs/SavedIndicator";
 import { Button, ButtonLink } from "@/components/ui/Button";
@@ -273,7 +273,7 @@ export function GoalsForm({
                   <span className="type-caption text-text-muted">{u.meta}</span>
                 </span>
                 <Link href={`/trainer/programs/${programId}/curriculum?edit=${u.id}`} aria-label={`عدّل ${u.title}`} className="flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-text-primary focus-ring">
-                  <Glyph icon={Pencil} size={16} />
+                  <Glyph icon={SquarePen} size={16} />
                 </Link>
                 <Link href={`/trainer/programs/${programId}/curriculum`} aria-label={`رتّب ${u.title}`} className="flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-text-primary focus-ring">
                   <Glyph icon={Menu} size={16} />

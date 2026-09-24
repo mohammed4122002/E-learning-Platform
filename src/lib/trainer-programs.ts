@@ -66,14 +66,14 @@ export function isEditStep(v: string): v is EditStep {
 }
 
 /** Missing-field codes (program_missing_fields) → label + the step that fixes it. */
-export const MISSING_FIELDS: Record<string, { label: string; step: EditStep; stepNo: number }> = {
-  cover: { label: "صورة الغلاف", step: "basics", stepNo: 1 },
-  summary: { label: "وصف البرنامج", step: "basics", stepNo: 1 },
-  category: { label: "التصنيف الرئيسي", step: "basics", stepNo: 1 },
-  hours: { label: "إجمالي الساعات", step: "basics", stepNo: 1 },
-  objectives: { label: "الأهداف التعليمية", step: "goals", stepNo: 2 },
-  units: { label: "محتوى البرنامج", step: "goals", stepNo: 2 },
-  price: { label: "السعر المرجعي", step: "pricing", stepNo: 4 },
+export const MISSING_FIELDS: Record<string, { label: string; short: string; step: EditStep; stepNo: number }> = {
+  cover: { label: "صورة الغلاف", short: "الغلاف", step: "basics", stepNo: 1 },
+  summary: { label: "وصف البرنامج", short: "الوصف", step: "basics", stepNo: 1 },
+  category: { label: "التصنيف الرئيسي", short: "التصنيف", step: "basics", stepNo: 1 },
+  hours: { label: "إجمالي الساعات", short: "الساعات", step: "basics", stepNo: 1 },
+  objectives: { label: "الأهداف التعليمية", short: "الأهداف", step: "goals", stepNo: 2 },
+  units: { label: "محتوى البرنامج", short: "المحتوى", step: "goals", stepNo: 2 },
+  price: { label: "السعر المرجعي", short: "السعر", step: "pricing", stepNo: 4 },
 };
 
 /** Reviewer finding fields → where the trainer fixes them. */
@@ -109,8 +109,9 @@ export function readFindings(raw: unknown): Finding[] {
     .filter((f) => f.note || f.field);
 }
 
-export function missingSummary(missing: string[]): string {
-  const labels = missing.map((m) => MISSING_FIELDS[m]?.label ?? m);
+/** «صورة الغلاف والأهداف التعليمية»; `short` gives the list-card form «السعر والأهداف» (262:2211). */
+export function missingSummary(missing: string[], short = false): string {
+  const labels = missing.map((m) => (short ? MISSING_FIELDS[m]?.short : MISSING_FIELDS[m]?.label) ?? m);
   return labels.join(" و");
 }
 
@@ -185,6 +186,11 @@ export function filesWord(n: number): string {
 export function lessonsWord(n: number): string {
   if (n === 0) return "٠ دروس";
   return pluralAr(n, ["درس واحد", "درسان", "دروس", "درسًا"]);
+}
+/** «٤ جلسات» — unit rows of ٢ الأهداف والمحتوى (360:13893). */
+export function sessionsWord(n: number): string {
+  if (n === 0) return "٠ جلسات";
+  return pluralAr(n, ["جلسة واحدة", "جلستان", "جلسات", "جلسة"]);
 }
 export function hoursWord(h: number): string {
   if (h === 0) return "٠ ساعات";

@@ -3484,6 +3484,14 @@ export type Database = {
         }
         Returns: string
       }
+      clone_program_assignments: { Args: { p_target: string }; Returns: number }
+      clone_program_materials: {
+        Args: { p_limit?: number; p_target: string }
+        Returns: {
+          copied: number
+          remaining: number
+        }[]
+      }
       course_dashboard: { Args: { p_course: string }; Returns: Json }
       course_outline: {
         Args: { p_course: string }
@@ -3631,6 +3639,7 @@ export type Database = {
         Returns: string
       }
       create_program: { Args: { p_title: string }; Returns: string }
+      discard_program_clone: { Args: { p_program: string }; Returns: undefined }
       discover_courses: {
         Args: {
           p_categories?: string[]
@@ -3758,6 +3767,10 @@ export type Database = {
             Args: { p_body: string; p_course: string; p_title: string }
             Returns: number
           }
+      notify_program_reviewers: {
+        Args: { p_event: string; p_program: string }
+        Returns: number
+      }
       open_dispute: {
         Args: { p_details: string; p_payment: string; p_reason: string }
         Returns: string
@@ -3785,6 +3798,44 @@ export type Database = {
           trainee_id: string
           trainee_name: string
         }[]
+      }
+      program_clone_target: {
+        Args: { p_target: string }
+        Returns: {
+          audience: string[]
+          category_id: string | null
+          cover_path: string | null
+          created_at: string
+          current_version: number
+          decided_at: string | null
+          derived_from: string | null
+          description: string | null
+          id: string
+          language: string
+          level: Database["public"]["Enums"]["course_level"]
+          objectives: string[]
+          organization_id: string | null
+          owner_id: string
+          prerequisites: string | null
+          published_at: string | null
+          reference_price: number | null
+          review_state: Database["public"]["Enums"]["program_review_state"]
+          revision: number
+          skills: string[]
+          slug: string
+          status: Database["public"]["Enums"]["program_status"]
+          submitted_at: string | null
+          summary: string | null
+          title: string
+          total_hours: number | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "programs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       program_missing_fields: { Args: { p: string }; Returns: string[] }
       program_snapshot: { Args: { p: string }; Returns: Json }

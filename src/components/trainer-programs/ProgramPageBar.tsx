@@ -5,7 +5,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 
 /** Slim bar of the program page preview (447:23369 / 450:23832): brand block + «حرّر البرنامج» + «اخرج من المعاينة». */
-export function ProgramPageBar({ editHref, editLabel = "حرّر البرنامج", editDisabled, shareUrl, exitHref = "/trainer/programs" }: { editHref: string; editLabel?: string; editDisabled?: boolean; shareUrl?: string; exitHref?: string }) {
+export function ProgramPageBar({ editHref, editLabel = "حرّر البرنامج", editDisabled, hideEdit, shareUrl, exitHref = "/trainer/programs" }: { editHref: string; editLabel?: string; editDisabled?: boolean; hideEdit?: boolean; shareUrl?: string; exitHref?: string }) {
   return (
     <header className="flex w-full flex-wrap items-center gap-3 border-b border-border-divider bg-bg-surface px-4 py-5 sm:gap-5 sm:px-14">
       <Link href="/trainer" className="flex items-center gap-3 rounded-12 focus-ring">
@@ -23,9 +23,11 @@ export function ProgramPageBar({ editHref, editLabel = "حرّر البرنام�
           <CopyLinkButton url={shareUrl} label="شارك الرابط" compact />
         </div>
       )}
-      <ButtonLink href={editHref} variant="outline" size="s" disabled={editDisabled}>
-        {editLabel}
-      </ButtonLink>
+      {!hideEdit && (
+        <ButtonLink href={editHref} variant="outline" size="s" disabled={editDisabled}>
+          {editLabel}
+        </ButtonLink>
+      )}
       <ButtonLink href={exitHref} size="s">
         اخرج من المعاينة
       </ButtonLink>

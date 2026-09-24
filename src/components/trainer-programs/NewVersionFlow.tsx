@@ -5,13 +5,17 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { LucideIcon } from "lucide-react";
 import { BookOpen, Check, CircleCheck, ClipboardCheck, Copy, Flag, LoaderCircle, OctagonX, Puzzle, ShieldCheck, Star, TriangleAlert, Upload, X } from "lucide-react";
-import { cloneProgram } from "@/app/(trainer)/trainer/programs/actions";
-import { FlowPanel, FlowRow } from "@/components/trainer-programs/FlowPanel";
+import { cloneAssignments, cloneMaterialsBatch, cloneProgram, discardClone } from "@/app/(trainer)/trainer/programs/actions";
+import { FlowPanel, FlowRow, FlowSteps, type FlowStep } from "@/components/trainer-programs/FlowPanel";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
+import { toArabicDigits } from "@/lib/format";
 
 type Part = "objectives" | "units" | "assignments" | "materials";
-type Stage = { s: "options" } | { s: "creating" } | { s: "done"; id: string; title: string } | { s: "failed"; message: string };
+type Stage = { s: "options" } | { s: "creating" } | { s: "done"; id: string; title: string } | { s: "failed"; message: string; subtitle?: string };
+/** Real server steps of «جارٍ إنشاء النسخة» (454:28838). */
+type StepKey = "base" | "assignments" | "materials";
+type Progress = { steps: StepKey[]; current: number; filesDone: number; filesTotal: number };
 
 export type CloneSummary = {
   id: string;
@@ -20,6 +24,7 @@ export type CloneSummary = {
   versionLine: string;
   counts: Record<Part, string>;
   has: Record<Part, boolean>;
+  files: number;
 };
 
 const PARTS: { key: Part; label: string; icon: LucideIcon }[] = [
@@ -39,44 +44,71 @@ export function NewVersionFlow({ source, defaultTitle, done }: { source: CloneSu
   const [title, setTitle] = useState(defaultTitle);
   const [parts, setParts] = useState<Record<Part, boolean>>({ objectives: true, units: true, assignments: true, materials: true });
   const [titleError, setTitleError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<Progress>({ steps: ["base"], current: 0, filesDone: 0, filesTotal: 0 });
   const [, start] = useTransition();
 
   function create(override?: Partial<Record<Part, boolean>>) {
     const chosen = { ...parts, ...override };
+    const steps: StepKey[] = ["base", ...(chosen.assignments && source.has.assignments ? (["assignments"] as const) : []), ...(chosen.materials && source.has.materials ? (["materials"] as const) : [])];
     setTitleError(null);
+    setProgress({ steps, current: 0, filesDone: 0, filesTotal: source.files });
     setStage({ s: "creating" });
     start(async () => {
       const res = await cloneProgram({ sourceId: source.id, title, ...chosen });
-      if (res.ok && res.id) {
-        setStage({ s: "done", id: res.id, title });
-        router.replace(`/trainer/programs/${source.id}/new-version?created=${res.id}`, { scroll: false });
-        router.refresh();
-      } else if (!res.ok && res.fieldErrors?.title) {
-        setTitleError(res.fieldErrors.title);
-        setStage({ s: "options" });
-      } else setStage({ s: "failed", message: res.ok ? "" : res.message });
+      if (!res.ok || !res.id) {
+        if (!res.ok && res.fieldErrors?.title) {
+          setTitleError(res.fieldErrors.title);
+          setStage({ s: "options" });
+        } else setStage({ s: "failed", message: res.ok ? "" : res.message });
+        return;
+      }
+      const id = res.id;
+      // A later step failed: remove the half-built copy so the original list stays as it was.
+      const fail = async (message: string, subtitle?: string) => {
+        const undo = await discardClone(id, source.id);
+        setStage(undo.ok ? { s: "failed", message, subtitle } : { s: "failed", message, subtitle: "تعذّر إكمال النسخ — بقيت مسودة جزئية في برامجك، والأصل لم يتأثر." });
+      };
+      let i = 1;
+      if (steps.includes("assignments")) {
+        setProgress((p) => ({ ...p, current: i }));
+        const a = await cloneAssignments(id);
+        if (!a.ok) return fail(a.message);
+        i++;
+      }
+      if (steps.includes("materials")) {
+        setProgress((p) => ({ ...p, current: i }));
+        let done = 0;
+        for (let guard = 0; guard < 200; guard++) {
+          const m = await cloneMaterialsBatch(id);
+          if (!m.ok) {
+            const total = Math.max(source.files, done);
+            return fail(m.message, `فشل نسخ ${toArabicDigits(total - done)} ${total - done > 10 ? "ملفًا" : "ملفات"} من ${toArabicDigits(total)} — لم تُنشأ النسخة ولم يتأثر الأصل.`);
+          }
+          done += m.copied;
+          setProgress((p) => ({ ...p, filesDone: done, filesTotal: done + m.remaining }));
+          if (m.remaining === 0 || m.copied === 0) break;
+        }
+      }
+      setProgress((p) => ({ ...p, current: steps.length }));
+      setStage({ s: "done", id, title });
+      router.replace(`/trainer/programs/${source.id}/new-version?created=${id}`, { scroll: false });
+      router.refresh();
     });
   }
 
   if (stage.s === "creating") {
+    const { steps, current, filesDone, filesTotal } = progress;
+    const baseTitle = parts.objectives || parts.units ? "نسخ الأهداف والمحاور" : "إنشاء المسودة";
+    const titles: Record<StepKey, string> = { base: baseTitle, assignments: "نسخ الواجبات", materials: "نسخ المواد المرفوعة" };
+    const fraction = steps[current] === "materials" && filesTotal > 0 ? filesDone / filesTotal : 0;
+    const rows: FlowStep[] = steps.map((k, i) => ({
+      title: titles[k],
+      state: i < current ? "done" : i === current ? "current" : "todo",
+      detail: k === "materials" && i === current && filesTotal > 0 ? `جارٍ · ${toArabicDigits(filesDone)} من ${toArabicDigits(filesTotal)}` : undefined,
+    }));
     return (
-      <FlowPanel tone="info" icon={LoaderCircle} spinning title="جارٍ إنشاء النسخة…" subtitle={`ننسخ ${PARTS.filter((p) => parts[p.key]).map((p) => p.label).join(" و") || "البيانات الأساسية"}.`}>
-        <div role="progressbar" aria-label="إنشاء النسخة" aria-busy className="h-2.5 w-full overflow-hidden rounded-full bg-border-default">
-          <div className="h-full w-1/3 animate-pulse rounded-full bg-action-accent" />
-        </div>
-        <ul className="flex flex-col gap-3">
-          {PARTS.filter((p) => parts[p.key]).map((p) => (
-            <li key={p.key} className="flex items-center gap-3 rounded-12 bg-state-info-bg px-3.5 py-3.5">
-              <span className="flex size-9 items-center justify-center rounded-8 bg-bg-surface text-state-info">
-                <LoaderCircle aria-hidden size={20} strokeWidth={1.4} absoluteStrokeWidth className="animate-[tg-spin_0.9s_linear_infinite]" />
-              </span>
-              <span className="flex flex-col gap-0.5">
-                <span className="type-small text-state-info">نسخ {p.label}</span>
-                <span className="type-caption text-text-secondary">جارٍ</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+      <FlowPanel tone="info" icon={LoaderCircle} spinning title="جارٍ إنشاء النسخة…" subtitle={`ننسخ ${source.counts.units.replace(" · ", " و")}${parts.materials && source.has.materials ? ` و${source.counts.materials.split(" · ")[0]}` : ""}.`}>
+        <FlowSteps label={`${toArabicDigits(Math.min(current + 1, steps.length))} من ${toArabicDigits(steps.length)} ${steps.length > 2 ? "خطوات" : "خطوة"}`} percent={((current + fraction) / steps.length) * 100} steps={rows} />
       </FlowPanel>
     );
   }
@@ -112,7 +144,7 @@ export function NewVersionFlow({ source, defaultTitle, done }: { source: CloneSu
 
   if (stage.s === "failed") {
     return (
-      <FlowPanel tone="error" icon={OctagonX} title="تعذّر إنشاء النسخة" subtitle="لم تُنشأ النسخة ولم يتأثر الأصل.">
+      <FlowPanel tone="error" icon={OctagonX} title="تعذّر إنشاء النسخة" subtitle={stage.subtitle ?? "لم تُنشأ النسخة ولم يتأثر الأصل."}>
         <FlowRow icon={ShieldCheck} tone="success" title="برنامجك الأصلي بخير" body="لم يُمس ولم تتغيّر أي دورة." />
         <FlowRow icon={TriangleAlert} tone="warning" title="سبب الفشل" body={stage.message || "انقطاع مؤقت — أعد المحاولة."} />
         <Button size="l" fullWidth onClick={() => create()}>

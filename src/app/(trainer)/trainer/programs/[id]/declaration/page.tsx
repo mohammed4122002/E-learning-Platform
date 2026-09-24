@@ -11,7 +11,6 @@ import {
   Hourglass,
   Lock,
   MapPin,
-  Percent,
   Puzzle,
   RefreshCcw,
   ShieldCheck,
@@ -28,7 +27,7 @@ import { Breadcrumb } from "@/components/ui/Navigation";
 import { requireTrainer } from "@/lib/auth";
 import { getTrainerProgram, type ProgramDetail, type RequestView } from "@/lib/data/trainer-programs";
 import { formatDate, formatDayMonth, formatPrice, formatRelative, pluralAr } from "@/lib/format";
-import { MISSING_FIELDS, filesWord, formatBytes, hoursWord, isEditable, lessonsWord, shortHash, versionLabel, versionLabelAr } from "@/lib/trainer-programs";
+import { MISSING_FIELDS, filesWord, formatBytes, hoursWord, isEditable, sessionsWord, shortHash, versionLabel, versionLabelAr } from "@/lib/trainer-programs";
 
 export const metadata: Metadata = { title: "الإقرار قبل النشر" };
 
@@ -87,11 +86,11 @@ function summary(p: ProgramDetail, version: string) {
         <SummaryRow
           icon={Puzzle}
           label="المحتوى"
-          value={[pluralAr(p.units.length, ["فصل واحد", "فصلان", "فصول", "فصلًا"]) || "٠ فصول", p.hours ? hoursWord(p.hours) : null, lessonsWord(p.totals.lessons)].filter(Boolean).join(" · ")}
+          value={[pluralAr(p.units.length, ["فصل واحد", "فصلان", "فصول", "فصلًا"]) || "٠ فصول", p.hours ? hoursWord(p.hours) : null, sessionsWord(p.totals.lessons)].filter(Boolean).join(" · ")}
         />
         <SummaryRow icon={Upload} label="المواد المرفوعة" value={`${filesWord(p.totals.files)} · ${formatBytes(p.totals.bytes)} · أُنتجت خارج المنصة`} tone="text-state-info" />
         <SummaryRow icon={MapPin} label="نمط التقديم" value={mode ?? "يُحدَّد عند إنشاء كل دورة"} />
-        <SummaryRow icon={Percent} label="السعر" value={p.price === null ? "لم يُحدَّد" : `${formatPrice(p.price)} للمتدرب · غير شامل الضريبة`} tone={p.price === null ? "text-state-error" : "text-state-success"} />
+        <SummaryRow icon={Hourglass} label="السعر" value={p.price === null ? "لم يُحدَّد" : `${formatPrice(p.price)} للمتدرب · غير شامل الضريبة`} tone={p.price === null ? "text-state-error" : "text-state-success"} />
         <SummaryRow icon={RefreshCcw} label="سياسة الاسترداد" value="السياسة الموحّدة للمنصة — غير قابلة للتعديل" tone="text-state-warning" />
       </ul>
     </section>

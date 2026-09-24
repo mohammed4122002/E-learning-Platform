@@ -205,6 +205,27 @@ export async function listTrainerPrograms(userId: string): Promise<ProgramListIt
   });
 }
 
+/**
+ * «شهادات إتمام البرنامج» (262:2211 → TRR-CRT-02): certificates are issued per course run, so the entry opens the
+ * most recent non-draft course created from one of the trainer's programs. Null when there is none yet.
+ */
+export async function latestProgramCourseId(userId: string): Promise<string | null> {
+  const supabase = await createClient();
+  const { data: programs, error } = await supabase.from("programs").select("id").eq("owner_id", userId);
+  if (error) throw error;
+  const ids = (programs ?? []).map((p) => p.id);
+  if (ids.length === 0) return null;
+  const { data, error: cErr } = await supabase
+    .from("courses")
+    .select("id, starts_at, status")
+    .in("program_id", ids)
+    .neq("status", "draft")
+    .order("starts_at", { ascending: false, nullsFirst: false })
+    .limit(1);
+  if (cErr) throw cErr;
+  return data?.[0]?.id ?? null;
+}
+
 export type ItemView = {
   id: string;
   unitId: string;

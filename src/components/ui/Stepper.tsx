@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { CheckCheck } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import { toArabicDigits } from "@/lib/format";
 
@@ -23,7 +23,7 @@ export function Stepper({ steps, current, itemWidth = 170 }: { steps: string[]; 
                       : "border-[1.5px] border-border-default bg-bg-surface text-text-muted"
                 }`}
               >
-                {state === "complete" ? <Glyph icon={Check} size={20} /> : <span className="type-title">{toArabicDigits(n)}</span>}
+                {state === "complete" ? <Glyph icon={CheckCheck} size={20} /> : <span className="type-title">{toArabicDigits(n)}</span>}
               </span>
               <span className={`type-subtitle ${state === "upcoming" ? "text-text-muted" : "text-text-primary"}`}>{label}</span>
               <span className={`type-caption ${state === "complete" ? "text-state-success" : state === "current" ? "text-text-brand" : "text-text-muted"}`}>

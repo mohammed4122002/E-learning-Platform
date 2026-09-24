@@ -34,7 +34,7 @@ the app does today, so nothing is silently faked.
 | T4 | TRR-PRG-04 مسودة بالمساعد الذكي (310:10907) and the AI cards on PRG-01/PRG-02 | Needs an LLM provider (see #6). | Not built; AI entry points hidden. |
 | T5 | TRR-PRG-07 curriculum | Figma has no control to add a lesson/assignment inside an existing unit, no audience «+ أضف فئة» chip, and no unit picker when dropping files. | Small controls were added in the existing design system so the data can be edited. Please confirm or provide the design. |
 | T6 | TRR-PRG-02 ١ الغلاف | «اقتصّ وعدّل الإطار» (crop) | Not built yet. |
-| T7 | TRR-PRG-01 | «شهادات إتمام البرنامج» button | Not built yet (program certificates are part of the course-operations screens). |
+| T7 | TRR-PRG-01 | «شهادات إتمام البرنامج» button (Figma links it to TRR-CRT-02, which works per course run) | Opens TRR-CRT-02 for the most recent non-draft course created from the trainer's programs; disabled with a one-line explanation when there is none. Confirm this is the intended target. |
 | T8 | TRR-CAL-01 تقويمي (254:388 / 254:814) | Figma has a «يوم» tab but no day-view frame, and no frame for opening, editing or deleting an appointment. | Day view reuses the week grid for one day. Opening an appointment shows a dialog built from the existing Modal component. |
 | T9 | TRR-HLP-01 / DSH-01 support links | There is no trainer support-ticket screen. | «تواصل مع الدعم» opens `/messages?f=support`; identity verification links to `/account`. |
 | T10 | TRR-DSH-01 sidebar card | Figma always shows «مدرب معتمد» with a badge. | Shown when the platform has verified the trainer; otherwise the card shows «مدرب» without the badge. The eye count is real profile views (one per visitor per day). |
@@ -47,3 +47,6 @@ the app does today, so nothing is silently faked.
 | T17 | TRR-CRS-01 bulk actions (327:11990) | Figma has no entry point into bulk-selection mode. | A link opens `?view=select`. |
 | T18 | Inquiries («ردّ الآن») and trainer receipts | No screen for trainers answering pre-enrolment inquiries or printing a sale receipt. | «ردّ الآن» goes to the trainees tab; «نزّل الإيصال» prints the sale page. |
 | T19 | Trainee side of scheduled courses | Trainee screens do not list lessons or course files for in-person/live courses. | Needs a trainee design for those. |
+| T20 | TRR-PRG-01 / 02 meta rows | Figma lays out each «label: value» item left-to-right (value visually right of its label), which reads backwards in Arabic. | Items follow Figma's visual order across the row; inside an item the label precedes its value (proper RTL). |
+| T21 | TRR-PRG-06 · غير مكتمل (447:24061) vs «غير مكتمل · بلا دورة أولى» (4207:652) | Two different layouts for the same state (an unpublished program never has a course). | Status page follows 447:24061; the visibility page follows 450:24600. Tell us if 4207:652 should replace 447:24061. |
+| T22 | TRR-PRG-08 «إشعار فريق المراجعة» | There is no admin/reviewer account yet. | The step is real (`notify_program_reviewers` notifies every admin-workspace user) — today it notifies nobody. |

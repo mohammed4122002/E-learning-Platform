@@ -332,11 +332,55 @@ export async function cloneProgram(input: { sourceId: string; title: string; obj
     p_title: d.title,
     p_objectives: d.objectives,
     p_units: d.units,
-    p_assignments: d.assignments,
-    p_materials: d.materials,
+    // Assignments and materials are their own steps (cloneAssignments / cloneMaterialsBatch) so the
+    // «جارٍ إنشاء النسخة» screen (454:28838) reports real progress.
+    p_assignments: false,
+    p_materials: false,
   });
   if (error || !data) return { ok: false, message: toArabicError(error), code: errorCode(error) };
   touch(d.sourceId);
   touch(data);
   return { ok: true, id: data };
+}
+
+/** TRR-PRG-09 step «نسخ الواجبات» into a fresh copy. */
+export async function cloneAssignments(targetId: string): Promise<ActionResult> {
+  await requireTrainer("/trainer/programs");
+  if (!isUuid(targetId)) return { ok: false, message: toArabicError({ message: "not_found" }) };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("clone_program_assignments", { p_target: targetId });
+  if (error) return { ok: false, message: toArabicError(error), code: errorCode(error) };
+  return { ok: true };
+}
+
+/** TRR-PRG-09 step «نسخ المواد المرفوعة» — one batch; the client loops until nothing remains. */
+export async function cloneMaterialsBatch(targetId: string): Promise<{ ok: true; copied: number; remaining: number } | { ok: false; message: string }> {
+  await requireTrainer("/trainer/programs");
+  if (!isUuid(targetId)) return { ok: false, message: toArabicError({ message: "not_found" }) };
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("clone_program_materials", { p_target: targetId, p_limit: 4 });
+  const row = Array.isArray(data) ? data[0] : null;
+  if (error || !row) return { ok: false, message: toArabicError(error) };
+  return { ok: true, copied: row.copied, remaining: row.remaining };
+}
+
+/** Rolls back a copy whose later step failed, so «لم تُنشأ النسخة ولم يتأثر الأصل» stays true. */
+export async function discardClone(targetId: string, sourceId: string): Promise<ActionResult> {
+  await requireTrainer("/trainer/programs");
+  if (!isUuid(targetId)) return { ok: false, message: toArabicError({ message: "not_found" }) };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("discard_program_clone", { p_program: targetId });
+  touch(isUuid(sourceId) ? sourceId : undefined);
+  if (error) return { ok: false, message: toArabicError(error), code: errorCode(error) };
+  return { ok: true };
+}
+
+/** TRR-PRG-08 step «إشعار فريق المراجعة» after a withdrawal. */
+export async function notifyReviewersOfWithdrawal(programId: string): Promise<ActionResult> {
+  await requireTrainer("/trainer/programs");
+  if (!isUuid(programId)) return { ok: false, message: toArabicError({ message: "not_found" }) };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("notify_program_reviewers", { p_program: programId, p_event: "withdrawn" });
+  if (error) return { ok: false, message: toArabicError(error), code: errorCode(error) };
+  return { ok: true };
 }

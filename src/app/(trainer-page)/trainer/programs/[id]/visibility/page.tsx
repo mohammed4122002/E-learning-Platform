@@ -23,7 +23,7 @@ export default async function ProgramVisibilityPage({ params }: PageProps<"/trai
       <ProgramPageBar
         editHref={published ? `/trainer/programs/${p.id}/new-version` : incomplete ? `/trainer/programs/${p.id}/edit/${MISSING_FIELDS[p.missing[0]].step}` : `/trainer/programs/${p.id}/edit/basics`}
         editLabel={incomplete ? "أكمل النواقص" : "حرّر البرنامج"}
-        editDisabled={p.phase === "under_review"}
+        hideEdit={p.phase === "under_review"}
         shareUrl={published ? `${env.siteUrl}/trainee/programs/${p.slug}` : undefined}
         exitHref={`/trainer/programs/${p.id}`}
       />

@@ -4,7 +4,6 @@ import { ProgramPageBar } from "@/components/trainer-programs/ProgramPageBar";
 import { ProgramPublicPage } from "@/components/trainer-programs/ProgramPublicPage";
 import { requireTrainer } from "@/lib/auth";
 import { getTrainerProgram, programCoursesAndRatings } from "@/lib/data/trainer-programs";
-import { env } from "@/lib/env";
 import { MISSING_FIELDS } from "@/lib/trainer-programs";
 
 export async function generateMetadata({ params }: PageProps<"/trainer/programs/[id]">): Promise<Metadata> {
@@ -27,9 +26,8 @@ export default async function ProgramStatusPage({ params }: PageProps<"/trainer/
     <>
       <ProgramPageBar
         editHref={published ? `/trainer/programs/${p.id}/new-version` : incomplete ? `/trainer/programs/${p.id}/edit/${MISSING_FIELDS[p.missing[0]].step}` : `/trainer/programs/${p.id}/edit/basics`}
-        editLabel={incomplete ? "أكمل النواقص" : "حرّر البرنامج"}
+        editLabel="حرّر البرنامج"
         editDisabled={p.phase === "under_review"}
-        shareUrl={published ? `${env.siteUrl}/trainee/programs/${p.slug}` : undefined}
       />
       <ProgramPublicPage p={p} mode="status" courses={courses} ratings={ratings} />
     </>

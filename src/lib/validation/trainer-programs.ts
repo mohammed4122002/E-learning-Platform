@@ -43,10 +43,12 @@ export const intentField = z.enum(["next", "later", "stay"]).default("next");
 export const basicsSchema = z.object({
   title: z.string({ error: "أدخل اسم البرنامج" }).trim().min(3, "أدخل اسم البرنامج (٣ أحرف على الأقل)").max(200, "الاسم لا يتجاوز ٢٠٠ حرف"),
   summary: optionalText(2000, "الوصف لا يتجاوز ٢٠٠٠ حرف").refine((v) => v === null || v.length >= 20, "اكتب وصفًا أوضح (٢٠ حرفًا على الأقل)"),
+  // The select posts nothing while «اختر التصنيف» is shown; a draft may be saved without a category.
   categoryId: z
-    .string()
+    .string({ error: "اختر تصنيفًا من القائمة" })
     .trim()
-    .transform((v) => (v.length ? v : null))
+    .optional()
+    .transform((v) => (v ? v : null))
     .refine((v) => v === null || /^[0-9a-f-]{36}$/i.test(v), "اختر تصنيفًا من القائمة"),
   skills: stringList(15, 60, "المهارات حتى ١٥ مهارة، وكل مهارة لا تتجاوز ٦٠ حرفًا"),
   level: z.enum(["beginner", "intermediate", "advanced"], { error: "اختر المستوى" }),

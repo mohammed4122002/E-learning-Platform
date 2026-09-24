@@ -36,9 +36,9 @@ export default async function NewVersionPage({ params, searchParams }: PageProps
       <TopBar title="نسخة جديدة" subtitle={created ? "أُنشئت" : "اختر ما يُنسخ"} />
       <PageBody className="!gap-6">
         <Breadcrumb items={[{ label: "برامجي", href: "/trainer/programs" }, { label: p.title, href: `/trainer/programs/${p.id}` }]} />
-        <div className="flex flex-col-reverse gap-6 lg:flex-row lg:items-start">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex min-w-0 flex-1 justify-center">
-            <div className="w-full max-w-[480px]">
+            <div className="w-full max-w-[620px]">
               <NewVersionFlow
                 source={{
                   id: p.id,
@@ -52,6 +52,7 @@ export default async function NewVersionPage({ params, searchParams }: PageProps
                     materials: `${filesWord(p.totals.files)} · ${formatBytes(p.totals.bytes)}`,
                   },
                   has: { objectives: p.objectives.length > 0, units: p.units.length > 0, assignments: assignments > 0, materials: p.totals.files > 0 },
+                  files: p.totals.files,
                 }}
                 defaultTitle={`${p.title} — نسخة ${nth(2)}`}
                 done={created ? { id: created.id, title: created.title } : null}
@@ -91,7 +92,16 @@ export default async function NewVersionPage({ params, searchParams }: PageProps
                     <InfoRow label="رقم البرنامج" value={created.reference} mono valueClass="text-text-brand" />
                     <InfoRow label="النسخة" value="v1.0" mono />
                     <InfoRow label="الحالة" value="مسودة" />
-                    <InfoRow label="ما نُسخ" value={`${pluralAr(created.objectives.length, ["هدف", "هدفان", "أهداف", "هدفًا"])} · ${unitsWord(created.units.length)} · ${lessonsWord(created.totals.lessons)}`} valueClass="text-state-success" />
+                    <InfoRow label="ما نُسخ" value={
+                        [
+                          created.objectives.length ? pluralAr(created.objectives.length, ["هدف واحد", "هدفان", "أهداف", "هدفًا"]) : null,
+                          created.units.length ? unitsWord(created.units.length) : null,
+                          created.totals.lessons ? lessonsWord(created.totals.lessons) : null,
+                          created.totals.assignments ? pluralAr(created.totals.assignments, ["واجب واحد", "واجبان", "واجبات", "واجبًا"]) : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ") || "البيانات الأساسية"
+                      } valueClass="text-state-success" />
                     <InfoRow label="ما لم يُنسخ" value="التقييمات والإحصاءات" />
                     <InfoRow label="أثر على الأصل" value="لا شيء" valueClass="text-state-success" />
                   </>

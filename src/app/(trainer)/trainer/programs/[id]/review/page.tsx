@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import {
+  BadgeCheck,
   BellRing,
   CalendarDays,
   CircleAlert,
@@ -10,13 +11,12 @@ import {
   CircleX,
   Clock,
   Copy,
-  FileCheck,
   FileText,
   Hourglass,
   Lock,
   OctagonX,
   PencilLine,
-  Scale,
+  SquarePen,
   Users,
 } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
@@ -44,7 +44,7 @@ function Card({ title, children, tone, badge }: { title: string; children: React
   return (
     <section className={`flex w-full flex-col gap-4 rounded-16 p-5 sm:p-6 ${tone === "error" ? "border-2 border-state-error bg-state-error-bg" : "border border-border-default bg-bg-card shadow-card"}`}>
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className={`min-w-0 flex-1 type-h3 ${tone === "error" ? "text-state-error" : "text-text-primary"}`}>{title}</h2>
+        <h2 className={`min-w-0 type-h3 ${badge ? "" : "flex-1"} ${tone === "error" ? "text-state-error" : "text-text-primary"}`}>{title}</h2>
         {badge}
       </div>
       {children}
@@ -57,9 +57,9 @@ function Step({ icon, title, sub, state }: { icon: LucideIcon; title: string; su
     state === "current" || state === "waiting"
       ? "border-[1.5px] border-state-warning bg-state-warning-bg"
       : state === "success"
-        ? "border-[1.5px] border-state-success bg-bg-surface"
+        ? "border-[1.5px] border-state-success bg-state-success-bg"
         : state === "error"
-          ? "border-[1.5px] border-state-error bg-bg-surface"
+          ? "border-[1.5px] border-state-error bg-state-error-bg"
           : "bg-bg-page";
   const ic = state === "todo" ? "text-text-muted" : state === "error" ? "text-state-error" : state === "current" || state === "waiting" ? "text-state-warning" : "text-state-success";
   return (
@@ -135,6 +135,8 @@ export default async function ReviewStatusPage({ params, searchParams }: PagePro
   const submitted = `${formatDayMonth(r.submittedAt)} · ${formatTime(r.submittedAt)} · ${version}`;
   const decidedDay = r.decidedAt ? formatDayMonth(r.decidedAt) : "";
   const daysLeft = reviewDaysLeft(r.submittedAt);
+  /** Figma 270:4040's remedies are written for an unverified accreditation claim; other reasons get generic ones. */
+  const accreditationClaim = /اعتماد/.test(r.reason ?? "");
 
   const hero = {
     under_review: {
@@ -199,9 +201,9 @@ export default async function ReviewStatusPage({ params, searchParams }: PagePro
 
   const decisionStep =
     r.status === "under_review" ? (
-      <Step icon={FileCheck} title="القرار" sub={daysLeft > 0 ? `يصدر خلال ${businessDaysWord(daysLeft)}` : "يصدر قريبًا"} state="todo" />
+      <Step icon={BadgeCheck} title="القرار" sub={daysLeft > 0 ? `يصدر خلال ${businessDaysWord(daysLeft)}` : "يصدر قريبًا"} state="todo" />
     ) : r.status === "approved" ? (
-      <Step icon={CircleCheck} title="القرار" sub={`اعتُمد · ${decidedDay} · ${r.decidedAt ? formatTime(r.decidedAt) : ""}`} state="done" />
+      <Step icon={BadgeCheck} title="القرار" sub={`اعتُمد · ${decidedDay} · ${r.decidedAt ? formatTime(r.decidedAt) : ""}`} state="done" />
     ) : r.status === "needs_changes" ? (
       <Step icon={CircleAlert} title="القرار" sub={`رُدّ لتعديل · ${decidedDay}`} state="error" />
     ) : (
@@ -218,16 +220,19 @@ export default async function ReviewStatusPage({ params, searchParams }: PagePro
   return shell(
     <>
       {sp.submitted === "1" && r.status === "under_review" && <Alert tone="success" title="أُرسل برنامجك للمراجعة مع الإقرار. يصلك إشعار فور صدور القرار." />}
-      <section className={`flex flex-col-reverse gap-5 rounded-22 border-2 px-5 py-7 sm:flex-row sm:items-center sm:gap-[26px] sm:px-[30px] ${HERO[tone].box}`}>
+      <section className={`flex flex-col gap-5 rounded-22 border-2 px-5 py-7 sm:flex-row sm:items-center sm:gap-[26px] sm:px-[30px] ${HERO[tone].box}`}>
+        <span className={`flex size-[72px] shrink-0 items-center justify-center rounded-full bg-bg-surface ${approved ? "text-state-success" : HERO[tone].text}`}>
+          <Glyph icon={hero.icon} size={32} />
+        </span>
         <div className="flex min-w-0 flex-1 flex-col gap-2.5">
           <div className="flex flex-wrap items-center gap-2">
-            <span className={`inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption ${HERO[tone].text}`}>
-              <Glyph icon={hero.pill.icon} size={16} />
-              {hero.pill.label}
-            </span>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-text-secondary">
               <Glyph icon={FileText} size={16} />
               النسخة <span dir="ltr">{version}</span>
+            </span>
+            <span className={`inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption ${HERO[tone].text}`}>
+              <Glyph icon={hero.pill.icon} size={16} />
+              {hero.pill.label}
             </span>
           </div>
           <h2 className={`text-[28px] leading-[1.2] font-bold sm:text-[36px] ${approved && !live ? "text-state-warning" : "text-text-primary"}`}>{hero.title}</h2>
@@ -240,17 +245,14 @@ export default async function ReviewStatusPage({ params, searchParams }: PagePro
           )}
           <div className="mt-1 flex flex-wrap gap-3">{hero.actions}</div>
         </div>
-        <span className={`flex size-[72px] shrink-0 items-center justify-center rounded-full bg-bg-surface ${approved ? "text-state-success" : HERO[tone].text}`}>
-          <Glyph icon={hero.icon} size={32} />
-        </span>
       </section>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
           <Card title="مسار طلبك">
             <ol className="flex flex-col gap-3">
-              <Step icon={FileCheck} title="الإقرار والإرسال" sub={submitted} state="done" />
-              <Step icon={r.status === "under_review" ? Scale : Hourglass} title="المراجعة الفنية" sub="مطابقة المحتوى للمعايير" state={r.status === "under_review" ? "current" : "done"} />
+              <Step icon={BadgeCheck} title="الإقرار والإرسال" sub={submitted} state="done" />
+              <Step icon={Hourglass} title="المراجعة الفنية" sub="مطابقة المحتوى للمعايير" state={r.status === "under_review" ? "current" : "done"} />
               {decisionStep}
               {publishStep}
             </ol>
@@ -275,11 +277,7 @@ export default async function ReviewStatusPage({ params, searchParams }: PagePro
                   </ButtonLink>
                 </Row>
                 <Row icon={Users} title="استقبل عروض الجهات" sub={live ? "برنامجك المنشور يظهر في مطابقة طلبات التدريب." : "يظهر برنامجك في مطابقة طلبات التدريب فور نشر أول دورة."} />
-                <Row icon={Copy} title="أنشئ نسخة معدّلة" sub="لتقديم صيغة أخرى — لا يؤثر على النسخة المنشورة.">
-                  <ButtonLink href={`/trainer/programs/${p.id}/new-version`} size="s" variant="outline">
-                    نسخة جديدة
-                  </ButtonLink>
-                </Row>
+                <Row icon={Copy} title="أنشئ نسخة معدّلة" sub="لتقديم صيغة أخرى — لا يؤثر على النسخة المنشورة." />
               </ul>
             </Card>
           )}
@@ -326,24 +324,26 @@ export default async function ReviewStatusPage({ params, searchParams }: PagePro
               </div>
               <p className="text-[16px] leading-[1.5] text-text-primary">كيف تعالج هذا؟</p>
               <ul className="flex flex-col gap-3">
-                <li className="flex items-start gap-3 rounded-12 bg-bg-surface px-4 py-3.5">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-8 bg-state-success-bg text-state-success">
-                    <Glyph icon={CircleCheck} size={20} />
-                  </span>
-                  <span className="flex flex-col gap-0.5">
-                    <span className="text-[16px] leading-[1.5] text-text-primary">أنشئ نسخة جديدة تعالج السبب</span>
-                    <span className="type-caption text-text-muted">النسخة الجديدة مستقلة — عدّلها ثم أعد إرسالها للمراجعة.</span>
-                  </span>
-                </li>
-                <li className="flex items-start gap-3 rounded-12 bg-bg-surface px-4 py-3.5">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-8 bg-state-success-bg text-state-success">
-                    <Glyph icon={PencilLine} size={20} />
-                  </span>
-                  <span className="flex flex-col gap-0.5">
-                    <span className="text-[16px] leading-[1.5] text-text-primary">أو تظلّم على القرار</span>
-                    <span className="type-caption text-text-muted">إن رأيت أن القرار خاطئ، تواصل مع الدعم مع ما يثبت موقفك.</span>
-                  </span>
-                </li>
+                {(accreditationClaim
+                  ? [
+                      { icon: BadgeCheck, t: "ارفع مستند الاعتماد", d: "أرفق شهادة الاعتماد في ملفك المهني ثم أعد ذكرها في الوصف." },
+                      { icon: SquarePen, t: "أو احذف الادعاء", d: "عدّل الوصف بحذف عبارة الاعتماد وأعد الإرسال — يُقبل عادة من أول مراجعة." },
+                    ]
+                  : [
+                      { icon: CircleCheck, t: "أنشئ نسخة جديدة تعالج السبب", d: "النسخة الجديدة مستقلة — عدّلها ثم أعد إرسالها للمراجعة." },
+                      { icon: PencilLine, t: "أو تظلّم على القرار", d: "إن رأيت أن القرار خاطئ، تواصل مع الدعم مع ما يثبت موقفك." },
+                    ]
+                ).map((x) => (
+                  <li key={x.t} className="flex items-start gap-3 rounded-12 bg-bg-surface px-4 py-3.5">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-8 bg-state-success-bg text-state-success">
+                      <Glyph icon={x.icon} size={20} />
+                    </span>
+                    <span className="flex flex-col gap-0.5">
+                      <span className="text-[16px] leading-[1.5] text-text-primary">{x.t}</span>
+                      <span className="type-caption text-text-muted">{x.d}</span>
+                    </span>
+                  </li>
+                ))}
               </ul>
             </Card>
           )}
