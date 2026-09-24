@@ -23,3 +23,15 @@ the app does today, so nothing is silently faked.
 | 16 | **Blended mode, trainer years of experience, birth date / nationality** | Fields do not exist in the schema yet. | Not shown. |
 | 17 | **Certificate code format** | Figma shows `CRT-YYYY-NNNNN`; the database issues a 12-hex code. | 12-hex code; the verify page also accepts a `CRT-` prefix and dashes. |
 | 18 | **Test data** | Deleting it was blocked by this session's permission settings; needs the owner to allow it or run the cleanup in the SQL editor. | QA accounts `qa.trainee@`, `qa.discover*@`, `qa.certs@`, `qa.trainings@`, `qa.profile@`, `qa.learning@bawaba-qa.dev` (plus two QA-only completed courses) and their rows exist in the database; `qa-discover-*` programs are visible in discovery. |
+
+## Trainer workspace — design decisions needed
+
+| # | Screen (Figma) | Question | Current behaviour |
+| --- | --- | --- | --- |
+| T1 | Workspace switcher (none in Figma) | How does a user with both trainee and trainer workspaces switch between them? | No UI. `/select-workspace?add=1` (PUB-CTX-01) adds a workspace; switching is by URL (`/trainee`, `/trainer`). |
+| T2 | TRR-PRG-02 ٤ التسعير (314:11489) | Figma says prices are «شامل الضريبة», but TG · Configuration has `Tax/Inclusive = false` (VAT added on top at checkout). Which is right? | Shows «غير شامل الضريبة» to match what checkout actually charges. |
+| T3 | TRR-PRG-02 ٤ التسعير | Figma shows refund tiers 100/75/50 %. The platform's refund rule (`refund_quote`) is 100 % at 7+ days, 50 % at 3–6 days, recorded courses within 14 days. | Shows the real rule. Tell us which tiers to use and the rule will be changed in the database, not only in the UI. |
+| T4 | TRR-PRG-04 مسودة بالمساعد الذكي (310:10907) and the AI cards on PRG-01/PRG-02 | Needs an LLM provider (see #6). | Not built; AI entry points hidden. |
+| T5 | TRR-PRG-07 curriculum | Figma has no control to add a lesson/assignment inside an existing unit, no audience «+ أضف فئة» chip, and no unit picker when dropping files. | Small controls were added in the existing design system so the data can be edited. Please confirm or provide the design. |
+| T6 | TRR-PRG-02 ١ الغلاف | «اقتصّ وعدّل الإطار» (crop) | Not built yet. |
+| T7 | TRR-PRG-01 | «شهادات إتمام البرنامج» button | Not built yet (program certificates are part of the course-operations screens). |
