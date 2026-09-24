@@ -110,7 +110,7 @@ export function ContentEditor({
   return (
     <section aria-labelledby="modules-title" className="flex flex-col gap-[18px] rounded-22 border border-border-default bg-bg-card p-5 shadow-card sm:p-[26px]">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 id="modules-title" className="min-w-0 flex-1 type-h2 text-text-primary">
+        <h2 id="modules-title" className="min-w-[12rem] flex-1 type-h2 text-text-primary">
           الوحدات والدروس
         </h2>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-brand-tint px-[11px] py-1.5 type-caption text-text-brand">

@@ -178,3 +178,14 @@ export function daysUntil(iso: string, now = new Date()): number {
 export function netOf(amount: number, commissionPercent: number): number {
   return Math.round(amount * (1 - commissionPercent / 100) * 100) / 100;
 }
+
+/** Where «حرّر الدورة» leads: the setup wizard for drafts, the content tab once published. */
+export function courseEditHref(c: { id: string; status: string }): string {
+  return c.status === "draft" ? `/trainer/courses/${c.id}/setup/schedule` : `/trainer/courses/${c.id}/content`;
+}
+
+/** The course's home for its staff: the review step for drafts, the dashboard for recorded, the course page otherwise. */
+export function courseHomeHref(c: { id: string; status: string; mode: string }): string {
+  if (c.status === "draft") return `/trainer/courses/${c.id}/setup/review`;
+  return c.mode === "recorded" ? `/trainer/courses/${c.id}/dashboard` : `/trainer/courses/${c.id}`;
+}

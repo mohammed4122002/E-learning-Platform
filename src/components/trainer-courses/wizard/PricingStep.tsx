@@ -127,7 +127,7 @@ export function RecordedPricingCard({
   return (
     <section className={`flex flex-col gap-5 rounded-22 bg-bg-card px-7 pt-[26px] pb-7 drop-shadow-milestone ${locked ? "border-[1.5px] border-state-info" : "border border-border-default"}`}>
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="min-w-0 flex-1 type-h2 text-text-primary">سعر الدورة المسجَّلة</h2>
+        <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">سعر الدورة المسجَّلة</h2>
         {locked && (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-state-info-bg px-2.5 py-1 type-caption text-state-info">
             مقفل — بيعت {pluralAr(buyers, ["لمشترٍ واحد", "لمشتريَين", "لمشترين", "مشتريًا"])}

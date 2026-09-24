@@ -26,7 +26,7 @@ export function SummaryCard({ rows, previewHref }: { rows: SummaryRow[]; preview
   return (
     <section className="flex flex-col gap-[18px] rounded-22 border border-border-default bg-bg-card p-5 shadow-card sm:p-[26px]">
       <div className="flex items-center gap-3">
-        <h2 className="min-w-0 flex-1 type-h2 text-text-primary">ملخّص الدورة</h2>
+        <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">ملخّص الدورة</h2>
         <Link href={previewHref} className="rounded-8 type-subtitle text-text-brand hover:underline focus-ring">
           عاين كما يراها المتدرب
         </Link>

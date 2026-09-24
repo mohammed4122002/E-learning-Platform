@@ -39,7 +39,9 @@ export default async function CourseSetupPage({ params }: PageProps<"/trainer/co
   if (!isSetupStep(step)) notFound();
   const course = await getCourseHeader(id);
   if (!course) notFound();
-  if (course.status !== "draft" && step !== "review") redirect(course.mode === "recorded" ? `/trainer/courses/${id}/dashboard` : `/trainer/courses/${id}`);
+  // Published: the review, and the recorded course's pricing/access (Figma 396:17986 «تابع للتسعير»); the RPC keeps
+  // only the published-safe fields editable and the price locked once sold (BR-L3).
+  if (course.status !== "draft" && step !== "review" && !(step === "pricing" && course.mode === "recorded")) redirect(course.mode === "recorded" ? `/trainer/courses/${id}/dashboard` : `/trainer/courses/${id}`);
 
   const content = await getTrainerContent(id);
   const supabase = await createClient();
@@ -128,7 +130,7 @@ export default async function CourseSetupPage({ params }: PageProps<"/trainer/co
         value: !course.pricingSet ? "لم يُحدَّد" : course.price === 0 ? "مجانية" : `${formatPrice(course.price)} · صافيك ${formatNumber(netOf(course.price, commission))}`,
         missing: !course.pricingSet,
       },
-      { icon: "certificate", label: "الشهادة", value: course.mode === "recorded" ? "تصدر آليًا بإكمال ١٠٠٪ من الدروس" : "بشرط حضور ٧٥٪ من الجلسات" },
+      { icon: "certificate", label: "الشهادة", value: course.mode === "recorded" ? "تصدر آليًا بإكمال ١٠٠٪ من الدروس" : "بشرط حضور ٨٠٪ من الجلسات" },
       { icon: "refund", label: "الاسترداد", value: "السياسة الموحّدة · ١٤ يومًا من الشراء" },
     ];
     const published = draft

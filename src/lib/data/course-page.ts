@@ -52,17 +52,19 @@ export type CoursePageView = {
 
 type Snapshot = { objectives?: string[]; audience?: string[]; requirements?: string[]; faq?: { q: string; a: string }[] };
 
-/** Everything TRN-CRS-06 shows, read with the visitor's permissions (anon or signed-in). Cached per request. */
-export const getCoursePage = cache(async (slug: string): Promise<CoursePageView | null> => {
+/**
+ * Everything TRN-CRS-06 shows, read with the visitor's permissions (anon or signed-in). Cached per request.
+ * `includeDraft` is for the trainer preview (TRR-CRS-06): RLS still limits drafts to the course staff.
+ */
+export const getCoursePage = cache(async (slug: string, includeDraft = false): Promise<CoursePageView | null> => {
   const supabase = await createClient();
-  const { data: c } = await supabase
+  const query = supabase
     .from("courses")
     .select(
       "id, slug, title, summary, mode, level, cover_path, price, currency, status, starts_at, ends_at, city, venue, duration_hours, capacity, requires_provider_approval, rating_avg, rating_count, learners_count, updated_at, trainer_id, programs(categories(name)), program_versions(snapshot), organizations(id, name), trainer:profiles!courses_trainer_id_fkey(id, full_name, headline, avatar_path)",
     )
-    .eq("slug", slug)
-    .neq("status", "draft")
-    .maybeSingle();
+    .eq("slug", slug);
+  const { data: c } = await (includeDraft ? query : query.neq("status", "draft")).maybeSingle();
   if (!c) return null;
 
   const { data: claims } = await supabase.auth.getClaims();

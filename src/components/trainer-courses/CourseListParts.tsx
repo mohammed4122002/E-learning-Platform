@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { BookOpen, CalendarDays, ChevronLeft, CircleAlert, CircleCheck, Info, Lightbulb, MapPin, Play, TrendingUp, Users } from "lucide-react";
 import { ModeBadge } from "@/components/course/CourseCover";
+import { InfoPanel, type InfoRow } from "@/components/trainer-courses/course/InfoPanel";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import type { TrainerCourseItem, TrainerCoursesList } from "@/lib/data/trainer-courses";
@@ -220,26 +221,16 @@ export function SidePanels({ availability }: { availability: TrainerCoursesList[
 /** «دورة مباشرة جاهزة للإدارة» (4236:716) + «أدر الدورة» (4236:738). */
 export function LiveReadyCard({ c }: { c: TrainerCourseItem }) {
   const s = c.nextSession!;
-  const rows: { label: string; value: string; tone?: string }[] = [
+  const rows: InfoRow[] = [
     { label: "الدورة", value: c.title },
-    { label: "النمط", value: "مباشر", tone: "text-text-brand" },
+    { label: "النمط", value: "مباشر", tone: "brand" },
     { label: "الموعد القادم", value: `الجلسة ${toArabicDigits(s.position)} · ${formatDayMonth(s.startsAt)} · ${formatTime(s.startsAt)}` },
-    { label: "رابط الجلسة", value: "مرفوع وجاهز", tone: "text-state-success" },
+    { label: "رابط الجلسة", value: "مرفوع وجاهز", tone: "success" },
     { label: "المقاعد", value: `${toArabicDigits(c.seatsTaken)} من ${toArabicDigits(c.capacity ?? 0)}` },
   ];
   return (
     <>
-      <section className="flex flex-col gap-2.5 rounded-[14px] border-2 border-action-primary bg-bg-brand-tint p-6">
-        <h2 className="text-[20px] font-bold text-text-brand">دورة مباشرة جاهزة للإدارة</h2>
-        <dl className="flex flex-col gap-2.5">
-          {rows.map((r) => (
-            <div key={r.label} className="flex items-center justify-end gap-2.5 rounded-[10px] border border-border-default bg-bg-page px-4 py-[13px]">
-              <dt className="text-[13.5px] text-text-secondary">{r.label}</dt>
-              <dd className={`min-w-0 truncate text-[15px] font-bold ${r.tone ?? "text-text-primary"}`}>{r.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      <InfoPanel title="دورة مباشرة جاهزة للإدارة" rows={rows} highlight />
       <div className="flex justify-end">
         <Link href={`/trainer/courses/${c.id}`} className="rounded-[10px] bg-action-primary px-7 py-[15px] text-[16px] font-bold text-text-on-brand focus-ring hover:bg-action-primary-hover">
           أدر الدورة

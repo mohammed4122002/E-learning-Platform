@@ -50,7 +50,7 @@ export type TrainerCoursesList = {
 
 const ACTIVE = ["confirmed", "in_progress", "completed", "pending_provider"];
 
-function stateOf(c: { status: CourseStatus; mode: CourseMode; startsAt: string | null; endsAt: string | null; capacity: number | null; seatsTaken: number }, now: Date): ListState {
+export function stateOf(c: { status: CourseStatus; mode: CourseMode; startsAt: string | null; endsAt: string | null; capacity: number | null; seatsTaken: number }, now: Date): ListState {
   if (c.status === "cancelled") return "cancelled";
   if (c.status === "completed" || (c.mode !== "recorded" && c.endsAt && new Date(c.endsAt) < now)) return "ended";
   if (c.status === "in_progress" || (c.status === "open" && c.startsAt && new Date(c.startsAt) <= now)) return "running";
@@ -245,7 +245,7 @@ export const getCourseHeader = cache(async (courseId: string): Promise<CourseHea
   }
   const [sessionsRes, enrollRes, privRes] = await Promise.all([
     supabase.from("course_sessions").select("id, position, title, starts_at, ends_at, status, module_id, location").eq("course_id", courseId).order("position"),
-    supabase.from("enrollments").select("id, status, price_paid, hold_expires_at").eq("course_id", courseId),
+    supabase.from("enrollments").select("id, status, price_paid, vat_amount, hold_expires_at").eq("course_id", courseId),
     supabase.from("course_private").select("meeting_url").eq("course_id", courseId).maybeSingle(),
   ]);
   const now = new Date();
@@ -305,7 +305,7 @@ export const getCourseHeader = cache(async (courseId: string): Promise<CourseHea
     sessions,
     seatsTaken: en.filter((e) => ACTIVE.includes(e.status) || (e.status === "pending_payment" && e.hold_expires_at && new Date(e.hold_expires_at) > now)).length,
     buyers: buyersList.length,
-    revenue: buyersList.reduce((s, e) => s + Number(e.price_paid), 0),
+    revenue: buyersList.reduce((s, e) => s + Number(e.price_paid) - Number(e.vat_amount), 0),
     attendanceAvg,
     flags: {
       recordSessions: c.record_sessions,

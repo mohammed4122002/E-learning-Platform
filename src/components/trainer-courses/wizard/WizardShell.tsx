@@ -80,7 +80,7 @@ export function SaveStatus() {
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
         <p className="type-subtitle text-state-success">{status === "saving" ? "جارٍ حفظ المسودة…" : "حُفظت المسودة تلقائيًا"}</p>
-        <p className="type-caption text-text-muted">{lastSavedAt ? ago(lastSavedAt, now) : "كل تغيير يُحفظ تلقائيًا"}</p>
+        <p className="type-caption text-text-muted" suppressHydrationWarning>{lastSavedAt ? ago(lastSavedAt, now) : "كل تغيير يُحفظ تلقائيًا"}</p>
       </div>
     </div>
   );
@@ -247,6 +247,7 @@ export function WizardShell({ courseId, heading, description, breadcrumb, step, 
   const retry = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dirty = useRef(false);
   const backupKey = courseId ? `tg-course-draft-${courseId}` : null;
+  const flushRef = useRef<() => Promise<boolean>>(async () => true);
 
   const flush = useCallback(async (): Promise<boolean> => {
     if (timer.current) clearTimeout(timer.current);
@@ -279,10 +280,13 @@ export function WizardShell({ courseId, heading, description, breadcrumb, step, 
       } catch {}
       setStatus("offline");
       if (retry.current) clearTimeout(retry.current);
-      retry.current = setTimeout(() => void flush(), 8000);
+      retry.current = setTimeout(() => void flushRef.current(), 8000);
       return false;
     }
   }, [courseId, backupKey, router]);
+  useEffect(() => {
+    flushRef.current = flush;
+  }, [flush]);
 
   // Restore a local backup left by an offline session.
   useEffect(() => {
@@ -362,7 +366,7 @@ export function WizardShell({ courseId, heading, description, breadcrumb, step, 
         <nav aria-label="مسار التنقل">
           <ol className="flex flex-wrap items-center gap-2 type-small">
             <li>
-              <a
+              <Link
                 href="/trainer/courses"
                 onClick={(e) => {
                   e.preventDefault();
@@ -371,7 +375,7 @@ export function WizardShell({ courseId, heading, description, breadcrumb, step, 
                 className="rounded-8 text-text-brand hover:underline focus-ring"
               >
                 دوراتي
-              </a>
+              </Link>
             </li>
             <li aria-hidden className="text-text-muted">
               <Glyph icon={ChevronLeft} size={16} />

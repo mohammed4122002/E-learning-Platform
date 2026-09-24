@@ -4,8 +4,11 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { getCurrentUser, homePathFor } from "@/lib/auth";
 
-/** TRN-CRS-06 PUBLIC BAR: brand block + sign-in (or back to the workspace for signed-in users). */
-export async function PublicBar({ subtitle }: { subtitle: string }) {
+/**
+ * TRN-CRS-06 PUBLIC BAR: brand block + sign-in (or back to the workspace for signed-in users).
+ * `actions` replaces the account button (TRR-CRS-06 preview: «اخرج من المعاينة» · «حرّر الدورة»).
+ */
+export async function PublicBar({ subtitle, actions }: { subtitle: string; actions?: React.ReactNode }) {
   const user = await getCurrentUser();
   return (
     <header className="flex w-full items-center gap-5 border-b border-border-divider bg-bg-surface px-4 py-5 sm:px-12">
@@ -19,7 +22,9 @@ export async function PublicBar({ subtitle }: { subtitle: string }) {
         </span>
       </Link>
       <span className="flex-1" />
-      {user ? (
+      {actions ? (
+        actions
+      ) : user ? (
         <ButtonLink href={homePathFor(user)} variant="outline">
           مساحتي
         </ButtonLink>

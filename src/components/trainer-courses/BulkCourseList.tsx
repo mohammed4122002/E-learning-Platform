@@ -1,15 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { CalendarDays, Check, CircleAlert, Clock, Minus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Textarea, Input } from "@/components/ui/Field";
 import { Glyph } from "@/components/ui/Icon";
-import { Modal } from "@/components/ui/Modal";
-import { useToast } from "@/components/ui/Toast";
 import { toArabicDigits } from "@/lib/format";
-import { notifyTrainees } from "@/app/(trainer)/trainer/courses/actions";
+import { NotifyModal } from "./course/NotifyModal";
 
 export type BulkRow = { id: string; title: string; place: string; note: string; alert: boolean; upcoming: boolean };
 
@@ -20,12 +17,7 @@ export type BulkRow = { id: string; title: string; place: string; note: string; 
 export function BulkCourseList({ rows, total }: { rows: BulkRow[]; total: number }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [notifyOpen, setNotifyOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [pending, start] = useTransition();
   const router = useRouter();
-  const toast = useToast();
   const toggle = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   const allOnPage = rows.length > 0 && rows.every((r) => selected.includes(r.id));
 
@@ -55,7 +47,7 @@ export function BulkCourseList({ rows, total }: { rows: BulkRow[]; total: number
             <Button variant="ghost" className="w-[120px]" onClick={() => router.push(`/trainer/courses/${selected[0]}/postpone`)}>
               أجّل
             </Button>
-            <Button variant="outline" className="w-[120px]" onClick={() => (window.location.href = `/trainer/courses/export?ids=${selected.join(",")}`)}>
+            <Button variant="outline" className="w-[120px]" onClick={() => window.open(`/trainer/courses/export?ids=${selected.join(",")}`, "_self")}>
               صدّر كشوفًا
             </Button>
             <Button className="w-[120px]" onClick={() => router.push(`/trainer/courses/${selected[0]}/attendance`)}>
@@ -106,41 +98,13 @@ export function BulkCourseList({ rows, total }: { rows: BulkRow[]; total: number
         })}
       </ul>
 
-      <Modal
+      <NotifyModal
         open={notifyOpen}
         onClose={() => setNotifyOpen(false)}
+        courseIds={selected}
         title="راسل المسجّلين"
-        footer={
-          <>
-            <Button
-              loading={pending}
-              onClick={() =>
-                start(async () => {
-                  setError(null);
-                  const res = await notifyTrainees(selected, title, body);
-                  if (!res.ok) return setError(res.error);
-                  setNotifyOpen(false);
-                  setTitle("");
-                  setBody("");
-                  toast("success", `أُرسل التنبيه إلى ${toArabicDigits(res.data?.count ?? 0)} متدربًا.`);
-                })
-              }
-            >
-              أرسل
-            </Button>
-            <Button variant="outline" onClick={() => setNotifyOpen(false)}>
-              إلغاء
-            </Button>
-          </>
-        }
-      >
-        <div className="flex flex-col gap-4">
-          <p>يصل التنبيه إلى كل المسجّلين في {toArabicDigits(selected.length)} دورات محدّدة — داخل المنصة وبالبريد.</p>
-          <Input label="عنوان التنبيه" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} required />
-          <Textarea label="نص التنبيه" value={body} onChange={(e) => setBody(e.target.value)} maxLength={1000} rows={4} />
-          {error && <p role="alert" className="type-caption text-state-error">{error}</p>}
-        </div>
-      </Modal>
+        intro={`يصل التنبيه إلى كل المسجّلين في ${toArabicDigits(selected.length)} دورات محدّدة — داخل المنصة وبالبريد.`}
+      />
     </>
   );
 }
