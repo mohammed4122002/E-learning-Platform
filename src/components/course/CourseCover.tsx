@@ -24,7 +24,12 @@ export function ModeBadge({ mode, className }: { mode: CourseMode; className?: s
  * Figma "Media / Image Placeholder" (80:689): brand-tint frame with a 1.5px dashed focus-colour stroke
  * (dash 8 / gap 6, radius 16) and the cropped cover image.
  */
-export function CourseCover({ cover, mode, height = 180, priority = false }: Pick<CourseCardView, "cover" | "mode"> & { height?: number; priority?: boolean }) {
+export function CourseCover({
+  cover,
+  mode,
+  height = 180,
+  priority = false,
+}: Pick<CourseCardView, "cover"> & { mode: CourseMode | null; height?: number; priority?: boolean }) {
   const crop = cover.crop ?? { top: 0, left: 0, width: 100, height: 100 };
   return (
     <div className="relative w-full shrink-0" style={{ height }}>
@@ -45,7 +50,7 @@ export function CourseCover({ cover, mode, height = 180, priority = false }: Pic
       <svg aria-hidden className="pointer-events-none absolute inset-0 size-full" fill="none">
         <rect x="0.75" y="0.75" rx="15.25" style={{ width: "calc(100% - 1.5px)", height: "calc(100% - 1.5px)" }} stroke="var(--color-border-focus)" strokeWidth="1.5" strokeDasharray="8 6" />
       </svg>
-      <ModeBadge mode={mode} className="absolute top-3 right-3" />
+      {mode && <ModeBadge mode={mode} className="absolute top-3 right-3" />}
     </div>
   );
 }
