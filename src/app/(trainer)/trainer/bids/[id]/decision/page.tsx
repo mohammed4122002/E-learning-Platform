@@ -86,7 +86,7 @@ export default async function DecisionPage({ params }: PageProps<"/trainer/bids/
             reference={b.reference}
             title={b.requestTitle}
             actions={
-              <ButtonLink href={contractHref(b.id)} size="l" className="w-full sm:w-[240px]">
+              <ButtonLink href={contractHref(b.id, b.negotiationStatus)} size="l" className="w-full sm:w-[240px]">
                 أكمل التعاقد
               </ButtonLink>
             }
@@ -176,7 +176,7 @@ export default async function DecisionPage({ params }: PageProps<"/trainer/bids/
                   الخطوة التالية
                 </CardTitle>
                 <p className="type-body text-text-secondary">{`أكمل التعاقد خلال ${pluralAr(Math.max(left, 1), ["يوم واحد", "يومين", "أيام", "يومًا"])} — وإلا يُعرض الطلب على مدرب آخر.`}</p>
-                <ButtonLink href={contractHref(b.id)} size="l" fullWidth>
+                <ButtonLink href={contractHref(b.id, b.negotiationStatus)} size="l" fullWidth>
                   أكمل التعاقد
                 </ButtonLink>
                 <ButtonLink href={`/trainer/bids/${b.id}/negotiation`} variant="outline" size="l" fullWidth>
