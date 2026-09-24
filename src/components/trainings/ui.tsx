@@ -123,6 +123,7 @@ export function StatusItemCard({
   footerChip,
   actions,
   headingLevel: H = "h2",
+  refFirst = false,
 }: {
   tone: ItemTone;
   icon: LucideIcon;
@@ -136,8 +137,15 @@ export function StatusItemCard({
   footerChip?: ReactNode;
   actions: ReactNode;
   headingLevel?: "h2" | "h3";
+  /** Reference code at the inline start of the footer row (TRR-QUE-01 order). */
+  refFirst?: boolean;
 }) {
   const t = cardTones[tone];
+  const ref = (
+    <span dir="ltr" className="font-mono text-[14px] leading-normal text-text-muted">
+      {refCode}
+    </span>
+  );
   return (
     <article
       className={`flex w-full flex-col gap-4 rounded-16 bg-bg-card px-[22px] py-5 drop-shadow-milestone sm:flex-row sm:items-start sm:gap-5 ${highlight ? t.border : "border border-border-default"}`}
@@ -164,11 +172,10 @@ export function StatusItemCard({
             </dl>
           )}
           <div className="flex w-full flex-wrap items-center gap-2.5">
+            {refFirst && ref}
             {footerChip}
             {meta && <span className="type-caption text-text-muted">{meta}</span>}
-            <span dir="ltr" className="font-mono text-[14px] leading-normal text-text-muted">
-              {refCode}
-            </span>
+            {!refFirst && ref}
           </div>
         </div>
       </div>
