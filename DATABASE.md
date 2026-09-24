@@ -38,6 +38,7 @@ TypeScript types: `src/types/database.ts`, generated from the live schema
 | Learning | `lesson_progress`, `attendance`, `attendance_codes`, `quizzes`, `quiz_attempts`, `assignments`, `assignment_submissions`, `certificates` (12-hex public code), `external_certificates`, `course_ratings` |
 | Engagement & support | `trainee_preferences`, `experiences`, `favorites`, `follows`, `inquiries`, `notifications`, `conversations`, `conversation_participants`, `messages`, `violation_reports`, `identity_verifications`, `help_articles`, `queue_dismissals`, `terms_acceptances` |
 | Config | `app_settings` (VAT rate, sandbox flag, auth value panel) |
+| Training requests & bids (TRR-BID) | `training_requests` (posted by requester organizations), `training_bids` (`OFR-` reference, original terms + `agreed_terms`, 7-day `contract_due_at` paused while negotiating), `bid_negotiations`, `bid_negotiation_rounds`; `conversations.bid_id`; private bucket `bid-attachments` |
 
 ## Main RPCs
 
@@ -50,6 +51,8 @@ TypeScript types: `src/types/database.ts`, generated from the live schema
 | Money | `refund_quote`, `cancel_refund_request`, `withdraw_enrollment`, `withdraw_dispute`, `my_waitlist_positions` |
 | Live & learning extras | `join_live_session`, `course_quizzes`, `quiz_attempt_review`, `submit_quiz_attempt`, `submit_assignment_file`, `certificate_conditions` |
 | Discovery | `discover_courses`, `discover_facets`, `discover_suggest`, `course_public_facts` |
+| Bids (trainer) | `trainer_opportunities`, `training_request_match`, `trainer_bids`, `trainer_bid_stats`, `bid_negotiation_history`, `save_training_bid`, `withdraw_training_bid`, `open_bid_negotiation`, `save_bid_negotiation`, `cancel_bid_negotiation`, `withdraw_bid_negotiation`, `respond_bid_counter`, `open_bid_conversation`, `bid_terms` |
+| Bids (organization members) | `create_training_request`, `set_training_request_status`, `shortlist_training_bid`, `decide_training_bid`, `respond_bid_negotiation` |
 | Account | `add_workspace`, `submit_identity_verification`, `submit_identity_documents`, `account_deletion_blockers`, `freeze_account`, `request_account_deletion`, `public_profile`, `start_conversation`, `withdraw_violation_report` |
 
 ## Pricing
@@ -61,7 +64,8 @@ VAT is 15 % and **exclusive** (Figma TG · Configuration `Tax/Inclusive = false`
 ## Jobs
 
 `pg_cron` job `expire-stale-holds` runs every minute: expires unpaid holds, frees the seat and invites
-the next person on the waitlist.
+the next person on the waitlist. `expire-training-bids` runs every 5 minutes: expires unanswered negotiation steps
+(72 h, original terms return), accepted offers not contracted in time, and closes requests past their deadline.
 
 ## Seed data
 
