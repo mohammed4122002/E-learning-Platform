@@ -35,3 +35,7 @@ the app does today, so nothing is silently faked.
 | T5 | TRR-PRG-07 curriculum | Figma has no control to add a lesson/assignment inside an existing unit, no audience «+ أضف فئة» chip, and no unit picker when dropping files. | Small controls were added in the existing design system so the data can be edited. Please confirm or provide the design. |
 | T6 | TRR-PRG-02 ١ الغلاف | «اقتصّ وعدّل الإطار» (crop) | Not built yet. |
 | T7 | TRR-PRG-01 | «شهادات إتمام البرنامج» button | Not built yet (program certificates are part of the course-operations screens). |
+| T8 | TRR-CAL-01 تقويمي (254:388 / 254:814) | Figma has a «يوم» tab but no day-view frame, and no frame for opening, editing or deleting an appointment. | Day view reuses the week grid for one day. Opening an appointment shows a dialog built from the existing Modal component. |
+| T9 | TRR-HLP-01 / DSH-01 support links | There is no trainer support-ticket screen. | «تواصل مع الدعم» opens `/messages?f=support`; identity verification links to `/account`. |
+| T10 | TRR-DSH-01 sidebar card | Figma always shows «مدرب معتمد» with a badge. | Shown when the platform has verified the trainer; otherwise the card shows «مدرب» without the badge. The eye count is real profile views (one per visitor per day). |
+| T11 | TRR-JRN-02 حاسبة الدخل | The «عروض مقبولة» input depends on bids (Wave 2). | Input shown; it has no effect until bids exist. |
