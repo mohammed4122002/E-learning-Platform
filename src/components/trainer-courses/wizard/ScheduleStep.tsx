@@ -6,14 +6,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   CalendarDays,
-  CircleCheck,
+  CircleCheckBig,
   CircleX,
-  Link2,
+  Hourglass,
   Lock,
   MapPin,
-  MessageSquare,
+  MessagesSquare,
   MonitorPlay,
-  Pencil,
+  Tv,
+  SquarePen,
   Shield,
   TriangleAlert,
   Users,
@@ -230,19 +231,20 @@ export function ScheduleStep(props: Props) {
 
   if (mode === "live_remote") {
     const platforms: { key: string; title: string; hint: string; icon: LucideIcon }[] = [
-      { key: "zoom", title: "Zoom", hint: "حضور آلي من تقرير الجلسة", icon: Video },
-      { key: "google_meet", title: "Google Meet", hint: "حضور آلي من التقرير", icon: MonitorPlay },
-      { key: "other", title: "منصة أخرى", hint: "ترصد الحضور يدويًا", icon: Link2 },
+      // 395:16113, right → left: منصة أخرى · Google Meet · Zoom (glyphs as drawn by the TG icons).
+      { key: "other", title: "منصة أخرى", hint: "ترصد الحضور يدويًا", icon: Hourglass },
+      { key: "google_meet", title: "Google Meet", hint: "حضور آلي من التقرير", icon: Tv },
+      { key: "zoom", title: "Zoom", hint: "حضور آلي من تقرير الجلسة", icon: MonitorPlay },
     ];
     const toggles: { key: keyof Props["flags"]; field: "record_sessions" | "live_questions" | "auto_attendance"; title: string; hint: string; icon: LucideIcon }[] = [
-      { key: "recordSessions", field: "record_sessions", title: "سجّل الجلسات وأتحها للمسجّلين", hint: "من فاتته الجلسة يشاهدها لاحقًا · ترفع رضا المتدربين", icon: Video },
-      { key: "liveQuestions", field: "live_questions", title: "افتح الأسئلة أثناء البث", hint: "يكتبون أسئلتهم وتردّ عليها في نهاية الجلسة", icon: MessageSquare },
+      { key: "recordSessions", field: "record_sessions", title: "سجّل الجلسات وأتحها للمسجّلين", hint: "من فاتته الجلسة يشاهدها لاحقًا · ترفع رضا المتدربين", icon: MonitorPlay },
+      { key: "liveQuestions", field: "live_questions", title: "افتح الأسئلة أثناء البث", hint: "يكتبون أسئلتهم وتردّ عليها في نهاية الجلسة", icon: MessagesSquare },
       {
         key: "autoAttendance",
         field: "auto_attendance",
         title: "رصد الحضور آليًا",
         hint: `من تقرير ${platform === "google_meet" ? "Google Meet" : "Zoom"} · حضور ٣٠ دقيقة فأكثر يُحتسب`,
-        icon: CircleCheck,
+        icon: CircleCheckBig,
       },
     ];
     return (
@@ -305,7 +307,7 @@ export function ScheduleStep(props: Props) {
             {conflictBox ??
               (planned.length > 0 && (
                 <p className="flex items-center gap-3 rounded-16 bg-state-success-bg px-[18px] py-4 type-body-lg text-state-success">
-                  <Glyph icon={CircleCheck} size={20} />
+                  <Glyph icon={CircleCheckBig} size={20} />
                   <span className="flex-1">
                     {pluralAr(planned.length, ["جلسة واحدة", "جلستان", "جلسات", "جلسة"])} · {pluralAr(Math.round(hours), ["ساعة واحدة", "ساعتان", "ساعات", "ساعة"])}
                     {conflicts.length === 0 ? " · لا تعارض مع تقويمك." : " · تجاهلت التعارض."}
@@ -348,13 +350,13 @@ export function ScheduleStep(props: Props) {
         <aside className="flex w-full shrink-0 flex-col gap-[22px] lg:w-[400px]">
           <Card title="ما يميّز المباشر" big>
             {[
-              { icon: CircleCheck, text: "حضور آلي من تقرير البث" },
-              { icon: Users, text: "مقاعد محدودة كالحضوري" },
-              { icon: Video, text: "تسجيل الجلسات اختياري" },
-              { icon: CircleX, text: "لا قاعة ولا مكان" },
+              { icon: CircleCheckBig, text: "حضور آلي من تقرير البث", tone: "text-state-success" },
+              { icon: Users, text: "مقاعد محدودة كالحضوري", tone: "text-text-brand" },
+              { icon: MonitorPlay, text: "تسجيل الجلسات اختياري", tone: "text-state-info" },
+              { icon: CircleX, text: "لا قاعة ولا مكان", tone: "text-text-muted" },
             ].map((r) => (
               <p key={r.text} className="flex items-center gap-3 rounded-12 bg-bg-page px-3.5 py-[13px] type-body text-text-primary">
-                <Glyph icon={r.icon} size={20} className="text-text-brand" />
+                <Glyph icon={r.icon} size={20} className={r.tone} />
                 <span className="flex-1">{r.text}</span>
               </p>
             ))}
@@ -373,18 +375,20 @@ export function ScheduleStep(props: Props) {
         <Card
           title={
             <span className="flex items-center gap-3">
-              <span className="flex-1">نمط التقديم</span>
+              {/* 271:4539 — «تغيير» sits at the start of the heading row, the title right after it. */}
               <Link href={`/trainer/courses/${courseId}/setup/mode`} className="rounded-8 type-subtitle text-text-brand hover:underline focus-ring">
                 تغيير
               </Link>
+              <span className="flex-1">نمط التقديم</span>
             </span>
           }
         >
           <div className="grid grid-cols-3 gap-4">
             {[
-              { icon: MapPin, title: "حضوري", text: "قاعة ومقاعد وجدول جلسات", on: true },
+              // Same order as the mode selector (390:14314): مسجَّل · مباشر · حضوري.
+              { icon: Tv, title: "كورس مسجَّل", text: "بيع فوري بلا جدول — يُنتَج خارج المنصة", on: false },
               { icon: Video, title: "عن بُعد مباشر", text: "رابط جلسات ومواعيد ثابتة", on: false },
-              { icon: MonitorPlay, title: "كورس مسجَّل", text: "بيع فوري بلا جدول — يُنتَج خارج المنصة", on: false },
+              { icon: MapPin, title: "حضوري", text: "قاعة ومقاعد وجدول جلسات", on: true },
             ].map((m) => (
               <div
                 key={m.title}
@@ -468,7 +472,7 @@ export function ScheduleStep(props: Props) {
                   </div>
                   {!isEditing && (
                     <button type="button" onClick={() => setEditing(s.startsAt)} aria-label={`عدّل موضوع الجلسة ${toArabicDigits(i + 1)}`} className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-secondary focus-ring">
-                      <Glyph icon={Pencil} size={16} />
+                      <Glyph icon={SquarePen} size={16} />
                     </button>
                   )}
                 </li>

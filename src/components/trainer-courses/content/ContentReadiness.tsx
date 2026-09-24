@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CircleAlert, CircleCheck, CircleX } from "lucide-react";
+import { CircleAlert, CircleCheckBig, CircleX } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import { formatPercent, pluralAr, toArabicDigits } from "@/lib/format";
 import type { TrainerContent } from "@/lib/data/trainer-courses";
@@ -34,7 +34,7 @@ export function ContentProgressCard({ content, action }: { content: TrainerConte
     >
       <div className="flex items-center gap-3">
         <span className={`flex size-12 shrink-0 items-center justify-center rounded-12 ${r.ready ? "bg-state-success-bg text-state-success" : "bg-state-warning-bg text-state-warning"}`}>
-          <Glyph icon={r.ready ? CircleCheck : CircleAlert} size={20} />
+          <Glyph icon={r.ready ? CircleCheckBig : CircleAlert} size={20} />
         </span>
         <h2 className={`min-w-0 flex-1 type-h3 ${r.ready ? "text-state-success" : "text-state-warning"}`}>{r.ready ? "المحتوى جاهز للنشر" : "المحتوى غير مكتمل"}</h2>
       </div>
@@ -50,7 +50,7 @@ export function ContentProgressCard({ content, action }: { content: TrainerConte
       <ul className="flex flex-col gap-[18px]">
         {r.checks.map((c) => (
           <li key={c.text} className={`flex items-center gap-2.5 rounded-12 px-3.5 pt-3 pb-[13px] type-body ${c.ok ? "bg-state-success-bg text-state-success" : "bg-state-warning-bg text-state-warning"}`}>
-            <Glyph icon={c.ok ? CircleCheck : CircleAlert} size={20} />
+            <Glyph icon={c.ok ? CircleCheckBig : CircleAlert} size={20} />
             <span className="flex-1">{c.text}</span>
           </li>
         ))}
@@ -84,7 +84,7 @@ export function PublishConditionsCard({ content }: { content: TrainerContent }) 
       <ul className="flex flex-col gap-[18px]">
         {rows.map((r) => (
           <li key={r.text} className={`flex items-center gap-3 rounded-12 px-3.5 py-[13px] type-body ${r.ok ? "bg-state-success-bg text-state-success" : "bg-state-error-bg text-state-error"}`}>
-            <Glyph icon={r.ok ? CircleCheck : CircleX} size={20} />
+            <Glyph icon={r.ok ? CircleCheckBig : CircleX} size={20} />
             <span className="flex-1">{r.text}</span>
           </li>
         ))}

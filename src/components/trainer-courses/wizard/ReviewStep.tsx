@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Award, Banknote, BookOpen, CalendarDays, CircleAlert, CircleCheck, Eye, Layers, MapPin, MonitorPlay, RefreshCw, Users, Video } from "lucide-react";
+import { Award, BookOpen, CalendarDays, CircleAlert, CircleCheckBig, Eye, Hourglass, MapPin, Puzzle, RefreshCw, Tv, Users, Video } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Choice";
 import { Glyph } from "@/components/ui/Icon";
@@ -16,20 +16,26 @@ import { useWizard } from "./WizardShell";
 
 /* TRR-CRS-02 · ٥ المراجعة والنشر: شروط ناقصة (396:17293) · جاهزة (396:17657) · منشورة (396:17986) · ساعات التدريب (4227:690). */
 
-const SUMMARY_ICONS = { mode: MonitorPlay, program: BookOpen, content: Layers, schedule: CalendarDays, preview: Eye, venue: MapPin, stream: Video, price: Banknote, certificate: Award, refund: RefreshCw } satisfies Record<string, LucideIcon>;
+// Glyphs as drawn in 396:17539 (TG «monitor-play» → tv, «layers» → puzzle, «banknote» → hourglass).
+const SUMMARY_ICONS = { mode: Tv, mode_in_person: MapPin, mode_live_remote: Video, program: BookOpen, content: Puzzle, schedule: CalendarDays, preview: Eye, venue: MapPin, stream: Video, price: Hourglass, certificate: Award, refund: RefreshCw } satisfies Record<string, LucideIcon>;
 export type SummaryRow = { icon: keyof typeof SUMMARY_ICONS; label: string; value: string; missing?: boolean };
 
 const COUNT_WORDS = ["", "شرط واحد يمنع", "شرطان يمنعان", "ثلاثة شروط تمنع", "أربعة شروط تمنع", "خمسة شروط تمنع", "ستة شروط تمنع"];
-const BLOCKER_ICONS: Record<string, LucideIcon> = { no_preview: Eye, lessons_without_material: Video, empty_modules: Layers, price_missing: Banknote };
+const BLOCKER_ICONS: Record<string, LucideIcon> = { no_preview: Eye, lessons_without_material: Video, empty_modules: Puzzle, price_missing: Hourglass };
 
-export function SummaryCard({ rows, previewHref }: { rows: SummaryRow[]; previewHref: string }) {
+/** `linkFirst`: the ready-to-publish frames (396:17657 · 4227:690) put «عاين» before the title. */
+export function SummaryCard({ rows, previewHref, linkFirst = false }: { rows: SummaryRow[]; previewHref: string; linkFirst?: boolean }) {
+  const link = (
+    <Link href={previewHref} className="rounded-8 type-subtitle text-text-brand hover:underline focus-ring">
+      عاين كما يراها المتدرب
+    </Link>
+  );
   return (
     <section className="flex flex-col gap-[18px] rounded-22 border border-border-default bg-bg-card p-5 shadow-card sm:p-[26px]">
-      <div className="flex items-center gap-3">
-        <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">ملخّص الدورة</h2>
-        <Link href={previewHref} className="rounded-8 type-subtitle text-text-brand hover:underline focus-ring">
-          عاين كما يراها المتدرب
-        </Link>
+      <div className="flex flex-wrap items-center gap-3">
+        {linkFirst && link}
+        <h2 className={`type-h2 text-text-primary ${linkFirst ? "" : "min-w-[12rem] flex-1"}`}>ملخّص الدورة</h2>
+        {!linkFirst && link}
       </div>
       <dl className="flex flex-col gap-[18px]">
         {rows.map((r) => (
@@ -182,7 +188,7 @@ export function ReviewStep({
           <section className="flex flex-col gap-[18px] rounded-22 border-[3px] border-state-success bg-state-success-bg px-5 pt-7 pb-[30px] sm:px-7">
             <div className="flex items-center gap-4">
               <span className="flex size-[68px] shrink-0 items-center justify-center rounded-16 bg-bg-surface text-state-success">
-                <Glyph icon={CircleCheck} size={32} />
+                <Glyph icon={CircleCheckBig} size={32} />
               </span>
               <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <h2 className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">دورتك منشورة 🎉</h2>
@@ -208,7 +214,7 @@ export function ReviewStep({
             </div>
             <div className="grid grid-cols-3 gap-4">
               {[
-                { icon: Banknote, value: formatNumber(Math.round(published.revenue * 100) / 100), label: "ر.س إيراد" },
+                { icon: Hourglass, value: formatNumber(Math.round(published.revenue * 100) / 100), label: "ر.س إيراد" },
                 { icon: Users, value: toArabicDigits(published.sales), label: "عملية بيع" },
                 { icon: Eye, value: formatNumber(published.views), label: "مشاهدة الصفحة" },
               ].map((s) => (
@@ -241,7 +247,7 @@ export function ReviewStep({
             </div>
           </section>
         )}
-        <SummaryCard rows={rows} previewHref={`/trainer/courses/${courseId}/preview`} />
+        <SummaryCard rows={rows} previewHref={`/trainer/courses/${courseId}/preview`} linkFirst={isDraft && !blocked} />
       </div>
       <aside className="flex w-full shrink-0 flex-col gap-[22px] lg:w-[400px]">
         {!isDraft && publishCard}

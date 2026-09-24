@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Banknote, CalendarDays, CircleCheck, CircleAlert, Pencil, Play, Star, Users } from "lucide-react";
+import { CalendarCheck, CalendarDays, CircleCheckBig, CircleAlert, Hourglass, Pencil, Star, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ModeBadge } from "@/components/course/CourseCover";
 import { ButtonLink } from "@/components/ui/Button";
@@ -13,10 +13,10 @@ import { formatNumber, formatPercent, formatRating, toArabicDigits } from "@/lib
    40 Bold title, program line, stats row, and the preview / edit buttons. */
 
 const STATE_PILL: Record<HeroState, { label: string; icon: LucideIcon; className: string }> = {
-  running: { label: "جارية الآن", icon: Play, className: "bg-state-success-bg text-state-success" },
+  running: { label: "جارية الآن", icon: CalendarCheck, className: "bg-state-success-bg text-state-success" },
   upcoming: { label: "قادمة", icon: CalendarDays, className: "bg-bg-brand-tint text-text-brand" },
   full: { label: "اكتملت المقاعد", icon: Users, className: "bg-state-warning-bg text-state-warning" },
-  ended: { label: "منتهية", icon: CircleCheck, className: "bg-bg-disabled text-text-secondary" },
+  ended: { label: "منتهية", icon: CircleCheckBig, className: "bg-bg-disabled text-text-secondary" },
   cancelled: { label: "ملغاة", icon: CircleAlert, className: "bg-state-error-bg text-state-error" },
   draft: { label: "مسودة", icon: Pencil, className: "bg-state-warning-bg text-state-warning" },
 };
@@ -86,11 +86,11 @@ export function CourseHero({
           <h2 className="text-[28px] leading-[1.15] font-bold text-text-primary sm:text-[40px]">{course.title}</h2>
           <p className="type-body-lg text-text-secondary">{courseLine(course)}</p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5">
-            <Stat icon={Banknote} tone="text-state-success">
+            <Stat icon={Hourglass} tone="text-state-success">
               {formatNumber(Math.round(course.revenue))} ر.س إيراد
             </Stat>
             {course.mode !== "recorded" && course.attendanceAvg !== null && (
-              <Stat icon={CircleCheck} tone="text-state-success">
+              <Stat icon={CircleCheckBig} tone="text-state-success">
                 {formatPercent(course.attendanceAvg)} متوسط الحضور
               </Stat>
             )}

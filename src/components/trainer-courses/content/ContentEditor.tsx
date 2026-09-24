@@ -12,10 +12,10 @@ import {
   Clock,
   Eye,
   FileText,
-  Layers,
+  Puzzle,
   ListChecks,
   Menu,
-  Pencil,
+  SquarePen,
   Plus,
   Trash2,
   Type,
@@ -116,7 +116,7 @@ export function ContentEditor({
         <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-brand-tint px-[11px] py-1.5 type-caption text-text-brand">
           {pluralAr(totals.modules, ["وحدة واحدة", "وحدتان", "وحدات", "وحدة"])} · {pluralAr(totals.lessons, ["درس واحد", "درسان", "دروس", "درسًا"])}
           {totals.seconds > 0 && ` · ${formatDuration(totals.seconds)}`}
-          <Glyph icon={Layers} size={16} />
+          <Glyph icon={Puzzle} size={16} />
         </span>
       </div>
       {error && (
@@ -199,7 +199,7 @@ export function ContentEditor({
                           <Glyph icon={ArrowDown} size={16} />
                         </button>
                         <button type="button" aria-label={`عدّل «${l.title}»`} onClick={() => setEditing(l.id)} className="flex size-9 cursor-pointer items-center justify-center rounded-8 text-text-secondary hover:bg-bg-page focus-ring">
-                          <Glyph icon={Pencil} size={16} />
+                          <Glyph icon={SquarePen} size={16} />
                         </button>
                         <button type="button" aria-label={`احذف «${l.title}»`} onClick={() => setConfirm({ kind: "lesson", id: l.id, title: l.title })} className="flex size-9 cursor-pointer items-center justify-center rounded-8 text-state-error hover:bg-state-error-bg focus-ring">
                           <Glyph icon={Trash2} size={16} />
@@ -286,7 +286,7 @@ export function ContentEditor({
                   </div>
                   <div className="flex items-center gap-2.5">
                     <IconBtn icon={Trash2} label="احذف الوحدة" tone="danger" disabled={m.fromProgram || !allowModuleEdits} onClick={() => setConfirm({ kind: "module", id: m.id, title: m.title })} />
-                    <IconBtn icon={Pencil} label="عدّل عنوان الوحدة" disabled={m.fromProgram || !allowModuleEdits} onClick={() => setRenaming({ id: m.id, title: m.title })} />
+                    <IconBtn icon={SquarePen} label="عدّل عنوان الوحدة" disabled={m.fromProgram || !allowModuleEdits} onClick={() => setRenaming({ id: m.id, title: m.title })} />
                     <IconBtn icon={open ? ChevronUp : ChevronDown} label={open ? "اطوِ الوحدة" : "افتح الوحدة"} onClick={() => setCollapsed((c) => (open ? [...c, m.id] : c.filter((x) => x !== m.id)))} />
                   </div>
                 </div>

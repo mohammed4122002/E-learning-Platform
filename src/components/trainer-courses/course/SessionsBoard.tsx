@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { ChevronDown, CircleAlert, CircleCheck, Clock, Layers, Pencil, Play } from "lucide-react";
+import { ChevronDown, CircleAlert, CircleCheckBig, Clock, Puzzle, SquarePen, CalendarCheck } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Field";
@@ -28,8 +28,8 @@ export type BoardSession = {
 };
 
 const CHIP: Record<BoardSession["state"], { label: string; icon: LucideIcon; className: string }> = {
-  ended: { label: "انتهت", icon: CircleCheck, className: "bg-state-success-bg text-state-success" },
-  today: { label: "اليوم", icon: Play, className: "bg-bg-surface text-state-warning" },
+  ended: { label: "انتهت", icon: CircleCheckBig, className: "bg-state-success-bg text-state-success" },
+  today: { label: "اليوم", icon: CalendarCheck, className: "bg-bg-surface text-state-warning" },
   upcoming: { label: "قادمة", icon: Clock, className: "bg-bg-page text-text-muted" },
   cancelled: { label: "أُلغيت", icon: CircleAlert, className: "bg-state-error-bg text-state-error" },
 };
@@ -64,8 +64,8 @@ export function SessionsBoard({
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">المحاور والجلسات</h2>
           <span className="inline-flex items-center gap-[7px] rounded-full bg-bg-brand-tint px-3.5 py-[9px] type-subtitle text-text-brand">
-            <Glyph icon={Layers} size={20} />
             {pluralAr(modules.length, ["محور واحد", "محوران", "محاور", "محورًا"])} · {pluralAr(sessions.length, ["جلسة واحدة", "جلستان", "جلسات", "جلسة"])}
+            <Glyph icon={Puzzle} size={20} />
           </span>
         </div>
         {sessions.length === 0 && (
@@ -99,7 +99,7 @@ export function SessionsBoard({
                       aria-label={`عدّل «الجلسة ${toArabicDigits(s.number)}»`}
                       className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-page text-text-secondary focus-ring hover:text-text-brand disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      <Glyph icon={Pencil} size={16} />
+                      <Glyph icon={SquarePen} size={16} />
                     </button>
                     <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                       <p className="type-subtitle text-text-primary">

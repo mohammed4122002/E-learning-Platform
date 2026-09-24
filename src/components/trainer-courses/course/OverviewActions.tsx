@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Award, CircleCheck, FileText, MessageSquare } from "lucide-react";
+import { Award, CircleCheckBig, FileText, MessagesSquare } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
@@ -44,12 +44,12 @@ export function OverviewActions({
     <>
       <section className="flex flex-col gap-[18px] rounded-22 border border-border-default bg-bg-card p-5 shadow-card sm:p-[26px]">
         <h2 className="type-h2 text-text-primary">إجراءات الدورة</h2>
-        <ActionRow icon={CircleCheck} title="رصد حضور اليوم" sub={today ? today.label : "لا جلسة اليوم"} tone={today ? "error" : "page"}>
+        <ActionRow icon={CircleCheckBig} title="رصد حضور اليوم" sub={today ? today.label : "لا جلسة اليوم"} tone={today ? "error" : "page"}>
           <ButtonLink href={`${base}/attendance`} size="s" variant={today ? "primary" : "outline"} className="w-[120px]">
             ارصد الآن
           </ButtonLink>
         </ActionRow>
-        <ActionRow icon={MessageSquare} title="أرسل تنبيهًا للمسجّلين" sub="تغيير قاعة · تذكير · ملاحظة">
+        <ActionRow icon={MessagesSquare} title="أرسل تنبيهًا للمسجّلين" sub="تغيير قاعة · تذكير · ملاحظة">
           <Button size="s" variant="outline" className="w-[120px]" disabled={trainees === 0} onClick={() => setNotifyOpen(true)}>
             أرسل
           </Button>

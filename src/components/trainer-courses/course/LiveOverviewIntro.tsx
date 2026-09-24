@@ -11,6 +11,20 @@ export function sessionTimeLabel(startsAt: string, endsAt: string): string {
   return `${formatDayMonth(startsAt)} · ${formatTime(startsAt).replace(/\s?[صم]$/, "")} – ${formatTime(endsAt)}`;
 }
 
+/** «عرض تقرير الحضور» — the only block above the breadcrumb in 4236:743. */
+export function LiveOverviewLead({ courseId }: { courseId: string }) {
+  return (
+    <div className="flex justify-start">
+      <Link
+        href={`/trainer/courses/${courseId}/attendance`}
+        className="rounded-[10px] bg-action-primary px-7 py-[15px] text-[16px] font-bold text-text-on-brand focus-ring hover:bg-action-primary-hover"
+      >
+        عرض تقرير الحضور
+      </Link>
+    </div>
+  );
+}
+
 export function LiveOverviewIntro({ course }: { course: CourseHeader }) {
   const platform = course.meetingPlatform ? (PLATFORM_LABEL[course.meetingPlatform] ?? "منصة أخرى") : null;
   const sessions = course.sessions.filter((s) => s.status !== "cancelled");
@@ -29,14 +43,6 @@ export function LiveOverviewIntro({ course }: { course: CourseHeader }) {
   ];
   return (
     <>
-      <div className="flex justify-start">
-        <Link
-          href={`/trainer/courses/${course.id}/attendance`}
-          className="rounded-[10px] bg-action-primary px-7 py-[15px] text-[16px] font-bold text-text-on-brand focus-ring hover:bg-action-primary-hover"
-        >
-          عرض تقرير الحضور
-        </Link>
-      </div>
       <InfoPanel title="نمط التقديم: مباشر" description="جلسات مباشرة عبر الإنترنت — بلا موقع حضوري." rows={modeRows} highlight />
       <InfoPanel title="مواعيد الجلسات" rows={sessionRows} />
       <InfoPanel

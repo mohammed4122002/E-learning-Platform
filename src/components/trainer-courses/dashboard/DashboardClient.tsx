@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { ChevronLeft, FileText, MessageSquare, Pause, Play, Plus } from "lucide-react";
+import { ChevronLeft, FileText, Hourglass, MessagesSquare, Play, Plus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
@@ -93,10 +93,10 @@ export function DashboardActions({ courseId, buyers, paused }: { courseId: strin
     <section className="flex flex-col gap-5 rounded-22 border border-border-default bg-bg-card p-5 shadow-card sm:p-7">
       <h2 className="type-h2 text-text-primary">إجراءات</h2>
       <ActionLinkRow icon={Plus} title="أضف درسًا جديدًا" sub={`يُشعر ${toArabicDigits(buyers)} مشتريًا ويُعيد نسبهم`} href={`/trainer/courses/${courseId}/content`} />
-      <ActionLinkRow icon={MessageSquare} title="راسل المشترين" sub="إعلان أو تذكير للجميع" onClick={() => setNotifyOpen(true)} disabled={buyers === 0} />
+      <ActionLinkRow icon={MessagesSquare} title="راسل المشترين" sub="إعلان أو تذكير للجميع" onClick={() => setNotifyOpen(true)} disabled={buyers === 0} />
       <ActionLinkRow icon={FileText} title="صدّر قائمة المشترين" sub="Excel أو PDF" href={`/trainer/courses/export?ids=${courseId}`} />
       <ActionLinkRow
-        icon={paused ? Play : Pause}
+        icon={paused ? Play : Hourglass}
         title={paused ? "استأنف البيع" : "أوقف البيع مؤقتًا"}
         sub="المشترون الحاليون يحتفظون بوصولهم"
         disabled={pending}

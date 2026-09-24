@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CircleAlert, CircleCheck, Info, RotateCcw, ShieldCheck } from "lucide-react";
+import { CircleAlert, CircleCheckBig, Info, RotateCcw, ShieldCheck } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { PrintReceipt } from "@/components/trainer-courses/sales/PrintReceipt";
 import { money, saleState, soldAt } from "@/components/trainer-courses/sales/SalesView";
@@ -47,7 +47,7 @@ export default async function SaleDetailPage({ params }: PageProps<"/trainer/cou
       ? { box: "border-state-info bg-state-info-bg", chip: "text-state-info", icon: RotateCcw, label: "مستردة", line: `استُرِد المبلغ للمشتري${r.refundDecidedAt ? ` · ${formatDate(r.refundDecidedAt)}` : ""}` }
       : st === "refund_pending"
         ? { box: "border-state-warning bg-state-warning-bg", chip: "text-state-warning", icon: CircleAlert, label: "طلب استرداد قيد المراجعة", line: "صافي هذه العملية معلّق حتى يُحسم الطلب" }
-        : { box: "border-state-success bg-state-success-bg", chip: "text-state-success", icon: CircleCheck, label: "مدفوعة ومكتملة", line: `صافي ما وصلك من هذه العملية · ${formatDate(at)} · ${formatTime(at)}` };
+        : { box: "border-state-success bg-state-success-bg", chip: "text-state-success", icon: CircleCheckBig, label: "مدفوعة ومكتملة", line: `صافي ما وصلك من هذه العملية · ${formatDate(at)} · ${formatTime(at)}` };
 
   const breakdown = [
     { label: "سعر الدورة", value: `${money(r.listPrice)} ر.س`, tone: "text-text-primary" },

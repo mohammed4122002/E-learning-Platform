@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
-  Banknote, BookOpen, CircleAlert, CircleCheck, CircleDot, Eye, Globe, Hourglass, Lightbulb, Link2, Lock, MessageSquare, Plus,
+  BookOpen, CircleAlert, CircleCheckBig, Eye, Hourglass, LayoutGrid, Lightbulb, Lock, MessagesSquare, Plus,
   RefreshCw, Star, TrendingUp, TriangleAlert, Users, X,
 } from "lucide-react";
 import { ModeBadge } from "@/components/course/CourseCover";
@@ -33,7 +33,7 @@ export function DashboardHero({ course, saleUrl, state }: { course: CourseHeader
         <div className="flex min-w-0 flex-1 flex-col gap-2.5">
           <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center gap-[7px] rounded-full px-3.5 py-[9px] type-subtitle ${pill.cls}`}>
-              <Glyph icon={Globe} size={20} />
+              <Glyph icon={LayoutGrid} size={20} />
               {pill.text}
             </span>
             <ModeBadge mode="recorded" />
@@ -44,7 +44,7 @@ export function DashboardHero({ course, saleUrl, state }: { course: CourseHeader
             <span dir="ltr" className="min-w-0 truncate font-mono text-[14px] text-text-brand">
               {saleUrl.replace(/^https?:\/\//, "")}
             </span>
-            <Glyph icon={Link2} size={16} className="text-text-brand" />
+            <Glyph icon={Hourglass} size={16} className="text-text-brand" />
           </p>
         </div>
         <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row lg:w-[171px] lg:flex-col">
@@ -60,17 +60,18 @@ export function DashboardHero({ course, saleUrl, state }: { course: CourseHeader
   );
 }
 
-export function SourceProgramCard({ course, drift }: { course: CourseHeader; drift: { version: number } | null }) {
+/** `stacked`: the narrow column variant of the error frame (413:19321) — icon, title, chip, text and link stacked. */
+export function SourceProgramCard({ course, drift, stacked = false }: { course: CourseHeader; drift: { version: number } | null; stacked?: boolean }) {
   const frozen = versionLabel(course.program.version);
   return (
     <section
-      className={`flex flex-col gap-4 rounded-16 border-2 px-5 pt-5 pb-[22px] sm:flex-row sm:items-center sm:px-6 ${drift ? "border-state-warning bg-state-warning-bg" : "border-state-success bg-bg-brand-tint"}`}
+      className={`flex flex-col gap-4 rounded-16 border-2 px-5 pt-5 pb-[22px] sm:px-6 ${stacked ? "" : "sm:flex-row sm:items-center"} ${drift ? "border-state-warning bg-state-warning-bg" : "border-state-success bg-bg-brand-tint"}`}
     >
       <span className="flex size-[52px] shrink-0 items-center justify-center rounded-12 bg-bg-surface text-text-brand">
         <Glyph icon={BookOpen} size={20} />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-[5px]">
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className={stacked ? "flex flex-col items-start gap-2.5" : "flex flex-wrap items-center gap-2.5"}>
           <h2 className="min-w-0 flex-1 type-title text-text-primary">البرنامج المصدر: {course.program.title}</h2>
           {drift ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-[11px] py-1.5 type-caption text-state-warning">
@@ -90,7 +91,7 @@ export function SourceProgramCard({ course, drift }: { course: CourseHeader; dri
             : "هذه الدورة مرتبطة بنسخة ثابتة. تعديل البرنامج لاحقًا لن يغيّر ما اشتراه المتدربون."}
         </p>
       </div>
-      <Link href={`/trainer/programs/${course.program.id}`} className="flex h-12 w-[120px] shrink-0 items-center justify-center rounded-12 type-button text-text-brand hover:bg-bg-surface focus-ring">
+      <Link href={`/trainer/programs/${course.program.id}`} className={`flex h-12 shrink-0 items-center rounded-12 type-button text-text-brand hover:bg-bg-surface focus-ring ${stacked ? "self-start px-2" : "w-[120px] justify-center"}`}>
         اعرض البرنامج
       </Link>
     </section>
@@ -135,7 +136,7 @@ export function NeedsAction({ course, data }: { course: CourseHeader; data: Reco
   if (data.questions.count > 0)
     items.push({
       key: "q",
-      icon: MessageSquare,
+      icon: MessagesSquare,
       title: `${pluralAr(data.questions.count, ["سؤال واحد", "سؤالان", "أسئلة", "سؤالًا"])} بلا رد`,
       sub: `أقدمها من ${data.questions.oldestName ?? "متدرب"} ${formatRelative(data.questions.oldestAt ?? new Date().toISOString())}`,
       label: "ردّ الآن",
@@ -273,7 +274,7 @@ export function LearnersProgress({ course, data }: { course: CourseHeader; data:
               <p className="type-caption">{s.line}</p>
             </div>
             <Link href="/messages" aria-label={`راسل ${l.name}`} className="flex size-10 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-text-brand focus-ring">
-              <Glyph icon={MessageSquare} size={20} />
+              <Glyph icon={MessagesSquare} size={20} />
             </Link>
           </div>
         );
@@ -329,7 +330,7 @@ export function StatsRow({ course, data, totals }: { course: CourseHeader; data:
         subTone={data.ratings.unreplied ? "text-state-warning" : "text-text-muted"}
       />
       <StatTile icon={TrendingUp} label="متوسط الإكمال" value={formatPercent(avg)} sub={`${pluralAr(finished, ["متدرب واحد", "متدربان", "متدربين", "متدربًا"])} أكملوا الدورة`} subTone="text-state-success" />
-      <StatTile icon={Banknote} label="ر.س صافي" value={money(totals.net)} sub={`من ${formatNumber(Math.round(totals.gross))} إجمالي`} />
+      <StatTile icon={Hourglass} label="ر.س صافي" value={money(totals.net)} sub={`من ${formatNumber(Math.round(totals.gross))} إجمالي`} />
       <StatTile icon={Users} label="مشتريًا" value={toArabicDigits(buyers)} sub={`+${toArabicDigits(data.monthBuyers)} هذا الشهر`} subTone="text-state-success" />
     </div>
   );
@@ -359,7 +360,7 @@ export function EmptyDashboard({
       side: preview ? (
         <span className="inline-flex items-center gap-1.5 rounded-full bg-state-success-bg px-[11px] py-1.5 type-caption text-state-success">
           مبنيّ
-          <Glyph icon={CircleCheck} size={16} />
+          <Glyph icon={CircleCheckBig} size={16} />
         </span>
       ) : (
         <ButtonLink href={`/trainer/courses/${course.id}/content`} size="s" variant="outline" className="w-[120px]">
@@ -388,7 +389,7 @@ export function EmptyDashboard({
       ),
     },
     {
-      icon: Banknote,
+      icon: Hourglass,
       title: "راجع سعرك",
       text:
         categoryAvg === null
@@ -400,7 +401,7 @@ export function EmptyDashboard({
         categoryAvg === null ? null : (
           <span className={`inline-flex items-center gap-1.5 rounded-full px-[11px] py-1.5 type-caption ${priceOk ? "bg-state-success-bg text-state-success" : "bg-state-warning-bg text-state-warning"}`}>
             {priceOk ? "مناسب" : "أعلى من المتوسط"}
-            <Glyph icon={priceOk ? CircleCheck : TriangleAlert} size={16} />
+            <Glyph icon={priceOk ? CircleCheckBig : TriangleAlert} size={16} />
           </span>
         ),
     },
@@ -408,7 +409,7 @@ export function EmptyDashboard({
   const numbers: { icon: LucideIcon; label: string; value: string; tone?: string }[] = [
     { icon: Eye, label: "مشاهدة للصفحة", value: formatNumber(course.pageViews), tone: "text-text-brand" },
     { icon: Users, label: "مشترٍ", value: "٠" },
-    { icon: Banknote, label: "ر.س", value: money(0) },
+    { icon: Hourglass, label: "ر.س", value: money(0) },
     { icon: Star, label: "لا تقييمات", value: "—" },
   ];
   return (
@@ -472,11 +473,11 @@ export function DashboardError({ course }: { course: CourseHeader }) {
   const ok = ["صفحة البيع تعمل والشراء متاح", "المشترون يشاهدون الدروس طبيعيًا", "مبيعاتك مسجَّلة ولن تضيع", "الشهادات تصدر آليًا كالمعتاد"];
   return (
     <>
-      <section role="alert" className="flex flex-col items-center gap-4 rounded-22 border-2 border-state-error bg-state-error-bg px-5 py-10 text-center sm:px-12">
-        <span className="flex size-16 items-center justify-center rounded-16 bg-bg-surface text-state-error">
-          <Glyph icon={CircleAlert} size={24} />
+      <section role="alert" className="flex flex-col items-center gap-5 rounded-22 border-[3px] border-state-error bg-state-error-bg px-5 py-10 text-center sm:px-12 sm:pt-[52px] sm:pb-[52px]">
+        <span className="flex size-20 items-center justify-center rounded-22 bg-bg-surface text-state-error sm:size-24">
+          <Glyph icon={CircleAlert} size={32} />
         </span>
-        <h2 className="text-[26px] leading-[1.3] font-bold text-text-primary sm:text-[32px]">تعذّر تحميل بيانات الدورة</h2>
+        <h2 className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">تعذّر تحميل بيانات الدورة</h2>
         <p className="max-w-[720px] type-body-lg text-text-secondary">لم نتمكن من جلب المبيعات والتقدّم. دورتك ومحتواها ومشتروك بخير — المشكلة في عرض البيانات فقط.</p>
         <p className="type-caption text-text-muted">
           رمز الخطأ <span dir="ltr" className="font-mono">ERR-DASH-503</span>
@@ -488,16 +489,17 @@ export function DashboardError({ course }: { course: CourseHeader }) {
           </ButtonLink>
         </div>
       </section>
+      {/* 413:19321 — narrow program card on the start side, «ما زال يعمل» fills the rest. */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <div className="min-w-0 flex-1">
-          <SourceProgramCard course={course} drift={null} />
+        <div className="w-full shrink-0 lg:w-[380px]">
+          <SourceProgramCard course={course} drift={null} stacked />
         </div>
-        <section className={`${card} w-full lg:w-[440px]`}>
+        <section className={`${card} min-w-0 flex-1`}>
           <h2 className="type-h2 text-text-primary">ما زال يعمل</h2>
           <p className="type-body text-text-secondary">هذا العطل لا يؤثّر على دورتك ولا على متدربيك:</p>
           {ok.map((t) => (
             <p key={t} className="flex items-center gap-3 rounded-12 bg-state-success-bg px-4 py-3 type-body text-state-success">
-              <Glyph icon={CircleCheck} size={20} />
+              <Glyph icon={CircleCheckBig} size={20} />
               <span className="flex-1">{t}</span>
             </p>
           ))}
@@ -521,7 +523,7 @@ function VersionBox({ title, version, sub, rows, tone }: { title: string; versio
       <p className={`type-body ${tone === "success" ? "text-state-success" : "text-state-info"}`}>{sub}</p>
       {rows.map((r) => (
         <p key={r} className="flex items-center gap-2.5 rounded-12 bg-bg-surface px-3.5 py-3 type-body text-text-primary">
-          <Glyph icon={CircleDot} size={16} className="text-text-muted" />
+          <Glyph icon={Hourglass} size={16} className={tone === "success" ? "text-state-success" : "text-state-info"} />
           <span className="flex-1">{r}</span>
         </p>
       ))}
@@ -592,14 +594,14 @@ export function StaleProgram({
           <section className={card}>
             <h2 className="type-h2 text-text-primary">خياراتك</h2>
             <NeedRow
-              icon={CircleCheck}
+              icon={CircleCheckBig}
               title="أبقِ الدورة كما هي"
               sub="مشتروك يكملون ما اشتروه. لا شيء يتغيّر — هذا الخيار الموصى به."
               highlight={false}
               action={
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-[11px] py-1.5 type-caption text-state-success">
                   موصى به
-                  <Glyph icon={CircleCheck} size={16} />
+                  <Glyph icon={CircleCheckBig} size={16} />
                 </span>
               }
             />

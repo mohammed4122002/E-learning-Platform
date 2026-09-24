@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
-  Banknote, CalendarDays, CircleAlert, CircleCheck, CircleX, Clock, Eye, FileText, Hourglass, LayoutGrid, RefreshCw, RotateCcw, Search, Target,
+  Banknote, CalendarDays, CircleAlert, CircleCheckBig, CircleX, Clock, Eye, FileText, Hourglass, LayoutGrid, RotateCcw, Search, Target,
   Users, X,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Data";
@@ -26,14 +26,19 @@ export function saleState(r: SaleRow): SaleState {
 export const soldAt = (r: SaleRow) => r.paidAt ?? r.confirmedAt ?? r.createdAt;
 export const netOfSale = (r: SaleRow) => Math.round((r.paid - r.vat) * (1 - r.commissionPercent / 100) * 100) / 100;
 
-export function Tile({ icon, label, value, sub, valueTone = "text-text-primary", subTone = "text-text-muted", iconTone = "bg-bg-brand-tint text-text-brand" }: { icon: LucideIcon; label: string; value: string; sub?: string; valueTone?: string; subTone?: string; iconTone?: string }) {
+/** `iconAtEnd`: the empty-state tiles (415:19914) put the label first and the icon at the end of the row. */
+export function Tile({ icon, label, value, sub, valueTone = "text-text-primary", subTone = "text-text-muted", iconTone = "bg-bg-brand-tint text-text-brand", iconAtEnd = false }: { icon: LucideIcon; label: string; value: string; sub?: string; valueTone?: string; subTone?: string; iconTone?: string; iconAtEnd?: boolean }) {
+  const badge = (
+    <span className={`flex size-10 shrink-0 items-center justify-center rounded-12 ${iconTone}`}>
+      <Glyph icon={icon} size={20} />
+    </span>
+  );
   return (
     <div className="flex min-w-0 flex-col gap-2.5 rounded-16 border border-border-default bg-bg-card px-5 pt-5 pb-[22px] shadow-card">
       <div className="flex items-start gap-2.5">
-        <span className={`flex size-10 shrink-0 items-center justify-center rounded-12 ${iconTone}`}>
-          <Glyph icon={icon} size={20} />
-        </span>
+        {!iconAtEnd && badge}
         <span className="min-w-0 flex-1 type-caption text-text-muted">{label}</span>
+        {iconAtEnd && badge}
       </div>
       <p className={`text-[24px] leading-[1.2] font-bold sm:text-[28px] ${valueTone}`}>{value}</p>
       {sub && <p className={`type-caption ${subTone}`}>{sub}</p>}
@@ -44,7 +49,7 @@ export function Tile({ icon, label, value, sub, valueTone = "text-text-primary",
 const STATE_CHIP: Record<SaleState, { label: string; icon: LucideIcon; cls: string }> = {
   refunded: { label: "مستردة", icon: RotateCcw, cls: "bg-state-info-bg text-state-info" },
   refund_pending: { label: "طلب استرداد", icon: Clock, cls: "bg-state-warning-bg text-state-warning" },
-  paid: { label: "مدفوعة", icon: CircleCheck, cls: "bg-state-success-bg text-state-success" },
+  paid: { label: "مدفوعة", icon: CircleCheckBig, cls: "bg-state-success-bg text-state-success" },
 };
 
 export function SalesTable({ courseId, rows }: { courseId: string; rows: SaleRow[] }) {
@@ -106,7 +111,7 @@ export function PayoutCard({ available, held }: { available: number; held: numbe
       <h2 className="type-h2 text-text-primary">متى يصلك المال؟</h2>
       <div className="flex items-center gap-3 rounded-16 bg-state-success-bg px-4 py-4">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-bg-surface text-state-success">
-          <Glyph icon={CircleCheck} size={20} />
+          <Glyph icon={CircleCheckBig} size={20} />
         </span>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <p className="type-h3 text-state-success">{money(available)} ر.س</p>
@@ -187,7 +192,7 @@ export function EmptySales({ courseId, views, saleUrl, title }: { courseId: stri
     { icon: Users, text: "اسم كل مشترٍ وتاريخ شرائه" },
     { icon: Hourglass, text: "المبلغ قبل العمولة وبعدها" },
     { icon: FileText, text: "رقم العملية وإيصالها" },
-    { icon: RefreshCw, text: "أي استرداد وسببه" },
+    { icon: RotateCcw, text: "أي استرداد وسببه" },
     { icon: Target, text: "الخصومات المستخدمة" },
     { icon: Clock, text: "متى يصلك المال" },
   ];
@@ -199,11 +204,11 @@ export function EmptySales({ courseId, views, saleUrl, title }: { courseId: stri
   return (
     <>
       <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-5">
-        <Tile icon={Eye} label="مشاهدة الصفحة" value={formatNumber(views)} valueTone="text-text-brand" />
-        <Tile icon={CircleCheck} label="صافي إيرادك" value={money(0)} />
-        <Tile icon={Users} label="مشترٍ" value="٠" />
-        <Tile icon={FileText} label="عملية" value="٠" />
-        <Tile icon={Hourglass} label="إجمالي المبيعات" value={money(0)} />
+        <Tile icon={Eye} label="مشاهدة الصفحة" value={formatNumber(views)} valueTone="text-text-brand" iconAtEnd />
+        <Tile icon={CircleCheckBig} label="صافي إيرادك" value={money(0)} iconAtEnd iconTone="bg-bg-page text-text-secondary" />
+        <Tile icon={Users} label="مشترٍ" value="٠" iconAtEnd iconTone="bg-bg-page text-text-secondary" />
+        <Tile icon={FileText} label="عملية" value="٠" iconAtEnd iconTone="bg-bg-page text-text-secondary" />
+        <Tile icon={Hourglass} label="إجمالي المبيعات" value={money(0)} iconAtEnd iconTone="bg-bg-page text-text-secondary" />
       </div>
       <section className="flex flex-col items-center gap-4 rounded-22 bg-bg-brand-tint px-5 py-10 text-center sm:px-12">
         <span className="flex size-16 items-center justify-center rounded-16 bg-bg-surface text-text-brand">
@@ -256,18 +261,18 @@ export function EmptySales({ courseId, views, saleUrl, title }: { courseId: stri
 
 export function SalesError() {
   const ok: { icon: LucideIcon; title: string; sub: string; bad?: boolean }[] = [
-    { icon: CircleCheck, title: "مبيعاتك مسجَّلة ومحفوظة", sub: "لا عملية تضيع بسبب عطل في العرض" },
+    { icon: CircleCheckBig, title: "مبيعاتك مسجَّلة ومحفوظة", sub: "لا عملية تضيع بسبب عطل في العرض" },
     { icon: LayoutGrid, title: "الشراء متاح والصفحة تعمل", sub: "المتدربون يشترون طبيعيًا الآن" },
     { icon: Hourglass, title: "رصيدك سليم في «الرصيد»", sub: "اعرضه من القائمة الجانبية" },
     { icon: CircleX, title: "لا يمكنك التصدير مؤقتًا", sub: "حتى يعود سجل العمليات", bad: true },
   ];
   return (
     <>
-      <section role="alert" className="flex flex-col items-center gap-4 rounded-22 border-2 border-state-error bg-state-error-bg px-5 py-10 text-center sm:px-12">
-        <span className="flex size-16 items-center justify-center rounded-16 bg-bg-surface text-state-error">
-          <Glyph icon={CircleAlert} size={24} />
+      <section role="alert" className="flex flex-col items-center gap-5 rounded-22 border-[3px] border-state-error bg-state-error-bg px-5 py-10 text-center sm:px-12 sm:pt-[52px] sm:pb-[52px]">
+        <span className="flex size-20 items-center justify-center rounded-22 bg-bg-surface text-state-error sm:size-24">
+          <Glyph icon={CircleAlert} size={32} />
         </span>
-        <h2 className="text-[26px] leading-[1.3] font-bold text-text-primary sm:text-[32px]">تعذّر تحميل سجل المبيعات</h2>
+        <h2 className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">تعذّر تحميل سجل المبيعات</h2>
         <p className="max-w-[720px] type-body-lg text-text-secondary">لم نتمكن من جلب العمليات. مبيعاتك مسجَّلة كاملة في النظام ولم يضِع منها شيء — المشكلة في العرض فقط.</p>
         <p className="type-caption text-text-muted">
           رمز الخطأ <span dir="ltr" className="font-mono">ERR-SALES-502</span>
@@ -283,13 +288,13 @@ export function SalesError() {
         <section className={`${card} min-w-0 flex-1`}>
           <h2 className="type-h2 text-text-primary">ما زال يعمل</h2>
           {ok.map((o) => (
-            <div key={o.title} className={`flex items-center gap-3 rounded-16 px-4 py-3.5 ${o.bad ? "bg-state-error-bg" : "bg-state-success-bg"}`}>
-              <span className={`flex size-10 shrink-0 items-center justify-center rounded-12 bg-bg-surface ${o.bad ? "text-state-error" : "text-state-success"}`}>
+            <div key={o.title} className={`flex items-center gap-3.5 rounded-16 px-[18px] py-4 ${o.bad ? "bg-state-error-bg" : "bg-state-success-bg"}`}>
+              <span className={`flex size-11 shrink-0 items-center justify-center rounded-12 bg-bg-surface ${o.bad ? "text-state-error" : "text-state-success"}`}>
                 <Glyph icon={o.icon} size={20} />
               </span>
-              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <p className={`type-subtitle ${o.bad ? "text-state-error" : "text-state-success"}`}>{o.title}</p>
-                <p className="type-caption text-text-secondary">{o.sub}</p>
+              <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                <p className={`type-title ${o.bad ? "text-state-error" : "text-state-success"}`}>{o.title}</p>
+                <p className="type-body text-text-secondary">{o.sub}</p>
               </div>
             </div>
           ))}
@@ -314,18 +319,15 @@ export function NoResults({
   clearAll,
   clearSearch,
   tries,
-  totals,
 }: {
   query: string;
   filterLabel: string | null;
   clearAll: string;
   clearSearch: string | null;
   tries: { icon: LucideIcon; title: string; sub: string; badge: string; href: string }[];
-  totals: { gross: number; net: number; count: number };
 }) {
   return (
-    <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-      <div className="flex min-w-0 flex-1 flex-col gap-6">
+    <>
         <section className="flex flex-col items-center gap-4 rounded-22 border border-border-default bg-bg-card px-5 py-10 text-center shadow-card sm:px-12">
           <span className="flex size-16 items-center justify-center rounded-16 bg-bg-brand-tint text-text-secondary">
             <Glyph icon={Search} size={24} />
@@ -359,15 +361,21 @@ export function NoResults({
                   <span className="type-caption text-text-muted">{t.sub}</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-brand-tint px-2.5 py-1 type-caption text-text-brand">
-                  <Glyph icon={CircleCheck} size={16} />
+                  <Glyph icon={CircleCheckBig} size={16} />
                   {t.badge}
                 </span>
               </Link>
             ))}
           </section>
         )}
-      </div>
-      <section className={`${card} w-full lg:w-[400px]`}>
+    </>
+  );
+}
+
+/** «الإجماليات لا تتأثر» — the aside of the no-results frame (415:20625). */
+export function NoResultsTotals({ totals }: { totals: { gross: number; net: number; count: number } }) {
+  return (
+    <section className={card}>
         <h2 className="type-h3 text-text-primary">الإجماليات لا تتأثر</h2>
         <p className="type-body text-text-muted">البحث يصفّي العرض فقط — أرقامك الكاملة كما هي.</p>
         {[
@@ -376,13 +384,12 @@ export function NoResults({
           { label: "عدد العمليات", value: toArabicDigits(totals.count), tone: "text-text-primary" },
         ].map((r) => (
           <p key={r.label} className="flex items-center gap-3 rounded-12 bg-bg-page px-4 py-3">
-            <span className="min-w-0 flex-1 type-body text-text-secondary">{r.label}</span>
             <span className={`type-subtitle ${r.tone}`}>{r.value}</span>
+            <span className="min-w-0 flex-1 type-body text-text-secondary">{r.label}</span>
           </p>
         ))}
-      </section>
-    </div>
+    </section>
   );
 }
 
-export const TRY_ICONS = { refund: RefreshCw, period: CalendarDays, search: Search, x: X, banknote: Banknote };
+export const TRY_ICONS = { refund: RotateCcw, period: CalendarDays, search: Search, x: X, banknote: Banknote };

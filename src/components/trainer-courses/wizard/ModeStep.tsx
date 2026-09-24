@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CircleAlert, CircleCheck, MapPin, MonitorPlay, Video } from "lucide-react";
+import { CircleAlert, CircleCheckBig, MapPin, Tv, Video } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { MODE_TITLES, STEP3_NEXT } from "@/lib/trainer-courses";
@@ -22,7 +22,7 @@ const MODES: {
 }[] = [
   {
     mode: "recorded",
-    icon: MonitorPlay,
+    icon: Tv, // TG «icon · monitor-play» draws Lucide «tv»
     tile: "bg-state-warning-bg text-state-warning",
     check: "text-state-warning",
     description: "منتج رقمي يُباع ويشاهده المتدرب في أي وقت",
@@ -104,7 +104,7 @@ export function ModeStep({ programVersionId, initialMode }: { programVersionId: 
                       <span className="flex-1" />
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-[11px] py-1.5 type-caption text-text-brand">
                         مختار
-                        <Glyph icon={CircleCheck} size={16} />
+                        <Glyph icon={CircleCheckBig} size={16} />
                       </span>
                     </>
                   ) : (
@@ -121,7 +121,7 @@ export function ModeStep({ programVersionId, initialMode }: { programVersionId: 
                 <span className="flex flex-col gap-4">
                   {m.unlocks.map((u) => (
                     <span key={u} className="flex items-start gap-2.5">
-                      <Glyph icon={CircleCheck} size={16} className={`mt-1.5 ${selected ? "text-text-brand" : m.check}`} />
+                      <Glyph icon={CircleCheckBig} size={16} className={`mt-1.5 ${selected ? "text-text-brand" : m.check}`} />
                       <span className="flex-1 type-body text-text-primary">{u}</span>
                     </span>
                   ))}

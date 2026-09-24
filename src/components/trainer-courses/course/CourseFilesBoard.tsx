@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
-import { CircleCheck, FileSpreadsheet, FileText, Folder, Image as ImageIcon, Lock, Pencil, Trash2, Upload, X } from "lucide-react";
+import { CircleCheckBig, FileSpreadsheet, FileText, Bookmark, Image as ImageIcon, Lock, SquarePen, Trash2, Upload, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Field";
@@ -41,8 +41,8 @@ export function InheritedMaterials({ courseId, units }: { courseId: string; unit
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">مواد البرنامج الموروثة</h2>
         <span className="inline-flex items-center gap-[7px] rounded-full bg-bg-disabled px-3.5 py-[9px] type-subtitle text-text-secondary">
-          <Glyph icon={Lock} size={20} />
           {pluralAr(total, ["ملف واحد", "ملفان", "ملفات", "ملفًا"])} · مقفلة
+          <Glyph icon={Lock} size={20} />
         </span>
       </div>
       {units.length === 0 ? (
@@ -51,7 +51,7 @@ export function InheritedMaterials({ courseId, units }: { courseId: string; unit
         units.map((u) => (
           <div key={u.index} className="flex flex-wrap items-center gap-3 rounded-12 bg-bg-page px-4 py-3.5 sm:flex-nowrap">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-text-brand">
-              <Glyph icon={Folder} size={20} />
+              <Glyph icon={Bookmark} size={20} />
             </span>
             <p className="min-w-0 flex-1 type-subtitle text-text-primary">
               الفصل {toArabicDigits(u.index)} · {u.title}
@@ -122,8 +122,8 @@ export function CourseFiles({ courseId, files, canPublish }: { courseId: string;
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">مواد خاصة بهذه الدورة</h2>
         <span className="inline-flex items-center gap-[7px] rounded-full bg-state-success-bg px-3.5 py-[9px] type-subtitle text-state-success">
-          <Glyph icon={Pencil} size={20} />
           {pluralAr(files.length, ["ملف واحد", "ملفان", "ملفات", "ملفًا"])} · قابلة للتعديل
+          <Glyph icon={SquarePen} size={20} />
         </span>
       </div>
       {files.map((f) => {
@@ -139,7 +139,7 @@ export function CourseFiles({ courseId, files, canPublish }: { courseId: string;
             </div>
             {f.publishedAt ? (
               <span className="inline-flex shrink-0 items-center gap-[7px] rounded-full bg-state-success-bg px-[11px] py-1.5 type-small text-state-success">
-                <Glyph icon={CircleCheck} size={16} />
+                <Glyph icon={CircleCheckBig} size={16} />
                 منشور للمتدربين
               </span>
             ) : (
@@ -149,7 +149,7 @@ export function CourseFiles({ courseId, files, canPublish }: { courseId: string;
               </span>
             )}
             <button type="button" aria-label={`عدّل «${f.title}»`} onClick={() => setEditing(f)} className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-secondary focus-ring hover:text-text-brand">
-              <Glyph icon={Pencil} size={16} />
+              <Glyph icon={SquarePen} size={16} />
             </button>
             <button type="button" aria-label={`احذف «${f.title}»`} onClick={() => setRemoving(f)} className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-state-error focus-ring">
               <Glyph icon={Trash2} size={16} />

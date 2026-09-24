@@ -27,12 +27,15 @@ export function CourseChrome({
   courseTitle,
   hero,
   intro,
+  lead,
   children,
 }: {
   courseId: string;
   courseTitle: string;
   hero: ReactNode;
-  /** Blocks Figma places above the breadcrumb on the overview (live variant 4236:743). */
+  /** Overview only: block above the breadcrumb (live variant 4236:743 «عرض تقرير الحضور»). */
+  lead?: ReactNode;
+  /** Overview only: blocks between the breadcrumb and the hero (live variant 4236:743). */
   intro?: ReactNode;
   children: ReactNode;
 }) {
@@ -46,8 +49,9 @@ export function CourseChrome({
     <>
       <TopBar title="صفحة الدورة" subtitle={tab.subtitle ?? courseTitle} />
       <PageBody className="gap-6">
-        {tab.segment === null && intro}
+        {tab.segment === null && lead}
         <Breadcrumb items={[{ label: "دوراتي", href: "/trainer/courses" }, { label: courseTitle }]} />
+        {tab.segment === null && intro}
         {hero}
         <Tabs label="أقسام الدورة" active={href(tab.segment)} tabs={COURSE_TABS.map((t) => ({ href: href(t.segment), label: t.label }))} />
         {children}
