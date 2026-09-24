@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { ChevronsUpDown, CircleUserRound, Languages, LogOut, Settings, Shield } from "lucide-react";
+import { BadgeCheck, ChevronDown, ChevronLeft, ChevronsUpDown, CircleUserRound, Eye, Languages, LogOut, Settings, Shield, Star, Users } from "lucide-react";
+import { formatRating, toArabicDigits } from "@/lib/format";
 import { Avatar } from "@/components/ui/Data";
 import { Glyph } from "@/components/ui/Icon";
 import { signOut } from "@/app/(auth)/actions";
@@ -60,21 +61,78 @@ export function AccountMenu() {
           </form>
         </div>
       )}
-      <button
-        type="button"
-        onClick={toggle}
-        aria-expanded={open}
-        aria-controls="account-menu"
-        aria-label="قائمة الحساب"
-        className="flex w-full cursor-pointer items-center gap-3 rounded-12 bg-bg-surface p-3 text-start focus-ring"
-      >
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate type-subtitle text-text-primary">{user.fullName}</span>
-          <span className="type-caption text-text-muted">{user.roleLabel}</span>
-        </span>
-        <Avatar name={user.fullName} src={user.avatarUrl} />
-        <Glyph icon={ChevronsUpDown} size={16} className="text-text-muted" />
-      </button>
+      {user.trainerCard ? (
+        /* Figma TRR-DSH-01 sidebar divider + «profile-card» (I256:877;285:3029): 12px side padding, 14/6 top/bottom. */
+        <div className="flex flex-col">
+          <div className="h-px w-full bg-border-sidebar" />
+          <div className="px-3 pt-3.5 pb-1.5">
+            <div className="flex flex-col gap-2.5 rounded-16 border-[1.5px] border-action-primary bg-bg-brand-tint p-3.5">
+              <button
+                type="button"
+                onClick={toggle}
+                aria-expanded={open}
+                aria-controls="account-menu"
+                aria-label="قائمة الحساب"
+                className="flex w-full cursor-pointer items-center gap-2.5 rounded-8 text-start focus-ring"
+              >
+                <Avatar name={user.fullName} src={user.avatarUrl} />
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="truncate type-small text-text-primary">{user.fullName}</span>
+                  {user.trainerCard.accredited ? (
+                    <span className="flex items-center gap-[5px] type-caption text-state-success">
+                      مدرب معتمد
+                      <Glyph icon={BadgeCheck} size={16} />
+                    </span>
+                  ) : (
+                    <span className="type-caption text-text-muted">{user.roleLabel}</span>
+                  )}
+                </span>
+                <Glyph icon={ChevronDown} size={16} className="text-text-secondary" />
+              </button>
+              <Link
+                href={WORKSPACE_SHELL[user.workspace].profile}
+                className="flex h-11 items-center justify-center gap-2 rounded-8 bg-action-primary type-subtitle text-text-on-brand hover:bg-action-primary-hover focus-ring"
+              >
+                ملفي المهني
+                <Glyph icon={ChevronLeft} size={16} />
+              </Link>
+              <p className="flex items-center justify-center gap-2.5 type-caption text-text-secondary">
+                <span className="flex items-center gap-1">
+                  <Glyph icon={Eye} size={16} />
+                  {toArabicDigits(user.trainerCard.views)}
+                  <span className="sr-only">مشاهدة للملف</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <Glyph icon={Users} size={16} />
+                  {toArabicDigits(user.trainerCard.learners)}
+                  <span className="sr-only">متدربًا نشطًا</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <Glyph icon={Star} size={16} />
+                  {user.trainerCard.rating === null ? "—" : formatRating(user.trainerCard.rating)}
+                  <span className="sr-only">متوسط التقييم</span>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={toggle}
+          aria-expanded={open}
+          aria-controls="account-menu"
+          aria-label="قائمة الحساب"
+          className="flex w-full cursor-pointer items-center gap-3 rounded-12 bg-bg-surface p-3 text-start focus-ring"
+        >
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate type-subtitle text-text-primary">{user.fullName}</span>
+            <span className="type-caption text-text-muted">{user.roleLabel}</span>
+          </span>
+          <Avatar name={user.fullName} src={user.avatarUrl} />
+          <Glyph icon={ChevronsUpDown} size={16} className="text-text-muted" />
+        </button>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Award, BookOpen, Bookmark, CalendarDays, CircleQuestionMark, Compass, Hourglass, House, LibraryBig, Star, Tag, Wallet } from "lucide-react";
+import { Award, BookOpen, Bookmark, CalendarDays, CircleQuestionMark, Compass, Hourglass, House, Star, Tag } from "lucide-react";
 
 /** `also`: other route prefixes that belong to the item (e.g. program pages under "اكتشف دورة"). */
 export type NavItem = { label: string; href: string; icon: LucideIcon; badgeKey?: "pendingActions"; also?: string[] };
@@ -19,14 +19,14 @@ export const TRAINEE_NAV: NavItem[] = [
 
 const under = (pathname: string, prefix: string) => pathname === prefix || pathname.startsWith(`${prefix}/`);
 
-/** Figma "Nav / Sidebar — Trainer" (TRR-DSH-01 · 256:848) — items and order. */
+/** Figma "Nav / Sidebar — Trainer" (TRR-DSH-01 · 256:848) — items, order and TG icons (Calendar ×2, Opportunities, Status/Pending). */
 export const TRAINER_NAV: NavItem[] = [
   { label: "الرئيسية", href: "/trainer", icon: House, also: ["/trainer/queue", "/trainer/onboarding", "/trainer/journey"] },
   { label: "برامجي", href: "/trainer/programs", icon: BookOpen },
-  { label: "دوراتي", href: "/trainer/courses", icon: LibraryBig },
+  { label: "دوراتي", href: "/trainer/courses", icon: CalendarDays },
   { label: "تصفّح الفرص", href: "/trainer/opportunities", icon: Compass, also: ["/trainer/bids"] },
   { label: "الجدول", href: "/trainer/calendar", icon: CalendarDays },
-  { label: "الرصيد", href: "/trainer/finance", icon: Wallet },
+  { label: "الرصيد", href: "/trainer/finance", icon: Hourglass },
   { label: "مركز المساعدة", href: "/trainer/help", icon: CircleQuestionMark },
 ];
 

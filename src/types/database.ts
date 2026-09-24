@@ -2041,6 +2041,32 @@ export type Database = {
           },
         ]
       }
+      profile_views: {
+        Row: {
+          profile_id: string
+          viewed_on: string
+          viewer_key: string
+        }
+        Insert: {
+          profile_id: string
+          viewed_on?: string
+          viewer_key: string
+        }
+        Update: {
+          profile_id?: string
+          viewed_on?: string
+          viewer_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_views_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_path: string | null
@@ -3747,6 +3773,7 @@ export type Database = {
         }
         Returns: number
       }
+      profile_view_count: { Args: never; Returns: number }
       program_certificate_status: {
         Args: { p_course: string }
         Returns: {
@@ -3810,6 +3837,7 @@ export type Database = {
           course_percent: number
         }[]
       }
+      record_profile_view: { Args: { p_profile: string }; Returns: undefined }
       refund_quote: {
         Args: { p_enrollment: string }
         Returns: {
