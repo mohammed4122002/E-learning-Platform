@@ -5,6 +5,7 @@ import { PublicProfile } from "@/components/profile/PublicProfile";
 import { PublicHeader } from "@/components/profile/PublicHeader";
 import { getPublicProfile } from "@/lib/data/profile";
 import { env } from "@/lib/env";
+import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata({ params }: PageProps<"/u/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -31,6 +32,8 @@ export default async function PublicProfilePage({ params }: PageProps<"/u/[id]">
   const { id } = await params;
   const profile = await getPublicProfile(id);
   if (!profile) notFound();
+  // Feeds the trainer sidebar card's view count (one per visitor per day; the owner is not counted).
+  await (await createClient()).rpc("record_profile_view", { p_profile: profile.id });
   return (
     <div className="min-h-dvh bg-bg-page">
       <PublicHeader>

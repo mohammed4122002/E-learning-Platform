@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Award, BookOpen, Bookmark, CircleQuestionMark, Compass, Hourglass, House, Star, Tag } from "lucide-react";
+import { Award, BookOpen, Bookmark, CalendarDays, CircleQuestionMark, CircleUser, Compass, GraduationCap, Hourglass, House, Star, Tag } from "lucide-react";
 
 /** `also`: other route prefixes that belong to the item (e.g. program pages under "اكتشف دورة"). */
 export type NavItem = { label: string; href: string; icon: LucideIcon; badgeKey?: "pendingActions"; also?: string[] };
@@ -19,7 +19,49 @@ export const TRAINEE_NAV: NavItem[] = [
 
 const under = (pathname: string, prefix: string) => pathname === prefix || pathname.startsWith(`${prefix}/`);
 
+/** Figma "Nav / Sidebar — Trainer" (TRR-DSH-01 · 256:848) — items, order and TG icons (Calendar ×2, Opportunities, Status/Pending). */
+export const TRAINER_NAV: NavItem[] = [
+  { label: "الرئيسية", href: "/trainer", icon: House, also: ["/trainer/queue", "/trainer/onboarding", "/trainer/journey", "/trainer/profile"] },
+  { label: "برامجي", href: "/trainer/programs", icon: BookOpen },
+  { label: "دوراتي", href: "/trainer/courses", icon: CalendarDays },
+  { label: "تصفّح الفرص", href: "/trainer/opportunities", icon: Compass, also: ["/trainer/bids"] },
+  { label: "الجدول", href: "/trainer/calendar", icon: CalendarDays },
+  { label: "الرصيد", href: "/trainer/finance", icon: Hourglass },
+  { label: "مركز المساعدة", href: "/trainer/help", icon: CircleQuestionMark },
+];
+
+export type ShellWorkspace = "trainee" | "trainer";
+
+/** Per-workspace shell wiring (sidebar, account menu, top bar shortcuts). */
+/** `brand`: sidebar logo tile icon + title style (trainee 115:2492 · trainer I256:877;285:2962 = TG/Trainer/Trainee, Type/Subtitle). */
+export const WORKSPACE_SHELL: Record<
+  ShellWorkspace,
+  { label: string; home: string; nav: NavItem[]; profile: string; search: string; assistant: string; role: string; brand: { icon: LucideIcon; titleClass: string; rowClass: string } }
+> = {
+  trainee: {
+    label: "مساحة المتدرب",
+    home: "/trainee",
+    nav: TRAINEE_NAV,
+    profile: "/trainee/profile",
+    search: "/trainee/discover?focus=search",
+    assistant: "/trainee?assistant=1#assistant",
+    role: "متدرب",
+    brand: { icon: GraduationCap, titleClass: "type-title", rowClass: "pb-2.5" },
+  },
+  trainer: {
+    label: "مساحة المدرب",
+    home: "/trainer",
+    nav: TRAINER_NAV,
+    profile: "/trainer/profile",
+    search: "/trainer/courses?focus=search",
+    assistant: "/trainer?assistant=1#assistant",
+    role: "مدرب",
+    brand: { icon: CircleUser, titleClass: "type-subtitle", rowClass: "pb-[18px]" },
+  },
+};
+
 export function isActive(pathname: string, item: Pick<NavItem, "href" | "also">) {
-  if (item.href === "/trainee") return pathname === "/trainee";
+  // Workspace homes match exactly (plus their `also` prefixes); other items match their whole subtree.
+  if (item.href === "/trainee" || item.href === "/trainer") return pathname === item.href || (item.also ?? []).some((p) => under(pathname, p));
   return [item.href, ...(item.also ?? [])].some((p) => under(pathname, p));
 }

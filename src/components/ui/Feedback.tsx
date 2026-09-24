@@ -1,17 +1,17 @@
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { CircleAlert, CircleCheck, CircleX, Info, LoaderCircle, TriangleAlert } from "lucide-react";
+import { CircleAlert, CircleCheckBig, Info, LoaderCircle, OctagonX, TriangleAlert } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 
 /*
- * Figma "Feedback / Alert" (59:46): tint bg + 1.5px tone border, r12, p 14/16, gap 12, icon 20,
+ * Figma "Feedback / Alert" (59:46) — icons TG/Information · Status/Success · Warning · Notifications/Error (octagon-x): tint bg + 1.5px tone border, r12, p 14/16, gap 12, icon 20,
  * title 17 Regular tone, body 15 Regular text/secondary.
  */
 const tones = {
   info: { box: "bg-state-info-bg border-state-info text-state-info", icon: Info },
-  success: { box: "bg-state-success-bg border-state-success text-state-success", icon: CircleCheck },
+  success: { box: "bg-state-success-bg border-state-success text-state-success", icon: CircleCheckBig },
   warning: { box: "bg-state-warning-bg border-state-warning text-state-warning", icon: TriangleAlert },
-  error: { box: "bg-state-error-bg border-state-error text-state-error", icon: CircleX },
+  error: { box: "bg-state-error-bg border-state-error text-state-error", icon: OctagonX },
 } as const;
 
 export type Tone = keyof typeof tones;

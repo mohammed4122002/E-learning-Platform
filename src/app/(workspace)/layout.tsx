@@ -1,27 +1,22 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AppShell } from "@/components/layout/AppShell";
-import { requireUser } from "@/lib/auth";
-import { getShellData } from "@/lib/data/shell";
-import { avatarUrl } from "@/lib/storage";
+import { WorkspaceFrame } from "@/components/layout/WorkspaceFrame";
+import { WORKSPACE_COOKIE, requireUser } from "@/lib/auth";
 
-/** Signed-in workspace frame (trainee sidebar + shared screens: notifications, messages, account). */
+/**
+ * Trainee area + shared screens (notifications, messages, account, checkout).
+ * Shared screens keep the shell of the workspace area the user came from (cookie set by proxy.ts).
+ * Every trainee page checks its own access with requireTrainee().
+ */
 export default async function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
-  if (!user.workspaces.some((w) => w.kind === "trainee")) redirect("/select-workspace");
-  const data = await getShellData(user.id);
-  const verified = user.identityStatus === "verified";
+  const kinds = new Set(user.workspaces.map((w) => w.kind));
+  if (!kinds.has("trainee") && !kinds.has("trainer")) redirect("/select-workspace");
+  const last = (await cookies()).get(WORKSPACE_COOKIE)?.value;
+  const workspace = (last === "trainer" && kinds.has("trainer")) || !kinds.has("trainee") ? "trainer" : "trainee";
   return (
-    <AppShell
-      user={{
-        fullName: user.fullName || user.email,
-        email: user.email,
-        avatarUrl: avatarUrl(user.avatarPath),
-        verified,
-        roleLabel: verified ? "موثَّق · متدرب" : "متدرب",
-      }}
-      data={data}
-    >
+    <WorkspaceFrame user={user} workspace={workspace}>
       {children}
-    </AppShell>
+    </WorkspaceFrame>
   );
 }

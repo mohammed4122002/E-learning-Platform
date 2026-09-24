@@ -23,6 +23,13 @@ export function ReviewCard({ rating, authorName }: { rating: SentRating; authorN
         <RatingStars value={rating.average} />
       </div>
       {rating.comment && <p className="type-small whitespace-pre-line text-text-secondary">{rating.comment}</p>}
+      {rating.reply && (
+        /* Figma TRN-RTG-02 reply box: bg/page, r12, p 12/14, gap 6; title 14 brand, body 14 secondary. */
+        <div className="flex flex-col gap-1.5 rounded-12 bg-bg-page px-3.5 py-3">
+          <p className="type-caption text-text-brand">رد المقدّم — {rating.sourceName}</p>
+          <p className="type-caption whitespace-pre-line text-text-secondary">{rating.reply}</p>
+        </div>
+      )}
       <ul className="flex flex-wrap gap-2" aria-label="محاور التقييم">
         {axes.map((a) => (
           <li key={a.label} className="rounded-full bg-bg-page px-2.5 py-1 type-caption text-text-secondary">

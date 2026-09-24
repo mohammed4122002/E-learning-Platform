@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MapPin, MonitorPlay, Video } from "lucide-react";
+import { MapPin, Tv, Video } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import type { CourseCardView, CourseMode } from "@/types/views";
 
@@ -7,15 +7,16 @@ import type { CourseCardView, CourseMode } from "@/types/views";
 export const MODES: Record<CourseMode, { label: string; icon: typeof MapPin; className: string }> = {
   in_person: { label: "حضورية", icon: MapPin, className: "bg-state-success-bg text-state-success" },
   live_remote: { label: "عن بُعد مباشرة", icon: Video, className: "bg-state-info-bg text-state-info" },
-  recorded: { label: "مسجَّلة", icon: MonitorPlay, className: "bg-bg-brand-tint text-text-brand" },
+  // The TG icon «monitor-play» used by this component draws Lucide «tv».
+  recorded: { label: "مسجَّلة", icon: Tv, className: "bg-bg-brand-tint text-text-brand" },
 };
 
-export function ModeBadge({ mode, className }: { mode: CourseMode; className?: string }) {
+export function ModeBadge({ mode, className, label }: { mode: CourseMode; className?: string; label?: string }) {
   const m = MODES[mode];
   return (
     <span className={`inline-flex items-center gap-[5px] whitespace-nowrap rounded-full px-[9px] py-1 type-caption ${m.className} ${className ?? ""}`}>
       <Glyph icon={m.icon} size={16} />
-      {m.label}
+      {label ?? m.label}
     </span>
   );
 }
@@ -24,7 +25,12 @@ export function ModeBadge({ mode, className }: { mode: CourseMode; className?: s
  * Figma "Media / Image Placeholder" (80:689): brand-tint frame with a 1.5px dashed focus-colour stroke
  * (dash 8 / gap 6, radius 16) and the cropped cover image.
  */
-export function CourseCover({ cover, mode, height = 180, priority = false }: Pick<CourseCardView, "cover" | "mode"> & { height?: number; priority?: boolean }) {
+export function CourseCover({
+  cover,
+  mode,
+  height = 180,
+  priority = false,
+}: Pick<CourseCardView, "cover"> & { mode: CourseMode | null; height?: number; priority?: boolean }) {
   const crop = cover.crop ?? { top: 0, left: 0, width: 100, height: 100 };
   return (
     <div className="relative w-full shrink-0" style={{ height }}>
@@ -45,7 +51,7 @@ export function CourseCover({ cover, mode, height = 180, priority = false }: Pic
       <svg aria-hidden className="pointer-events-none absolute inset-0 size-full" fill="none">
         <rect x="0.75" y="0.75" rx="15.25" style={{ width: "calc(100% - 1.5px)", height: "calc(100% - 1.5px)" }} stroke="var(--color-border-focus)" strokeWidth="1.5" strokeDasharray="8 6" />
       </svg>
-      <ModeBadge mode={mode} className="absolute top-3 right-3" />
+      {mode && <ModeBadge mode={mode} className="absolute top-3 right-3" />}
     </div>
   );
 }

@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useTransition, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Award, Bell, ChevronLeft, CircleAlert, Info, Lightbulb, MessageSquare, PanelRight, Search, Users, Wallet } from "lucide-react";
+import { Award, Bell, ChevronLeft, CircleAlert, Info, Lightbulb, MessageSquare, MessagesSquare, PanelRight, Search, Users, Wallet } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { formatRelative, toArabicDigits } from "@/lib/format";
 import { markAllNotificationsRead, markNotificationRead } from "@/lib/actions/notifications";
 import { useShell } from "./ShellContext";
+import { WORKSPACE_SHELL } from "./nav";
 
 /* Notification kinds → icon + tint (GEN-NOT-01 / Nav / Notifications Popup). */
 export const NOTIFICATION_STYLE: Record<string, { icon: LucideIcon; tint: string }> = {
@@ -134,7 +135,7 @@ type TopBarProps = { title: string; subtitle?: string; actions?: ReactNode };
 
 /** Figma "Nav / Top Bar" (135:1826): 86px, surface, bottom divider, title 20 Medium + 14 caption. */
 export function TopBar({ title, subtitle, actions }: TopBarProps) {
-  const { data, openMenu } = useShell();
+  const { data, openMenu, user } = useShell();
   return (
     <header className="sticky top-0 z-20 flex h-[86px] w-full shrink-0 items-center gap-3 border-b border-border-divider bg-bg-surface px-4 sm:gap-5 sm:px-8">
       <button
@@ -154,13 +155,13 @@ export function TopBar({ title, subtitle, actions }: TopBarProps) {
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         {actions}
         <Link
-          href="/trainee?assistant=1#assistant"
+          href={WORKSPACE_SHELL[user.workspace].assistant}
           className="flex h-11 shrink-0 items-center justify-center gap-2 rounded-12 bg-bg-brand-tint px-3 type-subtitle text-text-brand focus-ring"
         >
           <span className="sr-only whitespace-nowrap sm:not-sr-only">المساعد</span>
           <Glyph icon={Lightbulb} size={20} />
         </Link>
-        <Link href="/trainee/discover?focus=search" aria-label="بحث" className="hidden size-11 items-center justify-center rounded-12 bg-bg-page text-text-primary focus-ring sm:flex">
+        <Link href={WORKSPACE_SHELL[user.workspace].search} aria-label="بحث" className="hidden size-11 items-center justify-center rounded-12 bg-bg-page text-text-primary focus-ring sm:flex">
           <Glyph icon={Search} size={20} />
         </Link>
         <Link
@@ -168,7 +169,7 @@ export function TopBar({ title, subtitle, actions }: TopBarProps) {
           aria-label={`الرسائل${data.unreadMessages ? ` — ${toArabicDigits(data.unreadMessages)} غير مقروءة` : ""}`}
           className="relative flex size-11 items-center justify-center rounded-12 bg-bg-page text-text-primary focus-ring"
         >
-          <Glyph icon={MessageSquare} size={20} />
+          <Glyph icon={MessagesSquare} size={20} />
           <CountBadge count={data.unreadMessages} tone="brand" />
         </Link>
         <NotificationsPopup />

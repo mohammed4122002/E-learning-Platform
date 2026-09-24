@@ -33,8 +33,9 @@ npm run dev                  # http://localhost:3000
 
 ## What is implemented
 
-The trainee workspace end to end, plus shared and public pages. Other workspaces (trainer, provider,
-studio, requester, admin) are the next waves — see [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+The trainee workspace end to end, the trainer workspace (Wave 1), plus shared and public pages. The trainer's
+Wave 2 and the other workspaces (provider, studio, requester, admin) are the next waves — see
+[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
 
 | Area | Routes |
 | --- | --- |
@@ -52,6 +53,10 @@ studio, requester, admin) are the next waves — see [IMPLEMENTATION_PLAN.md](IM
 | Account | `/account`, `/account/security`, `/account/notifications`, `/account/privacy`, `/account/export` |
 | Inbox | `/notifications`, `/messages`, `/messages/[id]`, `/messages/new` |
 | Public | `/help`, `/help/[slug]`, `/terms`, `/verify`, `/verify/[code]` |
+| Trainer · home | `/trainer`, `/trainer/onboarding/[step]`, `/trainer/queue`, `/trainer/journey` (+ `income`), `/trainer/profile` (+ `edit`, `portfolio`), `/trainer/calendar` (+ `new`), `/trainer/help` (+ `[slug]`) |
+| Trainer · programs | `/trainer/programs`, `/new`, `/[id]` (+ `edit/[step]`, `curriculum`, `preview`, `declaration`, `review`, `visibility`, `withdraw`, `new-version`) |
+| Trainer · courses | `/trainer/courses`, `/new`, `/[id]` (+ `setup/[step]`, `content`, `files`, `assignments`, `preview`, `dashboard`, `sales`, `content/publish`) |
+| Trainer · running a course | `/trainer/courses/[id]/trainees`, `seats`, `postpone`, `cancel`, `attendance` (+ `[sessionId]`), `results` (+ `record`, `approve`), `assignments/[aId]/submissions`, `certificates` (+ `issue`, `program`), `ratings`; `/trainer/ratings` (+ `reply`, `review`) |
 
 Every dynamic route has `loading.tsx`, `error.tsx` (Arabic message + retry) and empty states.
 

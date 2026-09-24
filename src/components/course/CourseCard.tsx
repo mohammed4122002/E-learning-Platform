@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { Building2, CalendarDays, Clock, Gauge, Star, User, Users } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Data";
@@ -39,10 +40,22 @@ function Divider() {
 }
 
 /** Figma "Card / Course · Unified" (101:1206) — enrolled ("أكمل دوراتك") and catalog ("مقترحة لك") variants. */
-export function CourseCard({ course, priority }: { course: CourseCardView; priority?: boolean }) {
+export function CourseCard({
+  course,
+  priority,
+  delivery,
+  hideMode,
+}: {
+  course: CourseCardView;
+  priority?: boolean;
+  /** Optional delivery row under the meta (program card preview, TRR-PRG-02). */
+  delivery?: ReactNode;
+  /** Programs have no delivery mode until a course is scheduled. */
+  hideMode?: boolean;
+}) {
   return (
     <article className="relative flex w-full flex-col overflow-hidden rounded-16 bg-bg-card shadow-card inner-stroke">
-      <CourseCover cover={course.cover} mode={course.mode} priority={priority} />
+      <CourseCover cover={course.cover} mode={hideMode ? null : course.mode} priority={priority} />
       <div className="flex w-full flex-1 flex-col items-start gap-3 px-[18px] pt-4 pb-[18px]">
         <div className="flex w-full flex-wrap items-center gap-2">
           {course.status && (
@@ -106,6 +119,7 @@ export function CourseCard({ course, priority }: { course: CourseCardView; prior
                 <span className="type-caption">{course.learners > 0 ? `${formatNumber(course.learners)} متدرب` : "كن أول المسجّلين"}</span>
               </li>
             </ul>
+            {delivery}
             <div className="mt-auto flex w-full flex-col gap-3">
               <Divider />
               <div className="flex w-full items-center justify-between gap-3">
