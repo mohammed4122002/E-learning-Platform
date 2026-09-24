@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { CalendarDays, FileText, RefreshCw, RotateCcw, Search, Target, Users, X, CircleCheck, Hourglass } from "lucide-react";
+import { CalendarDays, FileText, RefreshCw, RotateCcw, Search, Target, Users, X, CircleCheckBig, Hourglass } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { SortSelect } from "@/components/trainer-courses/SortSelect";
 import {
-  DiscountsCard, EmptySales, NoResults, PayoutCard, RefundsCard, SalesError, SalesTable, Tile, money, netOfSale, saleState, soldAt,
+  DiscountsCard, EmptySales, NoResults,
+  NoResultsTotals, PayoutCard, RefundsCard, SalesError, SalesTable, Tile, money, netOfSale, saleState, soldAt,
 } from "@/components/trainer-courses/sales/SalesView";
 import { ButtonLink } from "@/components/ui/Button";
 import { ChipLink } from "@/components/ui/Chip";
@@ -161,7 +162,7 @@ export default async function CourseSalesPage({ params, searchParams }: PageProp
         {!noResults && (
           <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-5">
             <Tile icon={Users} label="مشتريًا نشطًا" value={toArabicDigits(active.length)} sub={`+${toArabicDigits(monthCount)} هذا الشهر`} subTone="text-state-success" />
-            <Tile icon={CircleCheck} label="صافي إيرادك" value={money(totals.net)} sub={`${money(available)} متاح للسحب`} subTone="text-state-success" iconTone="bg-state-success-bg text-state-success" />
+            <Tile icon={CircleCheckBig} label="صافي إيرادك" value={money(totals.net)} sub={`${money(available)} متاح للسحب`} subTone="text-state-success" iconTone="bg-state-success-bg text-state-success" />
             <Tile
               icon={RotateCcw}
               label={totals.refundCount ? pluralAr(totals.refundCount, ["استرداد واحد", "استردادان", "استردادات", "استردادًا"]) : "لا استردادات"}
@@ -218,7 +219,6 @@ export default async function CourseSalesPage({ params, searchParams }: PageProp
                 clearAll={base}
                 clearSearch={q && filter !== "all" ? href({ q: undefined, page: undefined }) : null}
                 tries={tries}
-                totals={{ gross: totals.gross, net: totals.net, count: all.length }}
               />
             ) : (
               <section className="flex flex-col gap-5 rounded-22 border border-border-default bg-bg-card p-4 shadow-card sm:p-7">
@@ -234,13 +234,17 @@ export default async function CourseSalesPage({ params, searchParams }: PageProp
               </section>
             )}
           </div>
-          {!noResults && (
-            <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-[400px]">
-              <PayoutCard available={available} held={held} />
-              <DiscountsCard rows={all} />
-              <RefundsCard rows={all} />
-            </aside>
-          )}
+          <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-[400px]">
+            {noResults ? (
+              <NoResultsTotals totals={{ gross: totals.gross, net: totals.net, count: all.length }} />
+            ) : (
+              <>
+                <PayoutCard available={available} held={held} />
+                <DiscountsCard rows={all} />
+                <RefundsCard rows={all} />
+              </>
+            )}
+          </aside>
         </div>
       </PageBody>
     </>

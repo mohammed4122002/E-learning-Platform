@@ -25,21 +25,23 @@ import { pluralAr, toArabicDigits } from "@/lib/format";
 export const metadata: Metadata = { title: "دوراتي", description: "التنفيذ المجدول لبرامجك المنشورة" };
 
 const FILTERS = [
+  // Visual order in 271:4102 (right → left): الكل · ملغاة · منتهية · اكتملت المقاعد · قادمة · جارية.
   { key: "all", label: "الكل" },
-  { key: "running", label: "جارية" },
-  { key: "upcoming", label: "قادمة" },
-  { key: "full", label: "اكتملت المقاعد" },
-  { key: "ended", label: "منتهية" },
   { key: "cancelled", label: "ملغاة" },
+  { key: "ended", label: "منتهية" },
+  { key: "full", label: "اكتملت المقاعد" },
+  { key: "upcoming", label: "قادمة" },
+  { key: "running", label: "جارية" },
 ] as const;
 
+// Visual order in 327:12157 (right → left): هذا الأسبوع · اكتملت المقاعد · قادمة · جارية · تحتاج رصد حضور · الكل.
 const BULK_FILTERS = [
-  { key: "all", label: "الكل" },
-  { key: "attendance", label: "تحتاج رصد حضور" },
-  { key: "running", label: "جارية" },
-  { key: "upcoming", label: "قادمة" },
-  { key: "full", label: "اكتملت المقاعد" },
   { key: "week", label: "هذا الأسبوع" },
+  { key: "full", label: "اكتملت المقاعد" },
+  { key: "upcoming", label: "قادمة" },
+  { key: "running", label: "جارية" },
+  { key: "attendance", label: "تحتاج رصد حضور" },
+  { key: "all", label: "الكل" },
 ] as const;
 
 const PAGE_SIZE = 10;
@@ -129,39 +131,40 @@ export default async function TrainerCoursesPage({ searchParams }: PageProps<"/t
       <>
         <TopBar title="دوراتي" subtitle="تحديد وإجراء جماعي" />
         <PageBody className="gap-6">
-          <div className="flex flex-col gap-1.5">
-            <h2 className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">دوراتي</h2>
-            <p className="type-body-lg text-text-secondary">حدّد دورات من {toArabicDigits(items.length)}. نفّذ إجراءً واحدًا عليها جميعًا بدل فتح كل دورة على حدة.</p>
-          </div>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <form action="/trainer/courses" className="relative flex-1" role="search">
-              <input type="hidden" name="view" value="select" />
-              <label htmlFor="bulk-q" className="sr-only">
-                ابحث في الدورات
-              </label>
-              <input
-                id="bulk-q"
-                name="q"
-                defaultValue={q}
-                placeholder={`ابحث في ${toArabicDigits(items.length)} دورة بالاسم أو البرنامج أو المكان`}
-                className="h-12 w-full rounded-12 border-[1.5px] border-border-default bg-bg-surface ps-4 pe-11 type-body text-text-primary outline-none placeholder:text-text-muted focus:border-2 focus:border-action-primary"
-              />
-              <Glyph icon={Search} size={16} className="pointer-events-none absolute end-4 top-4 text-text-secondary" />
-            </form>
-            <SortSelect value={sort} />
-          </div>
-          <nav aria-label="تصفية الدورات" className="flex flex-wrap gap-2.5">
-            {BULK_FILTERS.map((f) => (
-              <ChipLink key={f.key} href={href({ status: f.key === "all" ? undefined : f.key, page: undefined })} selected={filter === f.key}>
-                {f.label} · {toArabicDigits(searched.filter((c) => matches(c, f.key)).length)}
-              </ChipLink>
-            ))}
-          </nav>
-          {rows.length === 0 ? (
-            <p className="rounded-16 border-[1.5px] border-border-divider bg-bg-page px-6 py-10 text-center type-body text-text-secondary">لا دورات تطابق هذا التصفية.</p>
-          ) : (
-            <BulkCourseList key={`${filter}-${q}-${current}-${sort}`} rows={rows} total={items.length} />
-          )}
+          <BulkCourseList
+            key={`${filter}-${q}-${current}-${sort}`}
+            rows={rows}
+            total={items.length}
+            empty={<p className="rounded-16 border-[1.5px] border-border-divider bg-bg-page px-6 py-10 text-center type-body text-text-secondary">لا دورات تطابق هذا التصفية.</p>}
+            controls={
+              <>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                  <form action="/trainer/courses" className="relative flex-1" role="search">
+                    <input type="hidden" name="view" value="select" />
+                    <label htmlFor="bulk-q" className="sr-only">
+                      ابحث في الدورات
+                    </label>
+                    <input
+                      id="bulk-q"
+                      name="q"
+                      defaultValue={q}
+                      placeholder={`ابحث في ${toArabicDigits(items.length)} دورة بالاسم أو البرنامج أو المكان`}
+                      className="h-12 w-full rounded-12 border-[1.5px] border-border-default bg-bg-surface ps-4 pe-11 type-body text-text-primary outline-none placeholder:text-text-muted focus:border-2 focus:border-action-primary"
+                    />
+                    <Glyph icon={Search} size={16} className="pointer-events-none absolute end-4 top-4 text-text-secondary" />
+                  </form>
+                  <SortSelect value={sort} />
+                </div>
+                <nav aria-label="تصفية الدورات" className="flex flex-wrap gap-2.5">
+                  {BULK_FILTERS.map((f) => (
+                    <ChipLink key={f.key} href={href({ status: f.key === "all" ? undefined : f.key, page: undefined })} selected={filter === f.key}>
+                      {f.label} · {toArabicDigits(searched.filter((c) => matches(c, f.key)).length)}
+                    </ChipLink>
+                  ))}
+                </nav>
+              </>
+            }
+          />
           <div className="flex justify-center">
             <Pagination page={current} pageCount={pageCount} hrefFor={(p) => href({ page: String(p) })} />
           </div>

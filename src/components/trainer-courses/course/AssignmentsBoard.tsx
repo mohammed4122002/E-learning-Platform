@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { CircleCheck, FileCheck, Target, Upload } from "lucide-react";
+import { CircleCheckBig, BadgeCheck, Target, Upload } from "lucide-react";
 import { Avatar } from "@/components/ui/Data";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Input, Select, Textarea } from "@/components/ui/Field";
@@ -57,8 +57,8 @@ export function AssignmentsList({
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">واجبات الدورة</h2>
         <span className="inline-flex items-center gap-[7px] rounded-full bg-bg-brand-tint px-3.5 py-[9px] type-subtitle text-text-brand">
-          <Glyph icon={FileCheck} size={20} />
           {pluralAr(items.length, ["واجب واحد", "واجبان", "واجبات", "واجبًا"])} · {toArabicDigits(weight)}٪ من الدرجة
+          <Glyph icon={BadgeCheck} size={20} />
         </span>
       </div>
       {items.length === 0 && <p className="rounded-16 bg-bg-page px-5 py-6 text-center type-body text-text-secondary">لا واجبات في هذه الدورة بعد.</p>}
@@ -84,7 +84,7 @@ export function AssignmentsList({
               )}
             </div>
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2 rounded-12 bg-bg-surface px-3.5 py-3">
-              <Meta icon={CircleCheck} label="الحالة:" value={st.label} tone={st.tone} />
+              <Meta icon={CircleCheckBig} label="الحالة:" value={st.label} tone={st.tone} />
               <Meta icon={Target} label="الوزن:" value={a.weightPercent !== null ? `${toArabicDigits(a.weightPercent)}٪` : "—"} />
               <Meta icon={Upload} label="سُلّم:" value={`${toArabicDigits(a.submitted)} من ${toArabicDigits(trainees)}`} />
             </div>

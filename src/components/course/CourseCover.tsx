@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MapPin, MonitorPlay, Video } from "lucide-react";
+import { MapPin, Tv, Video } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import type { CourseCardView, CourseMode } from "@/types/views";
 
@@ -7,7 +7,8 @@ import type { CourseCardView, CourseMode } from "@/types/views";
 export const MODES: Record<CourseMode, { label: string; icon: typeof MapPin; className: string }> = {
   in_person: { label: "حضورية", icon: MapPin, className: "bg-state-success-bg text-state-success" },
   live_remote: { label: "عن بُعد مباشرة", icon: Video, className: "bg-state-info-bg text-state-info" },
-  recorded: { label: "مسجَّلة", icon: MonitorPlay, className: "bg-bg-brand-tint text-text-brand" },
+  // The TG icon «monitor-play» used by this component draws Lucide «tv».
+  recorded: { label: "مسجَّلة", icon: Tv, className: "bg-bg-brand-tint text-text-brand" },
 };
 
 export function ModeBadge({ mode, className, label }: { mode: CourseMode; className?: string; label?: string }) {

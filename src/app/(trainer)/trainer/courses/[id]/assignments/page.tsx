@@ -42,8 +42,9 @@ export default async function CourseAssignmentsPage({ params }: PageProps<"/trai
           <p className="type-caption text-state-warning">موروثة من البرنامج — تُعدَّل من البرنامج لا من الدورة.</p>
           {method.map((m) => (
             <p key={m.label} className="flex items-center gap-3 rounded-12 bg-bg-page px-3.5 py-[13px]">
-              <span className="min-w-0 flex-1 type-body-lg text-text-secondary">{m.label}</span>
+              {/* 335:13353 — the weight leads the row, its label follows. */}
               <span className={`type-h3 ${m.tone}`}>{m.value}</span>
+              <span className="min-w-0 flex-1 type-body-lg text-text-secondary">{m.label}</span>
             </p>
           ))}
         </section>

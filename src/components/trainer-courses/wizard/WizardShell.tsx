@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { BookOpen, ChevronLeft, CircleAlert, CircleCheck, LoaderCircle, TriangleAlert, X } from "lucide-react";
+import { BookOpen, ChevronLeft, CircleAlert, CircleCheckBig, LoaderCircle, TriangleAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { toArabicDigits } from "@/lib/format";
@@ -76,7 +76,7 @@ export function SaveStatus() {
   return (
     <div role="status" aria-live="polite" className="flex w-full items-center gap-3 rounded-12 bg-state-success-bg px-[18px] pt-[15px] pb-4 lg:w-[620px]">
       <span className="flex size-10 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-state-success">
-        <Glyph icon={status === "saving" ? LoaderCircle : CircleCheck} size={20} className={status === "saving" ? "animate-[tg-spin_0.9s_linear_infinite]" : ""} />
+        <Glyph icon={status === "saving" ? LoaderCircle : CircleCheckBig} size={20} className={status === "saving" ? "animate-[tg-spin_0.9s_linear_infinite]" : ""} />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
         <p className="type-subtitle text-state-success">{status === "saving" ? "جارٍ حفظ المسودة…" : "حُفظت المسودة تلقائيًا"}</p>
@@ -114,10 +114,11 @@ export function CourseStepper({ current, title = "دورة جديدة", hrefs }:
   return (
     <section aria-label="خطوات إنشاء الدورة" className="flex w-full flex-col gap-5 rounded-22 border border-border-default bg-bg-card px-4 pt-[26px] pb-7 drop-shadow-milestone sm:px-8">
       <div className="flex items-center gap-3">
-        <h2 className="min-w-0 flex-1 type-h3 text-text-primary">{title}</h2>
+        {/* 389:3941 — the step counter sits at the start, the title right after it. */}
         <p className="type-subtitle whitespace-nowrap text-text-brand">
           الخطوة {toArabicDigits(current)} من {toArabicDigits(STEP_LABELS.length)}
         </p>
+        <h2 className="min-w-0 flex-1 type-h3 text-text-primary">{title}</h2>
       </div>
       <ol className="flex w-full items-start">
         {STEP_LABELS.map((label, i) => {
@@ -134,7 +135,7 @@ export function CourseStepper({ current, title = "دورة جديدة", hrefs }:
                     : "border-2 border-border-default bg-bg-page text-text-disabled"
               }`}
             >
-              {state === "done" ? <Glyph icon={CircleCheck} size={20} /> : <span className="type-h3">{toArabicDigits(n)}</span>}
+              {state === "done" ? <Glyph icon={CircleCheckBig} size={20} /> : <span className="type-h3">{toArabicDigits(n)}</span>}
             </span>
           );
           const tone = state === "done" ? "text-state-success" : state === "current" ? "text-text-brand" : "text-text-disabled";
@@ -171,7 +172,7 @@ export function SourceProgramLock({ title, version, latest, changeHref }: { titl
           <h2 className="min-w-0 flex-1 type-title text-text-primary">البرنامج المصدر: {title}</h2>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-[11px] py-1.5 type-caption text-text-brand">
             <span dir="ltr">{version}</span> · {latest ? "الأحدث" : "مجمَّدة"}
-            <Glyph icon={CircleCheck} size={16} />
+            <Glyph icon={CircleCheckBig} size={16} />
           </span>
         </div>
         <p className="type-body text-text-secondary">المحتوى والأهداف والمحاور تُورَّث من البرنامج · تُجمَّد لحظة النشر ولا تتغير بعدها.</p>

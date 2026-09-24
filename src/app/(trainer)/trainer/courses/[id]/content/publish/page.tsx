@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Bell, CircleAlert, CircleCheck, FileText, Hourglass, ListChecks, Plus, ShieldCheck, Users, Video } from "lucide-react";
+import { BellRing, CircleAlert, CircleCheckBig, FileText, Hourglass, ListChecks, Plus, ShieldCheck, Users, Video } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { PublishNewContentCard } from "@/components/trainer-courses/content/PublishNewContent";
 import { Glyph } from "@/components/ui/Icon";
@@ -125,12 +125,12 @@ export default async function PublishNewContentPage({ params }: PageProps<"/trai
               </section>
               <PublishNewContentCard courseId={id} lessonIds={ready.map((l) => l.id)} affected={inProgress.length} />
             </div>
-            <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-[460px]">
+            <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-[530px]">
               <section className="flex flex-col gap-4 rounded-22 border border-border-default bg-bg-card p-5 shadow-card sm:p-7">
                 <div className="flex flex-wrap items-center gap-3">
                   <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">جاهز للنشر</h2>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-state-success-bg px-3 py-1.5 type-small text-state-success">
-                    <Glyph icon={CircleCheck} size={16} />
+                    <Glyph icon={CircleCheckBig} size={16} />
                     {pluralAr(ready.length, ["درس واحد", "درسان", "دروس", "درسًا"])}
                     {seconds > 0 && ` · ${formatDuration(seconds)}`}
                   </span>
@@ -146,7 +146,7 @@ export default async function PublishNewContentPage({ params }: PageProps<"/trai
                     </div>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-state-success-bg px-2.5 py-1 type-caption text-state-success">
                       جاهز
-                      <Glyph icon={CircleCheck} size={16} />
+                      <Glyph icon={CircleCheckBig} size={16} />
                     </span>
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-state-error-bg text-state-error">
                       <Glyph icon={KIND[l.kind].icon} size={20} />
@@ -180,7 +180,7 @@ export default async function PublishNewContentPage({ params }: PageProps<"/trai
                   title={`${pluralAr(finished.length, ["متدرب واحد أكمل", "متدربان أكملا", "أكملوا", "أكملوا"])}${certified ? " وحصلوا على شهاداتهم" : ""}`}
                   text="شهاداتهم محفوظة بتاريخ إصدارها ولا يُعاد احتسابها. يصلهم إشعار بالمحتوى الجديد فقط."
                 />
-                <ImpactRow icon={Bell} tone="text-state-info" title="إشعار للجميع" text="«أضاف المدرب محتوى جديدًا» — في المنصة والبريد." />
+                <ImpactRow icon={BellRing} tone="text-state-info" title="إشعار للجميع" text="«أضاف المدرب محتوى جديدًا» — في المنصة والبريد." />
                 <p className="flex items-start gap-3 rounded-16 bg-bg-surface px-4 py-4 type-body text-state-warning">
                   <Glyph icon={Hourglass} size={20} className="mt-1" />
                   <span className="flex-1">هذه قاعدة ثابتة في المنصة — نسبة الإكمال تعكس ما ينبغي تعلّمه. والشهادة الصادرة حق مكتسب لا يُسحب.</span>

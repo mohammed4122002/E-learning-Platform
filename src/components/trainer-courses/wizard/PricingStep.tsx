@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Award, CircleCheck, CircleX, Download, Info, Lock } from "lucide-react";
+import { Award, CircleCheckBig, CircleX, Download, Info, Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Field";
 import { Glyph } from "@/components/ui/Icon";
@@ -58,25 +58,26 @@ export function HoursCard({ hours, onChange, actual, actualLabel, readOnly = fal
       <h2 className="type-title text-text-primary">{readOnly ? "الساعات والمدة" : "الساعات التدريبية المعتمدة"}</h2>
       {!readOnly && (
         <div className="flex items-center self-start">
+          {/* 4227:315 — «−» on the start side, «+» on the end side. */}
           <button
             type="button"
-            aria-label="زِد ٥ ساعات"
-            onClick={() => onChange?.(Math.min(1000, hours + 5))}
-            className="flex h-[54px] w-[55px] cursor-pointer items-center justify-center rounded-s-[10px] border border-border-default bg-bg-page text-[22px] font-bold text-text-brand focus-ring"
+            aria-label="أنقص ٥ ساعات"
+            disabled={hours <= 5}
+            onClick={() => onChange?.(Math.max(5, hours - 5))}
+            className="flex h-[54px] w-[56px] cursor-pointer items-center justify-center rounded-s-[10px] border border-border-default bg-bg-page text-[22px] font-bold text-text-brand focus-ring disabled:opacity-40"
           >
-            +
+            −
           </button>
           <output aria-live="polite" className="flex h-[52px] min-w-[142px] items-center justify-center border-y border-border-default bg-bg-surface px-9 text-[20px] font-bold text-text-primary">
             {pluralAr(hours, ["ساعة واحدة", "ساعتان", "ساعات", "ساعة"])}
           </output>
           <button
             type="button"
-            aria-label="أنقص ٥ ساعات"
-            disabled={hours <= 5}
-            onClick={() => onChange?.(Math.max(5, hours - 5))}
-            className="flex h-[54px] w-[56px] cursor-pointer items-center justify-center rounded-e-[10px] border border-border-default bg-bg-page text-[22px] font-bold text-text-brand focus-ring disabled:opacity-40"
+            aria-label="زِد ٥ ساعات"
+            onClick={() => onChange?.(Math.min(1000, hours + 5))}
+            className="flex h-[54px] w-[55px] cursor-pointer items-center justify-center rounded-e-[10px] border border-border-default bg-bg-page text-[22px] font-bold text-text-brand focus-ring"
           >
-            −
+            +
           </button>
         </div>
       )}
@@ -97,9 +98,10 @@ export function HoursCard({ hours, onChange, actual, actualLabel, readOnly = fal
 
 function Money({ label, value, tone = "text-text-primary", big = false }: { label: string; value: string; tone?: string; big?: boolean }) {
   return (
+    // 394:4005 / 4227:2 — the amount leads the row (start side), its label follows.
     <div className="flex items-center gap-3">
-      <span className={`min-w-0 flex-1 ${big ? "type-title text-text-secondary" : "type-body text-text-secondary"}`}>{label}</span>
       <span className={`whitespace-nowrap ${big ? "type-h3" : "type-subtitle"} ${tone}`}>{value}</span>
+      <span className={`min-w-0 flex-1 ${big ? "type-title text-text-secondary" : "type-body text-text-secondary"}`}>{label}</span>
     </div>
   );
 }
@@ -127,9 +129,9 @@ export function RecordedPricingCard({
   return (
     <section className={`flex flex-col gap-5 rounded-22 bg-bg-card px-7 pt-[26px] pb-7 drop-shadow-milestone ${locked ? "border-[1.5px] border-state-info" : "border border-border-default"}`}>
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">سعر الدورة المسجَّلة</h2>
+        <h2 className="min-w-0 flex-1 type-h2 text-text-primary">سعر الدورة المسجَّلة</h2>
         {locked && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-state-info-bg px-2.5 py-1 type-caption text-state-info">
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-state-info-bg px-2.5 py-1 type-caption text-state-info">
             مقفل — بيعت {pluralAr(buyers, ["لمشترٍ واحد", "لمشتريَين", "لمشترين", "مشتريًا"])}
             <Glyph icon={Lock} size={16} />
           </span>
@@ -260,7 +262,7 @@ export function PricingStep(p: Props) {
 
   if (recorded) {
     const access: { key: keyof Props["flags"]; field: "lifetime_access" | "allow_downloads" | "certificate_on_completion"; title: string; hint: string; icon: LucideIcon }[] = [
-      { key: "lifetimeAccess", field: "lifetime_access", title: "وصول دائم", hint: "المشتري يشاهد متى شاء بلا انتهاء صلاحية", icon: CircleCheck },
+      { key: "lifetimeAccess", field: "lifetime_access", title: "وصول دائم", hint: "المشتري يشاهد متى شاء بلا انتهاء صلاحية", icon: CircleCheckBig },
       { key: "allowDownloads", field: "allow_downloads", title: "السماح بتنزيل الملفات", hint: "الفيديوهات لا تُنزَّل — الملفات فقط", icon: Download },
       { key: "certificateOnCompletion", field: "certificate_on_completion", title: "شهادة عند الإكمال", hint: "تصدر آليًا بعد مشاهدة ١٠٠٪ من الدروس", icon: Award },
     ];

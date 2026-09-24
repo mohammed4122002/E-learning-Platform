@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
-import { CircleCheck, Plus, Trash2, Upload, X } from "lucide-react";
+import { CircleCheckBig, Plus, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Field";
 import { Toggle } from "@/components/ui/Choice";
@@ -107,7 +107,7 @@ export function LessonEditor({ courseId, lesson, onClose }: { courseId: string; 
             <h3 className="type-subtitle text-text-primary">{lesson.kind === "video" ? "فيديو الدرس" : "ملف الدرس"}</h3>
             {lesson.mediaPath ? (
               <p className="flex flex-wrap items-center gap-2 type-small text-state-success">
-                <Glyph icon={CircleCheck} size={16} />
+                <Glyph icon={CircleCheckBig} size={16} />
                 مرفوع · {formatSize(lesson.mediaSize ?? 0)}
                 {lesson.kind === "video" && lesson.durationSeconds > 0 && ` · ${formatClock(lesson.durationSeconds)}`}
                 <button

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTransition, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Award, Bell, ChevronLeft, CircleAlert, Info, Lightbulb, MessageSquare, PanelRight, Search, Users, Wallet } from "lucide-react";
+import { Award, Bell, ChevronLeft, CircleAlert, Info, Lightbulb, MessageSquare, MessagesSquare, PanelRight, Search, Users, Wallet } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { formatRelative, toArabicDigits } from "@/lib/format";
@@ -169,7 +169,7 @@ export function TopBar({ title, subtitle, actions }: TopBarProps) {
           aria-label={`الرسائل${data.unreadMessages ? ` — ${toArabicDigits(data.unreadMessages)} غير مقروءة` : ""}`}
           className="relative flex size-11 items-center justify-center rounded-12 bg-bg-page text-text-primary focus-ring"
         >
-          <Glyph icon={MessageSquare} size={20} />
+          <Glyph icon={MessagesSquare} size={20} />
           <CountBadge count={data.unreadMessages} tone="brand" />
         </Link>
         <NotificationsPopup />

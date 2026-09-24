@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Banknote, CalendarDays, CircleCheck, Clock, Lock, MapPin, Pencil, RefreshCw, Users } from "lucide-react";
+import { CalendarDays, CircleCheckBig, Clock, Hourglass, Lock, MapPin, RefreshCw, SquarePen, Users } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import { PLATFORM_LABEL } from "@/components/trainer-courses/course/LiveOverviewIntro";
 import { OverviewActions } from "@/components/trainer-courses/course/OverviewActions";
@@ -82,7 +82,7 @@ export default async function CourseOverviewPage({ params }: PageProps<"/trainer
             <ul className="flex flex-col gap-[18px]">
               {objectives.map((o) => (
                 <li key={o} className="flex items-center gap-3.5 rounded-16 bg-state-success-bg px-[18px] py-[15px]">
-                  <Glyph icon={CircleCheck} size={20} className="text-state-success" />
+                  <Glyph icon={CircleCheckBig} size={20} className="text-state-success" />
                   <span className="flex-1 type-body-lg text-text-primary">{o}</span>
                 </li>
               ))}
@@ -93,8 +93,8 @@ export default async function CourseOverviewPage({ params }: PageProps<"/trainer
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="min-w-[12rem] flex-1 type-h2 text-text-primary">بيانات هذه الدورة</h2>
             <span className="inline-flex items-center gap-[7px] rounded-full bg-state-success-bg px-3.5 py-[9px] type-subtitle text-state-success">
-              <Glyph icon={Pencil} size={20} />
               قابلة للتعديل
+              <Glyph icon={SquarePen} size={20} />
             </span>
           </div>
           <DataRow icon={CalendarDays} label="التواريخ" value={dateRange(course.startsAt, course.endsAt)} />
@@ -109,9 +109,9 @@ export default async function CourseOverviewPage({ params }: PageProps<"/trainer
             label="المقاعد"
             value={course.capacity ? `${toArabicDigits(course.capacity)} مقعدًا${course.minCapacity ? ` · الحد الأدنى ${toArabicDigits(course.minCapacity)}` : ""}` : "لم تُحدَّد"}
           />
-          <DataRow icon={Banknote} label="السعر" value={!course.pricingSet ? "لم يُحدَّد" : course.price === 0 ? "مجانية" : `${formatPrice(course.price, course.currency)} للمتدرب`} />
+          <DataRow icon={Hourglass} label="السعر" value={!course.pricingSet ? "لم يُحدَّد" : course.price === 0 ? "مجانية" : `${formatPrice(course.price, course.currency)} للمتدرب`} />
           <DataRow icon={RefreshCw} label="سياسة الاسترداد" value="السياسة الموحّدة للمنصة" />
-          <DataRow icon={CircleCheck} label="شرط الاجتياز" value={pass} />
+          <DataRow icon={CircleCheckBig} label="شرط الاجتياز" value={pass} />
         </Card>
       </div>
       <aside className="flex w-full shrink-0 flex-col gap-5 lg:w-[400px]">

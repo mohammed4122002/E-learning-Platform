@@ -114,7 +114,7 @@ export default async function CourseSetupPage({ params }: PageProps<"/trainer/co
     description = draft ? (blockers.length ? "أكمل الشروط الناقصة قبل النشر." : "راجع كل شيء قبل النشر — بعده تصبح متاحة للشراء.") : "دورتك منشورة ومتاحة للشراء.";
     const previews = content.lessons.filter((l) => l.isPreview);
     const rows: SummaryRow[] = [
-      { icon: "mode", label: "النمط", value: course.mode === "recorded" ? "دورة مسجَّلة · بيع مفتوح دائم" : MODE_TITLES[course.mode] },
+      { icon: course.mode === "recorded" ? "mode" : `mode_${course.mode}`, label: "النمط", value: course.mode === "recorded" ? "دورة مسجَّلة · بيع مفتوح دائم" : MODE_TITLES[course.mode] },
       { icon: "program", label: "البرنامج المصدر", value: `${course.program.title} · ${versionLabel(course.program.version)} مجمَّدة` },
       course.mode === "recorded"
         ? { icon: "content", label: "المحتوى", value: `${pluralAr(content.totals.modules, ["وحدة واحدة", "وحدتان", "وحدات", "وحدة"])} · ${pluralAr(content.totals.lessons, ["درس واحد", "درسان", "دروس", "درسًا"])} · ${formatDuration(content.totals.seconds)}` }

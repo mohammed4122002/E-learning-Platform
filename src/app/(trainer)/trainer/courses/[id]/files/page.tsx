@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Bell, CircleAlert, Info, Lock, Users } from "lucide-react";
+import { BellRing, CircleAlert, Info, Lock, Users } from "lucide-react";
 import { CourseFiles, InheritedMaterials } from "@/components/trainer-courses/course/CourseFilesBoard";
 import { Glyph } from "@/components/ui/Icon";
 import { requireTrainer } from "@/lib/auth";
@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "ملفات الدورة", descriptio
 const WHO: { icon: LucideIcon; text: string; tone: string }[] = [
   { icon: Users, text: "المسجّلون في هذه الدورة فقط", tone: "text-state-success" },
   { icon: Lock, text: "لا تظهر لمتدربي دوراتك الأخرى", tone: "text-state-success" },
-  { icon: Bell, text: "يصلهم إشعار عند نشر ملف جديد", tone: "text-text-brand" },
+  { icon: BellRing, text: "يصلهم إشعار عند نشر ملف جديد", tone: "text-text-brand" },
   { icon: CircleAlert, text: "المسودة لا يراها أحد حتى تنشرها", tone: "text-state-warning" },
 ];
 

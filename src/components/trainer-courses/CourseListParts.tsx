@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, CalendarDays, ChevronLeft, CircleAlert, CircleCheck, Info, Lightbulb, MapPin, Play, TrendingUp, Users } from "lucide-react";
+import { BookOpen, CalendarDays, ChevronLeft, CircleAlert, CircleCheckBig, Info, Lightbulb, MapPin, SquareActivity, TrendingUp, Users } from "lucide-react";
 import { ModeBadge } from "@/components/course/CourseCover";
 import { InfoPanel, type InfoRow } from "@/components/trainer-courses/course/InfoPanel";
 import { ButtonLink } from "@/components/ui/Button";
@@ -12,10 +12,10 @@ import { BLOCKER_WAITING, daysUntil, riyadhParts, scheduleLabel } from "@/lib/tr
 /* TRR-CRS-01 · دوراتي (271:3915): stat tiles, course cards, side panels, live-ready card (4236:2) and the
    empty state (313:10290). */
 
-export function StatTile({ icon, value, label }: { icon: LucideIcon; value: string; label: string }) {
+export function StatTile({ icon, value, label, tone = "text-text-brand" }: { icon: LucideIcon; value: string; label: string; tone?: string }) {
   return (
     <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5 rounded-16 border border-border-default bg-bg-card pt-5 pb-[22px] shadow-card">
-      <span className="flex size-11 items-center justify-center rounded-12 bg-bg-brand-tint text-text-brand">
+      <span className={`flex size-11 items-center justify-center rounded-12 bg-bg-brand-tint ${tone}`}>
         <Glyph icon={icon} size={20} />
       </span>
       <p className="type-h2 text-center text-text-primary">{value}</p>
@@ -27,19 +27,19 @@ export function StatTile({ icon, value, label }: { icon: LucideIcon; value: stri
 export function StatsRow({ stats }: { stats: TrainerCoursesList["stats"] }) {
   return (
     <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
-      <StatTile icon={Play} value={toArabicDigits(stats.running)} label="جارية الآن" />
+      <StatTile icon={SquareActivity} value={toArabicDigits(stats.running)} label="جارية الآن" tone="text-state-success" />
       <StatTile icon={CalendarDays} value={toArabicDigits(stats.upcoming)} label="قادمة" />
-      <StatTile icon={Users} value={formatNumber(stats.activeTrainees)} label="متدربًا نشطًا" />
-      <StatTile icon={TrendingUp} value={formatPercent(stats.occupancy)} label="متوسط الإشغال" />
+      <StatTile icon={Users} value={formatNumber(stats.activeTrainees)} label="متدربًا نشطًا" tone="text-state-info" />
+      <StatTile icon={TrendingUp} value={formatPercent(stats.occupancy)} label="متوسط الإشغال" tone="text-state-warning" />
     </div>
   );
 }
 
 const STATE_STYLE = {
-  running: { label: "جارية", icon: Play, pill: "bg-state-success-bg text-state-success", tile: "bg-state-success-bg text-state-success" },
+  running: { label: "جارية", icon: SquareActivity, pill: "bg-state-success-bg text-state-success", tile: "bg-state-success-bg text-state-success" },
   full: { label: "اكتملت المقاعد", icon: Users, pill: "bg-state-warning-bg text-state-warning", tile: "bg-state-warning-bg text-state-warning" },
   upcoming: { label: "قادمة", icon: CalendarDays, pill: "bg-bg-brand-tint text-text-brand", tile: "bg-bg-brand-tint text-text-brand" },
-  ended: { label: "منتهية", icon: CircleCheck, pill: "bg-bg-disabled text-text-secondary", tile: "bg-bg-page text-text-secondary" },
+  ended: { label: "منتهية", icon: CircleCheckBig, pill: "bg-bg-disabled text-text-secondary", tile: "bg-bg-page text-text-secondary" },
   cancelled: { label: "ملغاة", icon: CircleAlert, pill: "bg-state-error-bg text-state-error", tile: "bg-state-error-bg text-state-error" },
 } as const;
 
@@ -184,7 +184,7 @@ export function SidePanels({ availability }: { availability: TrainerCoursesList[
           { icon: CalendarDays, title: "الدورة", tone: "text-state-success", text: "تنفيذ مجدول للبرنامج: تاريخ ومكان ومقاعد وسعر فعلي. تنشئ منه ما شئت." },
         ].map((b) => (
           <div key={b.title} className="flex items-start gap-2.5 rounded-12 bg-bg-page px-3 py-[11px]">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-text-brand">
+            <span className={`flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface ${b.tone}`}>
               <Glyph icon={b.icon} size={20} />
             </span>
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -260,33 +260,33 @@ export function EmptyCourses({ program }: { program: { id: string; title: string
             ? `برنامج «${program.title}» معتمد وجاهز. حدّد التاريخ والمكان والمقاعد ليبدأ المتدربون بالتسجيل — المحتوى موروث ولا تعيد كتابته.`
             : "الدورة هي التنفيذ المجدول لبرنامج منشور — بتاريخ ومكان ومقاعد. انشر برنامجك أولًا ثم أنشئ منه دوراتك."}
         </p>
-        <div className="flex w-full flex-col-reverse items-center justify-center gap-4 sm:flex-row">
-          <ButtonLink href="/trainer/programs" variant="outline" size="l" className="w-full sm:w-[240px]">
-            اعرض برامجي
-          </ButtonLink>
+        <div className="flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
           {program && (
             <ButtonLink href={`/trainer/courses/new?program=${program.id}`} size="l" className="w-full sm:w-[320px]">
               أنشئ دورة من هذا البرنامج
             </ButtonLink>
           )}
+          <ButtonLink href="/trainer/programs" variant="outline" size="l" className="w-full sm:w-[240px]">
+            اعرض برامجي
+          </ButtonLink>
         </div>
       </section>
       <section className="flex flex-col gap-[18px] rounded-22 border border-border-default bg-bg-card p-[26px] shadow-card">
         <h2 className="type-h2 text-text-primary">كيف تسير الخطوات؟</h2>
-        <ol className="flex flex-col items-stretch sm:flex-row sm:items-start">
+        <ol className="flex flex-col items-stretch sm:grid sm:grid-cols-3 sm:gap-12">
           {[
-            { icon: CalendarDays, title: "حدّد التواريخ", text: "ونفحص التعارض تلقائيًا" },
-            { icon: Users, title: "حدّد المقاعد والسعر", text: "وسياسة الحضور" },
-            { icon: CircleCheck, title: "انشر", text: "ويبدأ التسجيل فورًا" },
+            { icon: CalendarDays, title: "حدّد التواريخ", text: "ونفحص التعارض تلقائيًا", tone: "text-text-brand" },
+            { icon: Users, title: "حدّد المقاعد والسعر", text: "وسياسة الحضور", tone: "text-state-info" },
+            { icon: CircleCheckBig, title: "انشر", text: "ويبدأ التسجيل فورًا", tone: "text-state-success" },
           ].map((s, i) => (
-            <li key={s.title} className="flex flex-1 flex-col items-stretch sm:flex-row">
+            <li key={s.title} className="relative flex flex-col items-stretch">
               {i > 0 && (
-                <span aria-hidden className="flex h-8 items-center justify-center text-text-muted sm:h-auto sm:w-12 sm:pt-[52px]">
+                <span aria-hidden className="flex h-8 items-center justify-center text-text-muted sm:absolute sm:-start-12 sm:top-[42px] sm:h-5 sm:w-12">
                   <Glyph icon={ChevronLeft} size={20} className="rotate-[-90deg] sm:rotate-0" />
                 </span>
               )}
               <div className="flex flex-1 flex-col items-center gap-3 rounded-16 bg-bg-page px-[18px] pt-6 pb-[26px] text-center">
-                <span className="flex size-14 items-center justify-center rounded-16 bg-bg-surface text-text-brand">
+                <span className={`flex size-14 items-center justify-center rounded-16 bg-bg-surface ${s.tone}`}>
                   <Glyph icon={s.icon} size={20} />
                 </span>
                 <p className="type-title text-text-primary">{s.title}</p>

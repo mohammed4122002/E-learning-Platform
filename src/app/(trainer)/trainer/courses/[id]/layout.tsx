@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { CourseChrome } from "@/components/trainer-courses/course/CourseChrome";
 import { CourseHero } from "@/components/trainer-courses/course/CourseHero";
-import { LiveOverviewIntro } from "@/components/trainer-courses/course/LiveOverviewIntro";
+import { LiveOverviewIntro, LiveOverviewLead } from "@/components/trainer-courses/course/LiveOverviewIntro";
 import { heroState, sessionProgress } from "@/lib/data/trainer-course-page";
 import { getCourseHeader } from "@/lib/data/trainer-courses";
 import { courseEditHref } from "@/lib/trainer-courses";
@@ -21,6 +21,7 @@ export default async function CourseLayout({ children, params }: LayoutProps<"/t
     <CourseChrome
       courseId={id}
       courseTitle={course.title}
+      lead={course.mode === "live_remote" && course.status !== "draft" ? <LiveOverviewLead courseId={id} /> : null}
       intro={course.mode === "live_remote" && course.status !== "draft" ? <LiveOverviewIntro course={course} /> : null}
       hero={
         <CourseHero
