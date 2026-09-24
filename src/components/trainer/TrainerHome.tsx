@@ -14,6 +14,9 @@ import type { TrainerQueueItem } from "@/lib/data/trainer-queue";
 
 type Journey = { stages: Stage[]; doneCount: number; percent: number; current: Stage | null };
 
+/** One «فرص تناسبك» row: organization, match score and «title · duration». */
+export type DashOpportunity = { id: string; organizationName: string; score: number; caption: string };
+
 const FAQ = [
   { q: "هل التوثيق إلزامي؟", a: "نعم للنشر. بلا توثيق لا تُصدر شهادات قابلة للتحقق لمتدربيك." },
   { q: "ما الفرق بين البرنامج والدورة؟", a: "البرنامج هو المحتوى المعتمد. الدورة تنفيذ مجدول له بتاريخ ومكان ومقاعد." },
@@ -380,6 +383,7 @@ export function DefaultHome({
   queue,
   today,
   todayLabel,
+  opportunities = [],
 }: {
   o: TrainerOverview;
   journey: Journey;
@@ -387,6 +391,8 @@ export function DefaultHome({
   queue: TrainerQueueItem[];
   today: DaySession[];
   todayLabel: string;
+  /** Best-matching open requests (TRR-BID-01 data) for «فرص تناسبك» (256:1239). */
+  opportunities?: DashOpportunity[];
 }) {
   const s = o.stats;
   const running = o.courses.filter((c) => c.status === "in_progress").length;
@@ -565,7 +571,26 @@ export function DefaultHome({
             </h2>
             <p className="type-caption text-text-muted">طلبات تدريب من جهات، مطابقة لمجالاتك وتوفّرك.</p>
             <ul className="flex flex-col gap-4">
-              <MiniRow icon={Compass} title="لا توجد طلبات مطابقة الآن" caption="تظهر هنا طلبات الجهات فور نشرها." />
+              {opportunities.length === 0 ? (
+                <MiniRow icon={Compass} title="لا توجد طلبات مطابقة الآن" caption="تظهر هنا طلبات الجهات فور نشرها." />
+              ) : (
+                opportunities.slice(0, 2).map((op) => (
+                  <li key={op.id}>
+                    <Link href={`/trainer/opportunities/${op.id}/bid`} className="flex w-full items-start gap-2.5 rounded-12 bg-bg-page px-3 py-[11px] hover:bg-bg-brand-tint focus-ring">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-state-success">
+                        <Glyph icon={Compass} size={20} />
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                        <span className="flex items-center gap-2">
+                          <span className="min-w-0 flex-1 truncate type-small text-text-primary">{op.organizationName}</span>
+                          <span className="shrink-0 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-state-success">{`مطابقة ${toArabicDigits(op.score)}٪`}</span>
+                        </span>
+                        <span className="type-caption text-text-muted">{op.caption}</span>
+                      </span>
+                    </Link>
+                  </li>
+                ))
+              )}
             </ul>
             <ButtonLink href="/trainer/opportunities" variant="outline" fullWidth>
               اعرض كل الفرص
