@@ -2,7 +2,7 @@
 
 import { useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { MessageSquare } from "lucide-react";
+import { MessagesSquare } from "lucide-react";
 import { Button, type ButtonSize, type ButtonType } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { Modal } from "@/components/ui/Modal";
@@ -75,9 +75,9 @@ export function BroadcastDialog({
           aria-label={typeof label === "string" ? label : "راسل"}
           onClick={() => setOpen(true)}
           disabled={disabled}
-          className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-primary focus-ring hover:bg-bg-brand-tint disabled:cursor-not-allowed disabled:text-text-disabled"
+          className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-muted focus-ring hover:bg-bg-brand-tint hover:text-text-brand disabled:cursor-not-allowed disabled:text-text-disabled"
         >
-          <Glyph icon={MessageSquare} size={20} />
+          <Glyph icon={MessagesSquare} size={20} />
         </button>
       ) : (
         <Button variant={variant} size={size} fullWidth={fullWidth} className={className} disabled={disabled} onClick={() => setOpen(true)}>

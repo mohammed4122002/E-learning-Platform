@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
-  Banknote,
   Bell,
   CalendarDays,
   CircleAlert,
@@ -133,7 +132,7 @@ export function CourseChangeForm({
         </span>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            <MiniPill icon={Banknote} tone="secondary">
+            <MiniPill icon={Hourglass} tone="secondary">
               {money(impact.collected)} محصّلة
             </MiniPill>
             {impact.daysToStart !== null && (

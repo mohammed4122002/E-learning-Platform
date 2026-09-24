@@ -114,7 +114,7 @@ export function ResultsSheet({
           <h2 className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">رصد نتائج الدورة</h2>
           <p className="type-body-lg text-text-secondary">{heroBody}</p>
         </div>
-        <Button size="m" className="w-full sm:w-auto" disabled={approved || hardBlockers > 0} onClick={() => setConfirm(true)}>
+        <Button size="l" className="w-full sm:w-auto" disabled={approved || hardBlockers > 0} onClick={() => setConfirm(true)}>
           اعتمد النتائج نهائيًا
         </Button>
       </section>

@@ -59,7 +59,7 @@ export function ReviewForm({ ratingId, userId, side, after }: { ratingId: string
           <h2 id="reason-title" className="type-h2 text-text-primary">
             ما سبب طلبك؟
           </h2>
-          <p className="type-small text-text-muted">اختر السبب الذي ينطبق فعلًا. الطلبات بلا أساس تُرفض وتُسجَّل.</p>
+          <p className="type-body text-text-muted">اختر السبب الذي ينطبق فعلًا. الطلبات بلا أساس تُرفض وتُسجَّل.</p>
           <fieldset className="flex flex-col gap-3" aria-invalid={fe.reason ? true : undefined} aria-describedby={fe.reason ? "reason-error" : undefined}>
             <legend className="sr-only">سبب الطلب</legend>
             {REVIEW_REASONS.map((r) => {
@@ -75,8 +75,8 @@ export function ReviewForm({ ratingId, userId, side, after }: { ratingId: string
                     <Glyph icon={ICONS[r.value]} size={20} />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className={`type-subtitle font-bold! ${on ? "text-text-brand" : "text-text-primary"}`}>{r.label}</span>
-                    <span className="type-small text-text-muted">{r.hint}</span>
+                    <span className={`type-title ${on ? "text-text-brand" : "text-text-primary"}`}>{r.label}</span>
+                    <span className="type-body text-text-muted">{r.hint}</span>
                   </span>
                   <input type="radio" name="reason" value={r.value} checked={on} onChange={() => setReason(r.value)} className="size-5 shrink-0 cursor-pointer accent-[var(--color-action-primary)]" />
                 </label>
@@ -152,10 +152,10 @@ export function ReviewForm({ ratingId, userId, side, after }: { ratingId: string
         {after}
       </div>
 
-      <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[284px]">
+      <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[400px]">
         {side}
         <section aria-labelledby="submit-title" className="flex flex-col gap-4 rounded-22 border border-border-default bg-bg-card p-5 shadow-card">
-          <h2 id="submit-title" className="type-h3 font-bold! text-text-primary">
+          <h2 id="submit-title" className="type-h2 text-text-primary">
             إرسال الطلب
           </h2>
           <Checkbox name="acknowledge" checked={ack} onChange={(e) => setAck(e.currentTarget.checked)}>

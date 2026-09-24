@@ -42,7 +42,7 @@ export function ConditionsCard({ v, courseId }: { v: ResultsView; courseId: stri
               ? `${n(v.sessions.ended)} من ${n(v.sessions.total)}${pending.lastEndsAt ? ` · تنتهي ${formatDayMonth(pending.lastEndsAt)}` : ""}`
               : `${n(v.sessions.total)} من ${n(v.sessions.total)} منتهية`
           }
-          action={pending ? <ButtonLink href={`${base}/attendance`} size="s">اعرض الجدول</ButtonLink> : <MetPill />}
+          action={pending ? <ButtonLink href={`${base}/attendance`} className="w-[120px] px-3">اعرض الجدول</ButtonLink> : <MetPill />}
         />
         {v.assignments.total > 0 && (
           <ConditionRow
@@ -52,7 +52,7 @@ export function ConditionsCard({ v, courseId }: { v: ResultsView; courseId: stri
             caption={`${n(v.assignments.graded)} من ${n(v.assignments.submissions)} مقيَّم${ungraded ? ` · ${n(ungraded.count)} بانتظارك` : ""}`}
             action={
               ungraded && ungraded.key === "submissions_ungraded" ? (
-                <ButtonLink href={`${base}/assignments/${ungraded.items[0]?.assignment_id}/submissions`} size="s">
+                <ButtonLink href={`${base}/assignments/${ungraded.items[0]?.assignment_id}/submissions`} className="w-[120px] px-3">
                   قيّم الآن
                 </ButtonLink>
               ) : (
@@ -69,7 +69,7 @@ export function ConditionsCard({ v, courseId }: { v: ResultsView; courseId: stri
             caption={`${n(v.sessions.recorded)} من ${n(v.sessions.ended)} مرصودة`}
             action={
               unrec && unrec.key === "attendance_unrecorded" ? (
-                <ButtonLink href={`${base}/attendance/${unrec.sessions[0]?.id}`} size="s">
+                <ButtonLink href={`${base}/attendance/${unrec.sessions[0]?.id}`} className="w-[120px] px-3">
                   ارصد الآن
                 </ButtonLink>
               ) : (
@@ -86,7 +86,7 @@ export function ConditionsCard({ v, courseId }: { v: ResultsView; courseId: stri
 
 function MetPill() {
   return (
-    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-state-success">
+    <span className="inline-flex shrink-0 items-center gap-[7px] rounded-full bg-bg-surface px-[11px] py-1.5 type-caption text-state-success">
       <Glyph icon={CircleCheck} size={16} />
       مستوفى
     </span>
@@ -102,11 +102,11 @@ export function DistributionCard({ rows }: { rows: ResultRow[] }) {
   ];
   return (
     <OpsCard title="توزيع النتائج" titleId="dist-title">
-      <ul className="flex flex-col gap-4">
+      <ul className="flex flex-col gap-5">
         {items.map((i) => (
-          <li key={i.o} className={`flex items-center gap-2.5 rounded-12 px-3.5 py-3 ${i.bg} ${toneText[OUTCOME[i.o].tone]}`}>
-            <span className="type-subtitle">{n(count(i.o))}</span>
-            <span className="type-body">{i.label}</span>
+          <li key={i.o} className={`flex items-center gap-3 rounded-12 px-4 pt-3.5 pb-[15px] ${i.bg} ${toneText[OUTCOME[i.o].tone]}`}>
+            <span className="type-h3">{n(count(i.o))}</span>
+            <span className="min-w-0 flex-1 type-body">{i.label}</span>
           </li>
         ))}
       </ul>
@@ -128,7 +128,7 @@ export function ApprovalCard({ v, courseId }: { v: ResultsView; courseId: string
         </>
       ) : (
         <>
-          <p className="type-body text-state-error">الاعتماد نهائي – بعده تصدر الشهادات ولا تُعدَّل النتائج.</p>
+          <p className="type-body text-state-error">الاعتماد نهائي — بعده تصدر الشهادات ولا تُعدَّل النتائج.</p>
           {blocking.length ? (
             <ButtonLink href={`${base}/approve`} size="l" fullWidth disabled>
               اعتمد النتائج
@@ -161,11 +161,11 @@ export function PreliminaryCard({ v }: { v: ResultsView }) {
       aside={
         v.approval ? (
           <TagPill icon={Lock} tone="success">
-            معتمدة – نهائية
+            معتمدة — نهائية
           </TagPill>
         ) : (
           <TagPill icon={Hourglass} tone="warning">
-            غير معتمدة – قابلة للتغيير
+            غير معتمدة — قابلة للتغيير
           </TagPill>
         )
       }
@@ -178,21 +178,23 @@ export function PreliminaryCard({ v }: { v: ResultsView }) {
             const o = OUTCOME[r.outcome];
             const bg = r.outcome === "passed" ? "bg-bg-page" : r.outcome === "failed" ? "bg-state-error-bg" : "bg-state-warning-bg";
             return (
-              <li key={r.enrollmentId} className={`flex flex-wrap items-center gap-4 rounded-16 px-[18px] py-4 ${bg}`}>
-                <Avatar name={r.name} />
-                <div className="flex min-w-0 flex-1 basis-40 flex-col gap-0.5">
-                  <p className="truncate type-title text-text-primary">{r.name}</p>
-                  <p className="type-caption text-text-muted">
-                    {r.attendance !== null ? <>حضور <Pct value={r.attendance} /></> : "بلا جلسات"}
-                    {r.maxPoints !== null && <> · واجبات {n(r.points ?? 0)}/{n(r.maxPoints)}</>}
-                  </p>
+              <li key={r.enrollmentId} className={`flex flex-wrap items-center gap-4 rounded-16 px-[18px] pt-4 pb-[18px] ${bg}`}>
+                <div className="flex min-w-0 flex-1 basis-48 items-center gap-3">
+                  <Avatar name={r.name} />
+                  <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                    <p className="truncate type-title text-text-primary">{r.name}</p>
+                    <p className="type-body text-text-muted">
+                      {r.attendance !== null ? <><Pct value={r.attendance} /> حضور</> : "بلا جلسات"}
+                      {r.maxPoints !== null && <> · {n(r.points ?? 0)}/{n(r.maxPoints)} واجبات</>}
+                    </p>
+                  </div>
                 </div>
-                <span className={`type-h2 ${toneText[o.tone]}`}>
+                <span className={`w-[110px] text-end type-h2 ${toneText[o.tone]}`}>
                   <Pct value={r.final} />
                 </span>
-                <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption ${toneText[o.tone]}`}>
+                <span className={`inline-flex shrink-0 items-center gap-[7px] rounded-full bg-bg-surface px-[11px] py-1.5 type-caption ${toneText[o.tone]}`}>
                   <Glyph icon={o.icon} size={16} />
-                  {o.label === "ناجح" ? "ناجح" : o.label}
+                  {o.label}
                 </span>
               </li>
             );

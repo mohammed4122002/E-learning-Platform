@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Banknote, CircleAlert, CircleCheck, Hourglass, MessageSquare, TrendingUp, Users } from "lucide-react";
+import { CircleAlert, CircleCheck, Hourglass, MessagesSquare, TrendingUp, Users } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Feedback";
 import { ListControls } from "@/components/trainer-ops/ListControls";
@@ -49,9 +49,9 @@ export default async function TraineesTab(props: PageProps<"/trainer/courses/[id
     return (
       <div className="flex flex-col gap-6">
         <StatGrid label="ملخّص الكورس المسجَّل">
-          <StatCard valueSize="h2" icon={MessageSquare} iconTone="error" label="أسئلة بانتظار ردك" value={toArabicDigits(v.pendingQuestions)} caption={v.oldestQuestionAt ? `أقدمها ${formatRelative(v.oldestQuestionAt)}` : "لا أسئلة معلّقة"} captionTone={v.pendingQuestions ? "error" : "muted"} />
-          <StatCard valueSize="h2" icon={Banknote} label="ر.س إيراد" value={moneyWhole(v.revenue)} caption={`${toArabicDigits(v.buyers.length)} × ${moneyWhole(course.price)} ر.س`} captionTone="muted" />
-          <StatCard valueSize="h2" icon={TrendingUp} label="متوسط الإكمال" value={`${toArabicDigits(v.avgCompletion)}٪`} caption={`${toArabicDigits(v.completedCount)} أكملوا الكورس`} captionTone="muted" />
+          <StatCard valueSize="h2" icon={MessagesSquare} iconTone="error" label="أسئلة بانتظار ردك" value={toArabicDigits(v.pendingQuestions)} caption={v.oldestQuestionAt ? `أقدمها ${formatRelative(v.oldestQuestionAt)}` : "لا أسئلة معلّقة"} captionTone={v.pendingQuestions ? "error" : "muted"} />
+          <StatCard valueSize="h2" icon={Hourglass} iconTone="success" label="ر.س إيراد" value={moneyWhole(v.revenue)} caption={`${toArabicDigits(v.buyers.length)} × ${moneyWhole(course.price)} ر.س`} captionTone="muted" />
+          <StatCard valueSize="h2" icon={TrendingUp} iconTone="info" label="متوسط الإكمال" value={`${toArabicDigits(v.avgCompletion)}٪`} caption={`${toArabicDigits(v.completedCount)} أكملوا الكورس`} captionTone="muted" />
           <StatCard valueSize="h2" icon={Users} label="مشتريًا" value={toArabicDigits(v.buyers.length)} caption={`+${toArabicDigits(v.thisMonth)} هذا الشهر`} captionTone="success" />
         </StatGrid>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">

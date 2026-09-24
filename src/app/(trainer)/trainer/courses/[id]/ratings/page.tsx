@@ -132,15 +132,15 @@ export default async function CourseRatingsTab(props: PageProps<"/trainer/course
           <ul className="flex flex-col gap-3">
             <li className="flex items-center justify-between gap-3 rounded-12 bg-bg-page px-4 py-4">
               <span className="type-body text-text-secondary">تقييمك العام</span>
-              <span className="type-small text-state-success">{v.overall ? formatRating(v.overall) : "—"}</span>
+              <span className="type-subtitle text-state-success">{v.overall ? formatRating(v.overall) : "—"}</span>
             </li>
             <li className="flex items-center justify-between gap-3 rounded-12 bg-bg-page px-4 py-4">
               <span className="type-body text-text-secondary">قبل هذه الدورة</span>
-              <span className="type-small text-text-secondary">{v.before !== null ? new Intl.NumberFormat("ar-SA-u-nu-arab", { maximumFractionDigits: 2 }).format(v.before) : "—"}</span>
+              <span className="type-subtitle text-text-muted">{v.before !== null ? new Intl.NumberFormat("ar-SA-u-nu-arab", { maximumFractionDigits: 2 }).format(v.before) : "—"}</span>
             </li>
             <li className="flex items-center justify-between gap-3 rounded-12 bg-bg-page px-4 py-4">
               <span className="type-body text-text-secondary">الأثر</span>
-              <bdi dir="ltr" className={`type-small ${diff === null ? "text-text-muted" : diff >= 0 ? "text-state-success" : "text-state-error"}`}>
+              <bdi dir="ltr" className={`type-subtitle ${diff === null ? "text-text-muted" : diff >= 0 ? "text-state-success" : "text-state-error"}`}>
                 {diff === null ? "—" : `${diff >= 0 ? "+" : "−"}${new Intl.NumberFormat("ar-SA-u-nu-arab", { minimumFractionDigits: 2 }).format(Math.abs(diff))}`}
               </bdi>
             </li>

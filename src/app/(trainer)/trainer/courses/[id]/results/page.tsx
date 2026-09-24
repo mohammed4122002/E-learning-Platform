@@ -4,7 +4,7 @@ import { ApprovalCard, ConditionsCard, DistributionCard, PreliminaryCard } from 
 import { requireTrainer } from "@/lib/auth";
 import { getManagedCourse } from "@/lib/data/trainer-course";
 import { getResults } from "@/lib/data/trainer-results";
-import { toArabicDigits } from "@/lib/format";
+import { pluralAr, toArabicDigits } from "@/lib/format";
 
 export async function generateMetadata(props: PageProps<"/trainer/courses/[id]/results">): Promise<Metadata> {
   const { id } = await props.params;
@@ -30,7 +30,7 @@ export default async function ResultsTab(props: PageProps<"/trainer/courses/[id]
     <div className="flex flex-col gap-6">
       {v.approval ? (
         <DismissibleAlert tone="success" title="اعتُمدت نتائج الدورة">
-          {`${toArabicDigits(v.approval.passed)} ناجحًا · ${toArabicDigits(v.approval.failed)} لم يجتز. يمكنك الآن إصدار الشهادات.`}
+          {`${v.approval.passed === 0 ? "لا ناجحين" : pluralAr(v.approval.passed, ["ناجح واحد", "ناجحان", "ناجحين", "ناجحًا"])} · ${toArabicDigits(v.approval.failed)} لم يجتز. يمكنك الآن إصدار الشهادات.`}
         </DismissibleAlert>
       ) : (
         blocking.length > 0 && (
@@ -39,12 +39,12 @@ export default async function ResultsTab(props: PageProps<"/trainer/courses/[id]
           </DismissibleAlert>
         )
       )}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <div className="flex min-w-0 flex-1 flex-col gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-[26px]">
+        <div className="flex min-w-0 flex-1 flex-col gap-[26px]">
           {!v.approval && <ConditionsCard v={v} courseId={course.id} />}
           <PreliminaryCard v={v} />
         </div>
-        <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[380px]">
+        <div className="flex w-full shrink-0 flex-col gap-[22px] lg:w-[400px]">
           <DistributionCard rows={v.rows} />
           <ApprovalCard v={v} courseId={course.id} />
         </div>

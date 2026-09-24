@@ -101,7 +101,7 @@ export default async function ReplyPage(props: Props) {
                 عد إلى التقييمات
               </ButtonLink>
             </div>
-            <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[330px]">{sideAfter}</div>
+            <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[400px]">{sideAfter}</div>
           </div>
         ) : (
           <ReplyForm

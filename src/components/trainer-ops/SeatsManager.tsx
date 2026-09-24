@@ -195,7 +195,8 @@ function SeatsDialog({
     start(async () => {
       setPhase("processing");
       setStep(2);
-      const res = await updateCapacity(courseId, target);
+      // A dropped connection must land on the «تعذّر حفظ التعديل» state (462:33978), not the route error boundary.
+      const res = await updateCapacity(courseId, target).catch(() => ({ ok: false as const, message: "انقطع الاتصال قبل وصول التعديل. تحقّق من الشبكة وأعد المحاولة." }));
       if (!res.ok) {
         setFailure(res.message);
         setPhase("failed");
@@ -440,7 +441,7 @@ export function SeatsManager({ view, courseId, runLabel, editable }: { view: Sea
 
   const grant = () =>
     start(async () => {
-      const res = await grantWaitlistSeat(courseId);
+      const res = await grantWaitlistSeat(courseId).catch(() => ({ ok: false as const, message: "انقطع الاتصال. أعد المحاولة." }));
       if (!res.ok) {
         toast("error", res.message);
         return;
@@ -451,7 +452,7 @@ export function SeatsManager({ view, courseId, runLabel, editable }: { view: Sea
 
   const release = (enrollmentId: string) =>
     start(async () => {
-      const res = await releaseUnpaidHold(courseId, enrollmentId);
+      const res = await releaseUnpaidHold(courseId, enrollmentId).catch(() => ({ ok: false as const, message: "انقطع الاتصال. أعد المحاولة." }));
       if (!res.ok) {
         toast("error", res.message);
         return;
@@ -496,7 +497,7 @@ export function SeatsManager({ view, courseId, runLabel, editable }: { view: Sea
                     {view.waiting === 1 ? "ينتظر واحد" : view.waiting === 2 ? "٢ ينتظران" : `${n(view.waiting)} ينتظرون`}
                   </TagPill>
                 ) : (
-                  <TagPill icon={Hourglass} tone="neutral">
+                  <TagPill icon={Hourglass} tone={history.length ? "success" : "neutral"}>
                     لا أحد ينتظر
                   </TagPill>
                 )}
@@ -508,7 +509,9 @@ export function SeatsManager({ view, courseId, runLabel, editable }: { view: Sea
                     ? "تغيّر الترتيب بعد الترقية — والمنسحبون والمتجاوَزون يبقون في السجل."
                     : view.waiting
                       ? "مرتَّبون حسب وقت الدخول. المقعد الشاغر يُمنح يدويًا منك — لا آليًا."
-                      : full
+                      : history.length
+                        ? `رُقّي ${n(history.length)} جميعًا — القائمة فارغة.` /* 462:33712 «رُقّي الخمسة جميعًا — القائمة فارغة.» */
+                        : full
                         ? "المقاعد ممتلئة — ينضم المتدربون الجدد إلى القائمة تلقائيًا."
                         : `${seatsWord(Math.max(view.capacity - view.taken, 0))} ما زالت متاحة — لا حاجة لقائمة انتظار بعد.`}
               </p>

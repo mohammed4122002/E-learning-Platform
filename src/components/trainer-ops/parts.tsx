@@ -36,7 +36,7 @@ export const toneText: Record<OpsTone, string> = {
   neutral: "text-text-muted",
 };
 
-/** Stat card (436:20095): r16, 1px border, card shadow, pt20 pb22 px20, 40px tinted icon tile, 36 Bold value, 14 caption. */
+/** Stat card (436:20095): r16, 1px border, card shadow, pt20 pb22 px20, 40px bg/brand-tint icon tile (icon in the tone), 36 Bold value, 14 caption. */
 export function StatCard({
   icon,
   label,
@@ -58,7 +58,7 @@ export function StatCard({
   return (
     <li className="flex min-w-0 flex-col gap-2.5 rounded-16 border border-border-default bg-bg-card px-5 pt-5 pb-[22px] shadow-card">
       <div className="flex items-center gap-2.5">
-        <span className={`flex size-10 shrink-0 items-center justify-center rounded-12 ${tint[iconTone]} ${toneText[iconTone]}`}>
+        <span className={`flex size-10 shrink-0 items-center justify-center rounded-12 bg-bg-brand-tint ${toneText[iconTone]}`}>
           <Glyph icon={icon} size={20} />
         </span>
         <span className="min-w-0 flex-1 type-caption text-text-muted">{label}</span>
@@ -147,6 +147,7 @@ export function OpsHero({
   children,
   action,
   compact,
+  tight,
 }: {
   tone: OpsTone;
   icon: LucideIcon;
@@ -157,9 +158,11 @@ export function OpsHero({
   action?: ReactNode;
   /** 26 Bold title (e.g. «١٧ متدربًا يستحقون الشهادة»). */
   compact?: boolean;
+  /** 20px gaps and 26px padding + 2px border = Figma's 28px inside-stroke padding (463:35152 «صدرت ١٧ شهادة»). */
+  tight?: boolean;
 }) {
   return (
-    <section className={`flex w-full flex-col items-start gap-4 rounded-22 border-2 px-5 py-6 sm:flex-row sm:items-center sm:gap-6 sm:px-7 ${tint[tone]} ${border[tone]}`}>
+    <section className={`flex w-full flex-col items-start gap-4 rounded-22 border-2 px-5 py-6 sm:flex-row sm:items-center ${tight ? "sm:gap-5 sm:px-[26px]" : "sm:gap-6 sm:px-7"} ${tint[tone]} ${border[tone]}`}>
       <span className={`flex size-16 shrink-0 items-center justify-center rounded-16 bg-bg-surface ${toneText[tone === "neutral" ? "neutral" : tone]}`}>
         <Glyph icon={icon} size={32} />
       </span>
@@ -205,10 +208,10 @@ export function RuleRow({ icon, tone = "brand", children }: { icon: LucideIcon; 
   );
 }
 
-/** Larger rule row (20px icon, 17 body — 276:5002 «قاعدة الاجتياز»). */
+/** Larger rule row (20px icon, 17 body — 276:5002 «قاعدة الاجتياز», 438:20929 «عن الشهادة»): bg/page r12 px14 pt12 pb13 gap10. */
 export function RuleItem({ icon, tone = "brand", children, value, valueTone }: { icon: LucideIcon; tone?: OpsTone; children: ReactNode; value?: ReactNode; valueTone?: OpsTone }) {
   return (
-    <li className="flex w-full items-center gap-3 rounded-12 bg-bg-page px-4 py-3.5">
+    <li className="flex w-full items-center gap-2.5 rounded-12 bg-bg-page px-3.5 pt-3 pb-[13px]">
       <Glyph icon={icon} size={20} className={toneText[tone]} />
       <span className="min-w-0 flex-1 type-body text-text-primary">{children}</span>
       {value !== undefined && <span className={`shrink-0 type-subtitle ${valueTone ? toneText[valueTone] : "text-text-primary"}`}>{value}</span>}
@@ -257,7 +260,7 @@ export function SideRow({
   );
 }
 
-/** Condition card row (438:20310 «شروط اعتماد النتائج»): tint r16 p18, 40px white tile, 17 Medium title + 15 caption, trailing action. */
+/** Condition card row (438:20518 «شروط اعتماد النتائج»): tint r16 pt18 pb20 px20, 48px white tile, 19 Bold title + 17 caption, trailing action. */
 export function ConditionRow({
   icon,
   title,
@@ -265,23 +268,26 @@ export function ConditionRow({
   tone,
   action,
   titleTone,
+  captionTone = "tone",
 }: {
   icon: LucideIcon;
   title: ReactNode;
   caption?: ReactNode;
   tone: OpsTone;
   action?: ReactNode;
-  /** Title in the tone colour (463:34304 «ما اكتمل»); error rows always are. */
+  /** Title in the tone colour (463:34304 «ما اكتمل», 438:20891 «من سيحصل عليها؟»); error rows always are. */
   titleTone?: boolean;
+  /** Caption in the tone colour (438:20518) or text/secondary (463:34465, 438:20891). */
+  captionTone?: "tone" | "secondary";
 }) {
   return (
-    <li className={`flex w-full flex-wrap items-center gap-4 rounded-16 px-[18px] py-[18px] ${tint[tone]}`}>
-      <span className={`flex size-10 shrink-0 items-center justify-center rounded-12 bg-bg-surface ${toneText[tone]}`}>
+    <li className={`flex w-full flex-wrap items-center gap-4 rounded-16 px-4 pt-[18px] pb-5 sm:px-5 ${tint[tone]}`}>
+      <span className={`flex size-12 shrink-0 items-center justify-center rounded-12 bg-bg-surface ${toneText[tone]}`}>
         <Glyph icon={icon} size={20} />
       </span>
-      <span className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className={`type-h4 ${tone === "error" || titleTone ? toneText[tone] : "text-text-primary"}`}>{title}</span>
-        {caption && <span className={`type-small ${tone === "neutral" ? "text-text-muted" : toneText[tone]}`}>{caption}</span>}
+      <span className="flex min-w-0 flex-1 basis-40 flex-col gap-1">
+        <span className={`type-title ${tone === "error" || titleTone ? toneText[tone] : "text-text-primary"}`}>{title}</span>
+        {caption && <span className={`type-body ${captionTone === "secondary" ? "text-text-secondary" : tone === "neutral" ? "text-text-muted" : toneText[tone]}`}>{caption}</span>}
       </span>
       {action}
     </li>
@@ -330,7 +336,7 @@ export function Banner({ tone, icon, title, children, action }: { tone: OpsTone;
 
 /** 40px white square icon button of the roster rows (436:20166). */
 export function IconSquare({ icon, label, href, onClick }: { icon: LucideIcon; label: string; href?: string; onClick?: () => void }) {
-  const cls = "flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-primary focus-ring hover:bg-bg-brand-tint";
+  const cls = "flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-muted focus-ring hover:bg-bg-brand-tint hover:text-text-brand";
   if (href)
     return (
       <Link href={href} aria-label={label} className={cls}>
@@ -344,18 +350,19 @@ export function IconSquare({ icon, label, href, onClick }: { icon: LucideIcon; l
   );
 }
 
-/** Round ring (272:4534 «٧٥٪»): accent arc on a border track. */
+/** Round ring (436:20566 «٩٢٪»): accent arc, no track. */
 export function RingGauge({ percent, size = 88, label }: { percent: number; size?: number; label: string }) {
+  // Data / Progress · Type=Ring (60:87): an 88px arc with a 10px inside stroke, butt caps and no track, inset 11px
+  // in a 110 frame; the value is Body 17 text/primary.
   const v = Math.max(0, Math.min(100, Math.round(percent)));
-  const r = 40;
+  const r = 39;
   const c = 2 * Math.PI * r;
   return (
     <div role="progressbar" aria-label={label} aria-valuenow={v} aria-valuemin={0} aria-valuemax={100} className="relative flex shrink-0 items-center justify-center" style={{ width: size, height: size }}>
-      <svg viewBox="0 0 88 88" className="size-full -rotate-90" aria-hidden>
-        <circle cx="44" cy="44" r={r} fill="none" stroke="var(--color-border-default)" strokeWidth="8" />
-        <circle cx="44" cy="44" r={r} fill="none" stroke="var(--color-action-accent)" strokeWidth="8" strokeLinecap="round" strokeDasharray={`${(c * v) / 100} ${c}`} />
+      <svg viewBox="0 0 110 110" className="size-full -rotate-90" aria-hidden>
+        <circle cx="55" cy="55" r={r} fill="none" stroke="var(--color-action-accent)" strokeWidth="10" strokeDasharray={`${(c * v) / 100} ${c}`} />
       </svg>
-      <span className="absolute type-caption text-text-primary">{new Intl.NumberFormat("ar-SA-u-nu-arab").format(v)}٪</span>
+      <span className="absolute type-body text-text-primary">{new Intl.NumberFormat("ar-SA-u-nu-arab").format(v)}٪</span>
     </div>
   );
 }

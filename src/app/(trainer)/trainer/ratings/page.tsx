@@ -12,7 +12,7 @@ import {
   Star,
   TrendingDown,
   TrendingUp,
-  UserRound,
+  SquareUser,
   Users,
 } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
@@ -54,7 +54,7 @@ function Steps() {
   const steps = [
     { icon: CircleCheck, tone: "text-state-success", title: "تنتهي دورتك", body: "ويُفتح التقييم للمتدربين" },
     { icon: Star, tone: "text-state-warning", title: "يقيّمون ٣ محاور", body: "خلال ٣٠ يومًا" },
-    { icon: UserRound, tone: "text-text-brand", title: "يظهر في ملفك", body: "ويمكنك الرد على كل تقييم" },
+    { icon: SquareUser, tone: "text-text-brand", title: "يظهر في ملفك", body: "ويمكنك الرد على كل تقييم" },
   ];
   return (
     <ol className="grid gap-4 sm:grid-cols-3">
@@ -63,8 +63,8 @@ function Steps() {
           <span className={`flex size-14 items-center justify-center rounded-12 bg-bg-surface ${s.tone}`}>
             <Glyph icon={s.icon} size={24} />
           </span>
-          <span className="type-h4 font-bold! text-text-primary">{s.title}</span>
-          <span className="type-small text-text-muted">{s.body}</span>
+          <span className="type-title text-text-primary">{s.title}</span>
+          <span className="type-body text-text-muted">{s.body}</span>
         </li>
       ))}
     </ol>
@@ -90,8 +90,8 @@ export default async function TrainerRatingsPage(props: PageProps<"/trainer/rati
             <span className="flex size-24 items-center justify-center rounded-22 bg-bg-surface text-state-warning">
               <Glyph icon={Star} size={32} />
             </span>
-            <h2 className="text-[32px] leading-[1.2] font-bold text-text-primary sm:text-[40px]">لا تقييمات بعد</h2>
-            <p className="max-w-2xl type-body-lg text-text-secondary">يظهر أول تقييم بعد انتهاء أول دورة لك. المتدرب يقيّم ثلاثة محاور: جودة المحتوى · أداء المدرب · التنظيم والالتزام بالوقت.</p>
+            <h2 className="text-[32px] leading-[1.2] font-bold text-text-primary sm:text-[44px]">لا تقييمات بعد</h2>
+            <p className="max-w-[968px] type-body-lg text-text-secondary">يظهر أول تقييم بعد انتهاء أول دورة لك. المتدرب يقيّم ثلاثة محاور: جودة المحتوى · أداء المدرب · التنظيم والالتزام بالوقت.</p>
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
               <ButtonLink href="/trainer/courses" size="l" className="sm:min-w-[320px]">
                 اعرض دوراتي
@@ -109,8 +109,8 @@ export default async function TrainerRatingsPage(props: PageProps<"/trainer/rati
               <Glyph icon={Lightbulb} size={20} />
             </span>
             <div className="flex flex-col gap-1.5">
-              <h2 className="type-h4 font-bold! text-state-warning">التقييم لا يُحذف ولا يُخفى</h2>
-              <p className="type-body text-text-secondary">هذا ما يجعله ذا قيمة. ما تملكه هو حق الرد – والرد المهني على نقد صادق يرفع ثقة القارئ أكثر من تقييم كامل بلا رد.</p>
+              <h2 className="type-h3 text-state-warning">التقييم لا يُحذف ولا يُخفى</h2>
+              <p className="type-body-lg text-text-secondary">هذا ما يجعله ذا قيمة. ما تملكه هو حق الرد – والرد المهني على نقد صادق يرفع ثقة القارئ أكثر من تقييم كامل بلا رد.</p>
             </div>
           </section>
         </PageBody>
@@ -262,7 +262,7 @@ export default async function TrainerRatingsPage(props: PageProps<"/trainer/rati
             </OpsCard>
           </div>
 
-          <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[360px]">
+          <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[380px]">
             <SideCard title="قواعد الرد" titleId="rules-title">
               <ul className="flex flex-col gap-3">
                 <RuleRow icon={MessagesSquare}>ردّ واحد لكل تقييم – لا يمكن تعديله</RuleRow>
