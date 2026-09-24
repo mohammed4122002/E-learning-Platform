@@ -39,3 +39,6 @@ the app does today, so nothing is silently faked.
 | T9 | TRR-HLP-01 / DSH-01 support links | There is no trainer support-ticket screen. | «تواصل مع الدعم» opens `/messages?f=support`; identity verification links to `/account`. |
 | T10 | TRR-DSH-01 sidebar card | Figma always shows «مدرب معتمد» with a badge. | Shown when the platform has verified the trainer; otherwise the card shows «مدرب» without the badge. The eye count is real profile views (one per visitor per day). |
 | T11 | TRR-JRN-02 حاسبة الدخل | The «عروض مقبولة» input depends on bids (Wave 2). | Input shown; it has no effect until bids exist. |
+| T12 | TRR-RES-01 / TRR-CRT-01 | Figma copy on the results screen says certificates are issued automatically after approval; the flow in CRT-01 issues them as a separate step. | Copy adjusted to match the separate issuance step. Confirm which behaviour you want. |
+| T13 | TRR-RTG-01 / TRR-RES-01 / ٩ التقييمات | «متوسط الاعتماد ٣ أيام», «ضمن أعلى ١٠٪» and the repeated-phrase analysis have no data source. | Hidden until the platform collects that data. |
+| T14 | Shared avatar initials | `initialsOf` now skips the article «ال» (e.g. «سالم الحارثي» → «س ح») to match Figma. | Affects avatars in every workspace. |
