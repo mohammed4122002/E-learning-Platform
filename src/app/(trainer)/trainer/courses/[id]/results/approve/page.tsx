@@ -55,17 +55,18 @@ export default async function ApproveResultsPage(props: PageProps<"/trainer/cour
             .join(" و")}
           {". الاعتماد نهائي ولا يُعدَّل — لذلك يشترط اكتمال البيانات."}
         </DismissibleAlert>
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-[26px]">
           <div className="flex min-w-0 flex-1 flex-col gap-6">
             <OpsCard title="ما يمنع الاعتماد" titleId="block-title" titleSize="h2" titleClass="text-state-error" className="border-2! border-state-error!">
               <ul className="flex flex-col gap-4">
                 {blocking.map((b) =>
                   b.key === "sessions_pending" ? (
-                    <ConditionRow key={b.key} tone="error" icon={CalendarDays} title="جلسات لم تنتهِ" caption={b.lastEndsAt ? `تنتهي آخر جلسة ${formatRelative(b.lastEndsAt)}` : undefined} action={<ButtonLink href={`${base}/attendance`} size="s" className="min-w-[120px]">اعرض الجدول</ButtonLink>} />
+                    <ConditionRow key={b.key} tone="error" captionTone="secondary" icon={CalendarDays} title="جلسات لم تنتهِ" caption={b.lastEndsAt ? `تنتهي آخر جلسة ${formatRelative(b.lastEndsAt)}` : undefined} action={<ButtonLink href={`${base}/attendance`} className="w-[120px] px-3">اعرض الجدول</ButtonLink>} />
                   ) : b.key === "attendance_unrecorded" ? (
                     <ConditionRow
                       key={b.key}
                       tone="error"
+                      captionTone="secondary"
                       icon={ClipboardCheck}
                       title={`الجلسة ${n(b.sessions[0]?.position ?? 0)} بلا رصد`}
                       caption={
@@ -77,16 +78,17 @@ export default async function ApproveResultsPage(props: PageProps<"/trainer/cour
                             })()
                           : undefined
                       }
-                      action={<ButtonLink href={`${base}/attendance/${b.sessions[0]?.id}`} size="s" className="min-w-[120px]">ارصد الحضور</ButtonLink>}
+                      action={<ButtonLink href={`${base}/attendance/${b.sessions[0]?.id}`} className="w-[120px] px-3">ارصد الحضور</ButtonLink>}
                     />
                   ) : b.key === "submissions_ungraded" ? (
                     <ConditionRow
                       key={b.key}
                       tone="error"
+                      captionTone="secondary"
                       icon={ClipboardCheck}
                       title={b.count === 1 ? "واجب بلا تقييم" : b.count === 2 ? "واجبان بلا تقييم" : `${n(b.count)} واجبات بلا تقييم`}
                       caption={b.items.map((i) => v.names.get(i.trainee_id) ?? "متدرب").join(" و")}
-                      action={<ButtonLink href={`${base}/assignments/${b.items[0]?.assignment_id}/submissions`} size="s" className="min-w-[120px]">قيّم الآن</ButtonLink>}
+                      action={<ButtonLink href={`${base}/assignments/${b.items[0]?.assignment_id}/submissions`} className="w-[120px] px-3">قيّم الآن</ButtonLink>}
                     />
                   ) : null,
                 )}
@@ -98,21 +100,22 @@ export default async function ApproveResultsPage(props: PageProps<"/trainer/cour
                   <ConditionRow
                     tone="success"
                     titleTone
+                    captionTone="secondary"
                     icon={CircleCheck}
                     title={`${n(v.sessions.recorded)} ${v.sessions.recorded === 1 ? "جلسة مرصودة" : "جلسات مرصودة"} من ${n(v.sessions.total)}`}
                     caption={avgAttendance !== null ? `متوسط الحضور ${n(avgAttendance)}٪` : undefined}
                   />
                 )}
                 {v.assignments.graded > 0 && (
-                  <ConditionRow tone="success" titleTone icon={CircleCheck} title={`${n(v.assignments.graded)} واجبًا مقيَّمًا من ${n(v.assignments.submissions)}`} caption={`يتبقى ${n(v.assignments.submissions - v.assignments.graded)}`} />
+                  <ConditionRow tone="success" titleTone captionTone="secondary" icon={CircleCheck} title={`${n(v.assignments.graded)} واجبًا مقيَّمًا من ${n(v.assignments.submissions)}`} caption={`يتبقى ${n(v.assignments.submissions - v.assignments.graded)}`} />
                 )}
-                <ConditionRow tone="success" titleTone icon={CircleCheck} title="معادلة الدرجة جاهزة" caption={weightsLabel(v)} />
+                <ConditionRow tone="success" titleTone captionTone="secondary" icon={CircleCheck} title="معادلة الدرجة جاهزة" caption={weightsLabel(v)} />
               </ul>
             </OpsCard>
           </div>
-          <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[400px]">
+          <div className="flex w-full shrink-0 flex-col gap-[22px] lg:w-[400px]">
             <OpsCard title="الاعتماد" titleId="appr-title">
-              <p className="type-body text-state-error">نهائي – بعده تصدر الشهادات ولا تُعدَّل النتائج.</p>
+              <p className="type-body text-state-error">نهائي — بعده تصدر الشهادات ولا تُعدَّل النتائج.</p>
               <ButtonLink href={`${base}/results/record`} size="l" fullWidth disabled>
                 اعتمد النتائج
               </ButtonLink>
@@ -122,7 +125,7 @@ export default async function ApproveResultsPage(props: PageProps<"/trainer/cour
               </ButtonLink>
             </OpsCard>
             <OpsCard title="أثر التأخير" titleId="delay-title">
-              <ul className="flex flex-col gap-4">
+              <ul className="flex flex-col gap-5">
                 <RuleItem icon={Award} tone="warning">{`${n(passed)} شهادة بانتظار الاعتماد`}</RuleItem>
                 <RuleItem icon={Users} tone="brand">المتدربون يرون «النتائج قيد الإعداد»</RuleItem>
               </ul>

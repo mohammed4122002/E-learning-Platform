@@ -49,7 +49,7 @@ export default async function CertificatesTab(props: PageProps<"/trainer/courses
           </span>
           <div className="flex min-w-0 flex-1 flex-col items-start gap-3">
             <h2 className="type-h2 text-text-secondary">الشهادات مقفلة حتى اعتماد النتائج</h2>
-            <p className="type-body text-text-secondary">لا تُصدر شهادة قبل اعتماد نتائج الدورة – لأن الشهادة تحمل الدرجة وتقبل التحقق العام. اذهب لتبويب النتائج لإكمال الشروط.</p>
+            <p className="type-body text-text-secondary">لا تُصدر شهادة قبل اعتماد نتائج الدورة — لأن الشهادة تحمل الدرجة وتقبل التحقق العام. اذهب لتبويب النتائج لإكمال الشروط.</p>
             <ButtonLink href={`${base}/results`} variant="outline" size="m" className="bg-bg-surface">
               اذهب للنتائج
             </ButtonLink>
@@ -57,7 +57,7 @@ export default async function CertificatesTab(props: PageProps<"/trainer/courses
         </section>
       )}
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-[26px]">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
           <PreviewCard course={course} sampleName={v.eligible[0]?.name ?? course.trainerName} titleSize="h2" />
           <OpsCard
@@ -75,11 +75,12 @@ export default async function CertificatesTab(props: PageProps<"/trainer/courses
             {total === 0 ? (
               <p className="rounded-16 bg-bg-page px-5 py-6 text-center type-body text-text-muted">لا متدربين مسجّلين في الدورة بعد.</p>
             ) : (
-              <ul className="flex flex-col gap-4">
+              <ul className="flex flex-col gap-5">
                 {v.eligible.length > 0 && (
                   <ConditionRow
                     tone="success"
                     titleTone
+                    captionTone="secondary"
                     icon={CircleCheck}
                     title={pluralAr(v.eligible.length, ["ناجح واحد", "ناجحان", "ناجحين", "ناجحًا"])}
                     caption={
@@ -96,6 +97,7 @@ export default async function CertificatesTab(props: PageProps<"/trainer/courses
                     key={t.enrollmentId}
                     tone={t.outcome === "below_attendance" ? "warning" : "error"}
                     titleTone
+                    captionTone="secondary"
                     icon={t.outcome === "below_attendance" ? CircleAlert : CircleX}
                     title={t.name}
                     caption={t.reason}
@@ -105,7 +107,7 @@ export default async function CertificatesTab(props: PageProps<"/trainer/courses
             )}
           </OpsCard>
         </div>
-        <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[384px]">
+        <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[400px]">
           <OpsCard title="الإصدار" titleId="issue-title">
             <p className="type-body text-text-secondary">يبدأ بعد اعتماد النتائج. يمكنك أيضًا إصدارها يدويًا لمتدرب واحد</p>
             <ButtonLink href={`${base}/certificates/issue`} size="l" fullWidth disabled={!v.approved || v.pendingIssue.length === 0}>
@@ -122,6 +124,7 @@ export default async function CertificatesTab(props: PageProps<"/trainer/courses
             )}
           </OpsCard>
           <RuleList
+            large
             title="عن الشهادة"
             titleId="about-title"
             items={[

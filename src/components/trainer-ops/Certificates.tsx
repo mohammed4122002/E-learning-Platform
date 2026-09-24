@@ -8,7 +8,7 @@ import type { ManagedCourse } from "@/lib/data/trainer-course";
 import type { CertTrainee, CertificatesView } from "@/lib/data/trainer-certificates";
 import { pluralAr, toArabicDigits } from "@/lib/format";
 import { ButtonLink } from "@/components/ui/Button";
-import { MiniPill, OpsCard, OpsHero, RuleRow, SideCard, TagPill, type OpsTone } from "./parts";
+import { MiniPill, OpsCard, OpsHero, RuleItem, RuleRow, SideCard, TagPill, type OpsTone } from "./parts";
 
 /** The idle «إصدار شهادات الدورة» hero shown under the single / program panels (4254:*, 4256:*). */
 export function StaticIssueHero({ v, courseId }: { v: CertificatesView; courseId: string }) {
@@ -22,7 +22,7 @@ export function StaticIssueHero({ v, courseId }: { v: CertificatesView; courseId
       action={
         left > 0 ? (
           <ButtonLink href={`/trainer/courses/${courseId}/certificates/issue`} size="l" className="w-full sm:w-auto sm:min-w-[232px]">
-            {left === v.eligible.length ? `أصدر ${certs(left)} دفعة واحدة` : `أصدر ${certs(left)} متبقية`}
+            {left === v.eligible.length ? `أصدر ${pluralAr(left, ["شهادة واحدة", "شهادتين", "شهادات", "شهادة"])} دفعة واحدة` : `أصدر ${pluralAr(left, ["الشهادة المتبقية", "الشهادتين المتبقيتين", "شهادات متبقية", "شهادة متبقية"])}`}
           </ButtonLink>
         ) : undefined
       }
@@ -55,7 +55,20 @@ export function PreviewCard({ course, sampleName, caption, titleSize = "h3" }: {
   );
 }
 
-export function RuleList({ title, titleId, items }: { title: string; titleId: string; items: { icon: LucideIcon; tone?: OpsTone; text: string }[] }) {
+export function RuleList({ title, titleId, items, large }: { title: string; titleId: string; items: { icon: LucideIcon; tone?: OpsTone; text: string }[]; large?: boolean }) {
+  // «عن الشهادة» of the certificates tab (438:20927) is a content card with 17px rows; the CRT-01 side lists are the small card.
+  if (large)
+    return (
+      <OpsCard title={title} titleId={titleId}>
+        <ul className="flex flex-col gap-5">
+          {items.map((i) => (
+            <RuleItem key={i.text} icon={i.icon} tone={i.tone}>
+              {i.text}
+            </RuleItem>
+          ))}
+        </ul>
+      </OpsCard>
+    );
   return (
     <SideCard title={title} titleId={titleId}>
       <ul className="flex flex-col gap-3">
@@ -153,7 +166,7 @@ export function IssueHeroChips({ v }: { v: CertificatesView }) {
   return (
     <>
       <MiniPill icon={User} tone="brand">
-        {`${n(v.eligible.length)} ${v.eligible.length === 1 ? "مستحق" : "مستحقًا"} · ${n(v.ineligible.length)} غير مستحقين`}
+        {`${pluralAr(v.eligible.length, ["مستحق واحد", "مستحقان", "مستحقين", "مستحقًا"])} · ${n(v.ineligible.length)} ${v.ineligible.length === 1 ? "غير مستحق" : "غير مستحقين"}`}
       </MiniPill>
       <MiniPill icon={CircleCheck} tone="success">
         النتائج معتمدة
@@ -173,7 +186,7 @@ export const BEFORE_ISSUE = (ineligible: CertificatesView["ineligible"], organiz
 
 export function IssuedPill({ issued, failed }: { issued: number; failed: number }) {
   return (
-    <TagPill icon={CircleCheck} tone="success">
+    <TagPill icon={Award} tone="success">
       {`${n(issued)} صادرة · ${n(failed)} فشلت`}
     </TagPill>
   );

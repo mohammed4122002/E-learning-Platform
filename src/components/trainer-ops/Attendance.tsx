@@ -57,7 +57,7 @@ export function SessionLogRow({ s, href }: { s: SessionSummary; href: string }) 
         <span className="type-title text-text-primary">{s.title}</span>
         <span className="type-body text-text-muted">{sessionDay(s.startsAt)}</span>
       </Link>
-      <div className={`flex w-[134px] flex-col gap-[3px] sm:w-[170px] ${toneText[st.tone]}`}>
+      <div className={`flex w-[134px] flex-col gap-[3px] text-end sm:w-[170px] ${toneText[st.tone]}`}>
         <span className="type-h3">{st.value}</span>
         <span className="type-caption">{st.caption}</span>
       </div>

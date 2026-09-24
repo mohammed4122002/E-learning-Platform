@@ -128,7 +128,7 @@ export default async function GradeSubmissionPage(props: Props) {
             </section>
 
             <section aria-labelledby="answer-title" className="flex flex-col gap-4 rounded-22 border border-border-default bg-bg-card p-5 shadow-card sm:p-6">
-              <h2 id="answer-title" className="type-h3 text-text-primary">
+              <h2 id="answer-title" className="type-h2 text-text-primary">
                 إجابة المتدرب
               </h2>
               <div className="flex flex-wrap items-center gap-3 rounded-16 bg-bg-page px-4 py-4">

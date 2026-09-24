@@ -190,7 +190,7 @@ export function ReplyForm({
         </section>
       </div>
 
-      <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[330px]">
+      <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[400px]">
         <section aria-labelledby="send-title" className="flex flex-col gap-4 rounded-22 border border-border-default bg-bg-card p-5 shadow-card sm:p-6">
           <h2 id="send-title" className="type-h2 text-text-primary">
             إرسال الرد

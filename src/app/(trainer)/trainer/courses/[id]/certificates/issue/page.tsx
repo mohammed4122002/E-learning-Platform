@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Award, CircleCheck, CircleX, Info, QrCode, TriangleAlert } from "lucide-react";
+import { Award, CircleCheck, CircleX, Info, Mail, QrCode, TriangleAlert } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { ButtonLink } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Data";
@@ -62,6 +62,7 @@ export default async function IssueCertificatesPage(props: Props) {
               <div className="flex min-w-0 flex-1 flex-col gap-6">
                 <OpsHero
                   tone="success"
+                  tight
                   icon={CircleCheck}
                   title={`صدرت ${certs(v.issued.length)}`}
                   action={
@@ -77,7 +78,7 @@ export default async function IssueCertificatesPage(props: Props) {
                     {v.issued.map((t) => (
                       <li key={t.enrollmentId} className="flex flex-wrap items-center gap-3 rounded-16 bg-bg-page px-4 py-4">
                         <Avatar name={t.name} size="m" />
-                        <Link href={`/trainer/courses/${course.id}/certificates/issue/${t.enrollmentId}`} className="min-w-[150px] flex-1 type-h4 font-bold! text-text-primary hover:text-text-brand focus-ring">
+                        <Link href={`/trainer/courses/${course.id}/certificates/issue/${t.enrollmentId}`} className="min-w-[150px] flex-1 type-title text-text-primary hover:text-text-brand focus-ring">
                           {t.name}
                         </Link>
                         <div className="ms-auto flex items-center gap-3">
@@ -93,7 +94,7 @@ export default async function IssueCertificatesPage(props: Props) {
                     {v.ineligible.map((t) => (
                       <li key={t.enrollmentId} className="flex flex-wrap items-center gap-3 rounded-16 bg-state-error-bg px-4 py-4">
                         <Avatar name={t.name} size="m" />
-                        <span className="min-w-[150px] flex-1 type-h4 font-bold! text-text-primary">{t.name}</span>
+                        <span className="min-w-[150px] flex-1 type-title text-text-primary">{t.name}</span>
                         <div className="ms-auto flex items-center gap-3">
                           <span className="text-text-muted">—</span>
                           <MiniPill icon={CircleX} tone="error">
@@ -107,10 +108,11 @@ export default async function IssueCertificatesPage(props: Props) {
               </div>
               <div className="flex w-full shrink-0 flex-col gap-5 lg:w-[400px]">
                 <RuleList
+                  large
                   title="ما بعد الإصدار"
                   titleId="after-title"
                   items={[
-                    { icon: Info, text: "وصلت إشعارات المتدربين" },
+                    { icon: Mail, text: "وصلت إشعارات المتدربين" },
                     { icon: QrCode, tone: "success", text: "روابط التحقق فُعّلت" },
                     ...(firstOut ? [{ icon: TriangleAlert, tone: "warning" as const, text: `${firstOut.name.split(" ")[0]} لم تصدر شهادته – ${firstOut.reason.split(" – ")[0]}` }] : []),
                     { icon: Info, text: "الشهادة الصادرة لا تُسحب إلا باسترداد" },
@@ -139,7 +141,7 @@ export default async function IssueCertificatesPage(props: Props) {
             pendingIds={v.pendingIssue.map((t) => t.enrollmentId)}
             eligibleCount={v.eligible.length}
             hero={<IssueHeroChips v={v} />}
-            sideIssuing={<RuleList title="قبل الإصدار" titleId="before-title" items={BEFORE_ISSUE(v.ineligible, course.organizationName)} />}
+            sideIssuing={<RuleList large title="قبل الإصدار" titleId="before-title" items={BEFORE_ISSUE(v.ineligible, course.organizationName)} />}
           >
             <IssueBody v={v} course={course} all={sp.all === "1"} />
           </IssueFlow>

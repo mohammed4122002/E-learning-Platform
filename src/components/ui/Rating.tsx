@@ -2,11 +2,12 @@ import { Star } from "lucide-react";
 import { formatRating } from "@/lib/format";
 
 /* Figma "Data / Rating Stars" (89:754): stars only, filled state/rating (#ffc400). S = 18px, M = 22px. */
-export function RatingStars({ value, size = "s", className }: { value: number; size?: "s" | "m"; className?: string }) {
-  const px = size === "s" ? 18 : 22;
+export function RatingStars({ value, size = "s", className }: { value: number; size?: "xs" | "s" | "m"; className?: string }) {
+  // xs = the 13px stars of "Platform / Review" (63:271).
+  const px = size === "xs" ? 13 : size === "s" ? 18 : 22;
   const rounded = Math.round(value);
   return (
-    <span role="img" aria-label={`التقييم ${formatRating(value)} من ٥`} className={`inline-flex items-center gap-1 ${className ?? ""}`}>
+    <span role="img" aria-label={`التقييم ${formatRating(value)} من ٥`} className={`inline-flex items-center ${size === "xs" ? "gap-0.5" : "gap-1"} ${className ?? ""}`}>
       {Array.from({ length: 5 }, (_, i) => (
         <Star
           key={i}

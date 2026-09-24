@@ -115,7 +115,7 @@ export default async function SubmissionsPage(props: Props) {
                   ))}
                 </nav>
 
-                <OpsCard title="التسليمات" titleId="subs-title" titleSize="h3" className="gap-6!">
+                <OpsCard title="التسليمات" titleId="subs-title" titleSize="h2" className="gap-6!">
                   {rows.length === 0 ? (
                     <p className="rounded-16 bg-bg-page px-5 py-6 text-center type-body text-text-muted">لا تسليمات في هذا التصنيف.</p>
                   ) : (

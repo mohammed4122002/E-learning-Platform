@@ -15,7 +15,7 @@ export function RowMenu({ label, items }: { label: string; items: { href: string
         aria-label={label}
         aria-expanded={open}
         onClick={toggle}
-        className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-primary focus-ring hover:bg-bg-brand-tint"
+        className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-muted focus-ring hover:bg-bg-brand-tint hover:text-text-brand"
       >
         <Glyph icon={Ellipsis} size={20} />
       </button>
