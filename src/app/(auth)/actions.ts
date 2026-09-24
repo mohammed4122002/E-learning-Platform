@@ -85,7 +85,10 @@ export async function verifySignupCode(_: FormState, formData: FormData): Promis
   const parsed = otpSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { status: "error", fieldErrors: fieldErrorsOf(parsed.error) };
   const supabase = await createClient();
-  const { error } = await supabase.auth.verifyOtp({ email: parsed.data.email, token: parsed.data.token, type: "email" });
+  const { email, token } = parsed.data;
+  // Sign-up codes verify as "email"; older Auth versions only accept them as "signup".
+  let { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+  if (error) ({ error } = await supabase.auth.verifyOtp({ email, token, type: "signup" }));
   if (error) return { status: "error", message: toArabicError({ code: "otp_expired" }) };
   redirect(safeNext(formData.get("next"), "/select-workspace"));
 }
