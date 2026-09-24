@@ -39,13 +39,13 @@ export type ResultRow = { label: string; value: ReactNode; tone?: keyof typeof t
 export function ResultPanel({ tone, title, intro, rows, children, surface }: { tone: Tone; title: ReactNode; intro?: ReactNode; rows: ResultRow[]; children?: ReactNode; surface?: boolean }) {
   return (
     <section className={`flex w-full flex-col gap-2.5 rounded-[14px] border-2 p-5 sm:p-6 ${surface ? "border-border-default bg-bg-surface" : tint[tone]}`}>
-      <h2 className={`text-[20px] leading-[1.4] font-bold ${tone === "neutral" ? "text-text-primary" : toneText[tone]}`}>{title}</h2>
-      {intro && <div className="text-[15px] leading-normal text-text-secondary">{intro}</div>}
+      <h2 className={`text-[20px] leading-[1.2] font-bold ${tone === "neutral" ? "text-text-primary" : toneText[tone]}`}>{title}</h2>
+      {intro && <div className="text-[15px] leading-[1.2] text-text-secondary">{intro}</div>}
       <dl className="flex flex-col gap-2.5">
         {rows.map((r) => (
           <div key={r.label} className="flex flex-wrap items-center gap-2.5 rounded-[10px] border border-border-default bg-bg-page px-4 py-[13px]">
-            <dt className="text-[13.5px] leading-normal text-text-secondary">{r.label}</dt>
-            <dd className={`text-[15px] leading-normal font-bold ${r.tone ? toneText[r.tone] : "text-text-primary"}`}>{r.value}</dd>
+            <dt className="text-[13.5px] leading-[1.2] text-text-secondary">{r.label}</dt>
+            <dd className={`text-[15px] leading-[1.2] font-bold ${r.tone ? toneText[r.tone] : "text-text-primary"}`}>{r.value}</dd>
           </div>
         ))}
       </dl>
@@ -59,7 +59,7 @@ export function ActionRowLink({ href, children, outline }: { href: string; child
   return (
     <Link
       href={href}
-      className={`inline-flex items-center justify-center rounded-[10px] px-7 py-[15px] text-[16px] leading-normal font-bold focus-ring ${
+      className={`inline-flex items-center justify-center rounded-[10px] px-7 py-[15px] text-[16px] leading-[1.2] font-bold focus-ring ${
         outline ? "border-[1.5px] border-action-primary bg-bg-surface text-text-brand hover:bg-bg-brand-tint" : "bg-action-primary text-text-on-brand hover:bg-action-primary-hover"
       }`}
     >
@@ -69,7 +69,7 @@ export function ActionRowLink({ href, children, outline }: { href: string; child
 }
 
 export const actionRowButtonClass = (outline?: boolean) =>
-  `inline-flex cursor-pointer items-center justify-center rounded-[10px] px-7 py-[15px] text-[16px] leading-normal font-bold focus-ring disabled:cursor-not-allowed disabled:opacity-60 ${
+  `inline-flex cursor-pointer items-center justify-center rounded-[10px] px-7 py-[15px] text-[16px] leading-[1.2] font-bold focus-ring disabled:cursor-not-allowed disabled:opacity-60 ${
     outline ? "border-[1.5px] border-action-primary bg-bg-surface text-text-brand hover:bg-bg-brand-tint" : "bg-action-primary text-text-on-brand hover:bg-action-primary-hover"
   }`;
 
