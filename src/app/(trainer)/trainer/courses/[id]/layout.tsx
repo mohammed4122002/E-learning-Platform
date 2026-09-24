@@ -1,13 +1,37 @@
-import { CourseTabsFrame } from "@/components/trainer-ops/CourseTabsFrame";
-import { courseLabel, getManagedCourse, runLabel } from "@/lib/data/trainer-course";
+import { notFound } from "next/navigation";
+import { CourseChrome } from "@/components/trainer-courses/course/CourseChrome";
+import { CourseHero } from "@/components/trainer-courses/course/CourseHero";
+import { LiveOverviewIntro } from "@/components/trainer-courses/course/LiveOverviewIntro";
+import { heroState, sessionProgress } from "@/lib/data/trainer-course-page";
+import { getCourseHeader } from "@/lib/data/trainer-courses";
+import { courseEditHref } from "@/lib/trainer-courses";
 
-/** STAND-IN course layout (title + tab links) — replaced by the course-page layout on merge. */
-export default async function TrainerCourseLayout({ children, params }: LayoutProps<"/trainer/courses/[id]">) {
+/**
+ * TRR-CRS-05 صفحة الدورة — one layout for the course's routes. The nine tabs (نظرة عامة · المحاور والمحتوى ·
+ * الملفات · الواجبات · المتدربون · الحضور · النتائج · الشهادات · التقييمات) share the top bar, hero and tab bar;
+ * every other route under the course (setup, dashboard, sales, publish, grading…) renders its own chrome.
+ * RLS + getCourseHeader() hide courses the signed-in trainer does not manage (→ 404).
+ */
+export default async function CourseLayout({ children, params }: LayoutProps<"/trainer/courses/[id]">) {
   const { id } = await params;
-  const course = await getManagedCourse(id);
+  const course = await getCourseHeader(id);
+  if (!course) notFound();
+  const progress = sessionProgress(course.sessions);
   return (
-    <CourseTabsFrame courseId={course.id} title={courseLabel(course)} runLabel={runLabel(course)}>
+    <CourseChrome
+      courseId={id}
+      courseTitle={course.title}
+      intro={course.mode === "live_remote" && course.status !== "draft" ? <LiveOverviewIntro course={course} /> : null}
+      hero={
+        <CourseHero
+          course={course}
+          state={heroState(course)}
+          session={course.mode === "recorded" ? null : { index: progress.index, total: progress.total }}
+          editHref={courseEditHref(course)}
+        />
+      }
+    >
       {children}
-    </CourseTabsFrame>
+    </CourseChrome>
   );
 }

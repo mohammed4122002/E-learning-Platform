@@ -10,12 +10,12 @@ export const MODES: Record<CourseMode, { label: string; icon: typeof MapPin; cla
   recorded: { label: "مسجَّلة", icon: MonitorPlay, className: "bg-bg-brand-tint text-text-brand" },
 };
 
-export function ModeBadge({ mode, className }: { mode: CourseMode; className?: string }) {
+export function ModeBadge({ mode, className, label }: { mode: CourseMode; className?: string; label?: string }) {
   const m = MODES[mode];
   return (
     <span className={`inline-flex items-center gap-[5px] whitespace-nowrap rounded-full px-[9px] py-1 type-caption ${m.className} ${className ?? ""}`}>
       <Glyph icon={m.icon} size={16} />
-      {m.label}
+      {label ?? m.label}
     </span>
   );
 }
