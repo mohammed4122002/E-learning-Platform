@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CalendarCheck, ChevronLeft, ChevronRight, CircleCheck, EyeOff, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleCheckBig, EyeOff, Info } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
@@ -193,7 +193,7 @@ function MonthSide({ all, visible, today, first }: { all: Entries; visible: Entr
         {free.length ? (
           <div className="flex items-center gap-3 rounded-12 bg-state-success-bg px-4 py-3.5">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-bg-surface text-state-success">
-              <Glyph icon={CalendarCheck} size={20} />
+              <Glyph icon={CircleCheckBig} size={20} />
             </span>
             <div className="flex min-w-0 flex-col gap-0.5">
               <p className="type-subtitle text-state-success">{dayLabel(free[0])}</p>
@@ -237,7 +237,7 @@ function MonthSide({ all, visible, today, first }: { all: Entries; visible: Entr
         <ul className="flex flex-col gap-4">
           {["الأيام المتاحة وأوقاتها", "أقرب موعد متاح", "نسبة إشغالك"].map((t) => (
             <li key={t} className="flex items-center gap-2 rounded-12 bg-state-success-bg px-3.5 py-3 type-small text-state-success">
-              <Glyph icon={CircleCheck} size={16} />
+              <Glyph icon={CircleCheckBig} size={16} />
               {t}
             </li>
           ))}

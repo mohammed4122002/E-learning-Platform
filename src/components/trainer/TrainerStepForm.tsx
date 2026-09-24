@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState, type ReactNode } from "react";
-import { Check } from "lucide-react";
+import { CheckCheck } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Feedback";
 import { Glyph } from "@/components/ui/Icon";
@@ -32,8 +32,8 @@ function OptionCard({ option, type, checked, onChange }: { option: StepOption; t
       <span className={`type-title ${checked ? "text-text-brand" : "text-text-primary"}`}>{option.title}</span>
       {option.hint && <span className="type-caption text-text-muted">{option.hint}</span>}
       {checked && (
-        <span aria-hidden className="absolute end-2.5 top-2.5 flex size-[26px] items-center justify-center rounded-full bg-action-primary text-text-on-brand">
-          <Glyph icon={Check} size={16} />
+        <span aria-hidden className="absolute start-3 top-3 flex size-[26px] items-center justify-center rounded-full bg-action-primary text-text-on-brand">
+          <Glyph icon={CheckCheck} size={16} />
         </span>
       )}
     </label>

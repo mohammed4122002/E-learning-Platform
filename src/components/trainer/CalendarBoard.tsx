@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useState, useTransition } from "react";
-import { CircleCheck, Pencil, Trash2, TriangleAlert, X } from "lucide-react";
+import { CircleCheckBig, SquarePen, Trash2, TriangleAlert, X } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Feedback";
 import { Glyph } from "@/components/ui/Icon";
@@ -353,7 +353,7 @@ function EventDialog({ entry, onClose, onDeleted }: { entry: CalEntry | null; on
           </>
         ) : (
           <>
-            <ButtonLink href={`/trainer/calendar/new?event=${entry.eventId}`} icon={<Glyph icon={Pencil} size={16} />}>
+            <ButtonLink href={`/trainer/calendar/new?event=${entry.eventId}`} icon={<Glyph icon={SquarePen} size={16} />}>
               عدّل الموعد
             </ButtonLink>
             <Button variant="outline" onClick={() => setConfirm(true)} icon={<Glyph icon={Trash2} size={16} />}>
@@ -466,7 +466,7 @@ function MoveDialog({
             </p>
           ) : (
             <p className="flex items-center gap-2 type-small text-state-success">
-              <Glyph icon={CircleCheck} size={16} />
+              <Glyph icon={CircleCheckBig} size={16} />
               لا تعارض – هذا الوقت خالٍ في تقويمك.
             </p>
           )}

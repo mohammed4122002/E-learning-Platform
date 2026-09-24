@@ -96,20 +96,21 @@ export function AccountMenu() {
                 ملفي المهني
                 <Glyph icon={ChevronLeft} size={16} />
               </Link>
-              <p className="flex items-center justify-center gap-2.5 type-caption text-text-secondary">
+              <p className="flex items-center justify-center gap-3 type-caption text-text-secondary">
+                {/* Figma: the count reads first (inline start), its icon after it. */}
                 <span className="flex items-center gap-1">
-                  <Glyph icon={Eye} size={16} />
                   {toArabicDigits(user.trainerCard.views)}
+                  <Glyph icon={Eye} size={16} />
                   <span className="sr-only">مشاهدة للملف</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <Glyph icon={Users} size={16} />
                   {toArabicDigits(user.trainerCard.learners)}
+                  <Glyph icon={Users} size={16} />
                   <span className="sr-only">متدربًا نشطًا</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <Glyph icon={Star} size={16} />
                   {user.trainerCard.rating === null ? "—" : formatRating(user.trainerCard.rating)}
+                  <Glyph icon={Star} size={16} />
                   <span className="sr-only">متوسط التقييم</span>
                 </span>
               </p>

@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef, useState, useTransition, type ReactN
 import { useRouter } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import {
-  Award, BadgeCheck, BookOpen, Briefcase, Building2, ChevronLeft, CircleUser, Globe, GraduationCap, Info, Lock, Pencil, Trash2, Upload,
+  Award, BadgeCheck, BookOpen, ChevronLeft, CircleUser, Compass, Contact, Info, Landmark, LayoutGrid, Lock, SquarePen, Trash2, Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Checkbox, Toggle } from "@/components/ui/Choice";
@@ -30,8 +30,8 @@ export type EditorProgram = { id: string; title: string; caption: string; visibl
 export type VisibilityRow = { key: "profile" | "credentials" | "experience" | "availability" | "trainees"; label: string; level: "public" | "orgs" | "private" };
 
 const LEVEL = {
-  public: { label: "عام — يراه أي زائر", icon: Globe, cls: "text-state-info" },
-  orgs: { label: "الجهات — الجهات التدريبية فقط", icon: Building2, cls: "text-state-warning" },
+  public: { label: "عام — يراه أي زائر", icon: LayoutGrid, cls: "text-state-info" },
+  orgs: { label: "الجهات — الجهات التدريبية فقط", icon: Landmark, cls: "text-state-warning" },
   private: { label: "خاص — لا يراه أحد", icon: Lock, cls: "text-state-success" },
 } as const;
 
@@ -122,7 +122,7 @@ export function PhotoAndBio({ userId, fullName, avatarSrc, headline, bio, sugges
   };
 
   return (
-    <EditorSection id="photo" title="الصورة والنبذة" subtitle="أول ما تراه الجهة" icon={CircleUser} level={level}>
+    <EditorSection id="photo" title="الصورة والنبذة" subtitle="أول ما تراه الجهة" icon={Contact} level={level}>
       <div className="flex flex-wrap items-center gap-5 rounded-16 bg-bg-page p-5 sm:flex-nowrap">
         <Avatar name={fullName} src={avatarSrc} size="l" />
         <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -244,14 +244,14 @@ export function QualificationsSection({ userId, verified, verifiedLabel, items, 
         {items.map((q) => (
           <li key={q.id} className="flex items-center gap-3.5 rounded-16 bg-bg-page px-[18px] py-4">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-12 bg-bg-surface text-text-brand">
-              <Glyph icon={q.kind === "academic" ? GraduationCap : Award} size={20} />
+              <Glyph icon={q.kind === "academic" ? CircleUser : Award} size={20} />
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
               <span className="type-title text-text-primary">{q.title}</span>
               <span className="type-body text-text-muted">{[q.issuer, q.year ? toArabicDigits(q.year) : null, q.hasFile ? "مستند مرفق" : null].filter(Boolean).join(" · ")}</span>
             </span>
             <IconButton icon={Trash2} label={`احذف ${q.title}`} tone="danger" onClick={() => setConfirm(q)} />
-            <IconButton icon={Pencil} label={`عدّل ${q.title}`} onClick={() => setEditing(q)} />
+            <IconButton icon={SquarePen} label={`عدّل ${q.title}`} onClick={() => setEditing(q)} />
           </li>
         ))}
       </ul>
@@ -370,12 +370,12 @@ export function ExperienceSection({ userId, items, cv, level }: { userId: string
   };
   const period = (e: EditorExperience) => `${yearOf(e.startMonth)} – ${e.isCurrent || !e.endMonth ? "الآن" : yearOf(e.endMonth)}`;
   return (
-    <EditorSection id="experience" title="الخبرات والأعمال" subtitle="خبرتك العملية وسيرتك الذاتية" icon={Briefcase} level={level}>
+    <EditorSection id="experience" title="الخبرات والأعمال" subtitle="خبرتك العملية وسيرتك الذاتية" icon={Compass} level={level}>
       <ul className="flex flex-col gap-[18px]">
         {items.map((e) => (
           <li key={e.id} className="flex items-center gap-3.5 rounded-16 bg-bg-page px-[18px] py-4">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-12 bg-bg-surface text-text-brand">
-              <Glyph icon={Briefcase} size={20} />
+              <Glyph icon={Compass} size={20} />
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
               <span className="type-title text-text-primary">{e.title}</span>
@@ -384,7 +384,7 @@ export function ExperienceSection({ userId, items, cv, level }: { userId: string
               </span>
             </span>
             <IconButton icon={Trash2} label={`احذف ${e.title}`} tone="danger" onClick={() => setConfirm(e)} />
-            <IconButton icon={Pencil} label={`عدّل ${e.title}`} onClick={() => setEditing(e)} />
+            <IconButton icon={SquarePen} label={`عدّل ${e.title}`} onClick={() => setEditing(e)} />
           </li>
         ))}
       </ul>
@@ -558,7 +558,7 @@ export function VisibilityCard({ rows }: { rows: VisibilityRow[] }) {
           <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
             <span className="type-subtitle text-text-primary">{locked[0].label}</span>
             <span className="flex items-center gap-1.5 type-caption text-state-info">
-              <Glyph icon={Globe} size={16} />
+              <Glyph icon={LayoutGrid} size={16} />
               {locked[0].text}
             </span>
           </span>

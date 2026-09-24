@@ -23,7 +23,7 @@ export default async function TrainerHelpPage(props: PageProps<"/trainer/help">)
 
   return (
     <>
-      <TopBar title="مركز المساعدة" subtitle="أدلة واضحة وسريعة" />
+      <TopBar title="مركز المساعدة" subtitle="أدلة وأسئلة شائعة" />
       <PageBody className="gap-6">
         <Breadcrumb items={[{ label: "الرئيسية", href: "/trainer" }, { label: "مركز المساعدة" }]} />
         <section className="flex flex-col gap-4 rounded-22 bg-bg-brand-tint p-6 sm:px-8 sm:py-[30px]">

@@ -5,11 +5,11 @@ import { useActionState, useEffect, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   BellOff,
-  CircleCheck,
-  CircleX,
+  CircleCheckBig,
+  OctagonX,
   EyeOff,
   Landmark,
-  ShieldCheck,
+  Shield,
   TriangleAlert,
   User,
 } from "lucide-react";
@@ -129,16 +129,18 @@ export function EventForm({ initial }: { initial: EventDraft }) {
         )}
 
         <fieldset className="rounded-22 border border-border-default bg-bg-card p-6 shadow-card">
-          <legend className="float-start w-full type-h3 text-text-primary">
+          <legend className="float-start w-full type-h2 text-text-primary">
             نوع الموعد
           </legend>
           <div className="clear-both flex flex-col gap-5 pt-5">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {/* Figma (303:9062) draws «ارتباط شخصي» on the left like «من تاريخ»; the LTR grid keeps that order. */}
+            <div dir="ltr" className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {KINDS.map((k) => {
                 const on = d.kind === k.value;
                 return (
                   <label
                     key={k.value}
+                    dir="rtl"
                     className={`flex cursor-pointer flex-col items-center gap-3 rounded-16 px-4 pt-5 pb-6 text-center transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-border-focus ${
                       on
                         ? "border-2 border-action-primary bg-bg-brand-tint"
@@ -165,11 +167,11 @@ export function EventForm({ initial }: { initial: EventDraft }) {
                       <Glyph icon={k.icon} size={20} />
                     </span>
                     <span
-                      className={`type-subtitle ${on ? "text-text-brand" : "text-text-primary"}`}
+                      className={`type-title ${on ? "text-text-brand" : "text-text-primary"}`}
                     >
                       {k.title}
                     </span>
-                    <span className="type-small text-text-secondary">
+                    <span className="type-body text-text-secondary">
                       {k.hint}
                     </span>
                   </label>
@@ -180,7 +182,7 @@ export function EventForm({ initial }: { initial: EventDraft }) {
         </fieldset>
 
         <fieldset className="rounded-22 border border-border-default bg-bg-card p-6 shadow-card">
-          <legend className="float-start w-full type-h3 text-text-primary">
+          <legend className="float-start w-full type-h2 text-text-primary">
             التاريخ والوقت
           </legend>
           <div className="clear-both flex flex-col gap-5 pt-5">
@@ -192,7 +194,7 @@ export function EventForm({ initial }: { initial: EventDraft }) {
                 onChange={(e) => set("allDay", e.target.checked)}
                 description="يحجب اليوم بأكمله بلا تحديد ساعات"
               >
-                <span className="type-subtitle">يوم كامل</span>
+                <span className="type-title">يوم كامل</span>
               </Toggle>
             </div>
             {/* Figma places «من» on the left and «إلى» on the right; the LTR grid keeps that while tabbing من → إلى. */}
@@ -261,11 +263,11 @@ export function EventForm({ initial }: { initial: EventDraft }) {
               <div className="flex flex-1 flex-col gap-0.5">
                 <label
                   htmlFor="recurrence"
-                  className="type-subtitle text-text-primary"
+                  className="type-title text-text-primary"
                 >
                   التكرار
                 </label>
-                <p className="type-small text-text-secondary">
+                <p className="type-body text-text-secondary">
                   مثال: كل أحد · كل أسبوعين · شهريًا
                 </p>
               </div>
@@ -288,8 +290,8 @@ export function EventForm({ initial }: { initial: EventDraft }) {
           aria-labelledby="event-title"
           className="flex flex-col gap-5 rounded-22 border border-border-default bg-bg-card p-6 shadow-card"
         >
-          <h2 id="event-title" className="type-h3 text-text-primary">
-            عنوان الموعد – لك وحدك
+          <h2 id="event-title" className="type-h2 text-text-primary">
+            عنوان الموعد — لك وحدك
           </h2>
           <Input
             aria-labelledby="event-title"
@@ -306,17 +308,17 @@ export function EventForm({ initial }: { initial: EventDraft }) {
       <aside className="flex w-full flex-col gap-5 lg:w-[380px] lg:shrink-0">
         <section
           aria-labelledby="privacy-title"
-          className="flex flex-col gap-5 rounded-22 border-2 border-state-success bg-bg-page p-6"
+          className="flex flex-col gap-[18px] rounded-22 border-2 border-state-success bg-state-success-bg p-6 sm:p-[26px]"
         >
           <div className="flex items-center gap-3">
             <h2
               id="privacy-title"
-              className="flex-1 text-[22px] font-bold leading-[1.3] text-state-success"
+              className="flex-1 type-h2 text-state-success"
             >
               خصوصيتك محفوظة
             </h2>
             <span className="flex size-11 items-center justify-center rounded-12 bg-bg-surface text-state-success">
-              <Glyph icon={ShieldCheck} size={20} />
+              <Glyph icon={Shield} size={20} />
             </span>
           </div>
           <p className="type-small text-text-secondary">
@@ -331,7 +333,7 @@ export function EventForm({ initial }: { initial: EventDraft }) {
                 <p className="type-body text-text-secondary">غير متاح</p>
               </div>
               <span className="flex size-11 items-center justify-center rounded-12 bg-bg-page text-text-muted">
-                <Glyph icon={CircleX} size={20} />
+                <Glyph icon={OctagonX} size={20} />
               </span>
             </div>
             <p className="type-small text-state-success">
@@ -343,7 +345,7 @@ export function EventForm({ initial }: { initial: EventDraft }) {
               (t) => (
                 <li
                   key={t}
-                  className="flex items-center gap-2 rounded-12 bg-bg-surface px-4 py-3 type-small text-text-primary"
+                  className="flex items-center gap-2 rounded-12 bg-bg-surface px-4 py-3 type-body text-text-primary"
                 >
                   <Glyph
                     icon={EyeOff}
@@ -354,9 +356,9 @@ export function EventForm({ initial }: { initial: EventDraft }) {
                 </li>
               ),
             )}
-            <li className="flex items-center gap-2 rounded-12 bg-bg-surface px-4 py-3 type-small text-text-primary">
+            <li className="flex items-center gap-2 rounded-12 bg-bg-surface px-4 py-3 type-body text-text-primary">
               <Glyph
-                icon={CircleCheck}
+                icon={CircleCheckBig}
                 size={16}
                 className="text-state-success"
               />
@@ -369,7 +371,7 @@ export function EventForm({ initial }: { initial: EventDraft }) {
           aria-labelledby="save-title"
           className="flex flex-col gap-5 rounded-22 border border-border-default bg-bg-card p-6 shadow-card"
         >
-          <h2 id="save-title" className="type-h3 text-text-primary">
+          <h2 id="save-title" className="type-h2 text-text-primary">
             حفظ الموعد
           </h2>
           <Button
@@ -403,7 +405,7 @@ function ConflictRow({
   check: ConflictCheck | "checking" | null;
   hasRange: boolean;
 }) {
-  const base = "flex items-center gap-2 rounded-16 px-4 py-4 type-body";
+  const base = "flex items-center gap-2 rounded-16 px-4 py-4 type-body-lg";
   if (!hasRange) return null;
   if (check === null || check === "checking")
     return (
@@ -414,7 +416,7 @@ function ConflictRow({
   if (check.error)
     return (
       <p role="alert" className={`${base} bg-state-error-bg text-state-error`}>
-        <Glyph icon={CircleX} size={20} />
+        <Glyph icon={OctagonX} size={20} />
         {check.error}
       </p>
     );
@@ -440,7 +442,7 @@ function ConflictRow({
       role="status"
       className={`${base} bg-state-success-bg text-state-success`}
     >
-      <Glyph icon={CircleCheck} size={20} />
+      <Glyph icon={CircleCheckBig} size={20} />
       لا تعارض – هذا الوقت خالٍ في تقويمك.
     </p>
   );

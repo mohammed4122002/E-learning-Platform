@@ -1,17 +1,18 @@
 import type { LucideIcon } from "lucide-react";
-import { Award, Banknote, Building2, CalendarCheck, CircleAlert, Clock, FileText, Hourglass, Route, Shield, Star, User } from "lucide-react";
+import { Award, CalendarCheck, CircleAlert, Clock, FileText, Hourglass, Landmark, Shield, Signpost, Star, User } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Chip, StatusItemCard } from "@/components/trainings/ui";
 import { DismissButton } from "@/components/trainings/DismissButton";
 import { dismissTrainerQueueItem } from "@/app/(trainer)/trainer/queue/actions";
 import type { QueueIcon, TrainerQueueItem } from "@/lib/data/trainer-queue";
 
+/** Rendered TG components of TRR-QUE-01 (256:1267): Institute = landmark, Status/Pending = hourglass (also on money items). */
 export const QUEUE_ICONS: Record<QueueIcon, LucideIcon> = {
   alert: CircleAlert,
-  building: Building2,
+  building: Landmark,
   star: Star,
   hourglass: Hourglass,
-  banknote: Banknote,
+  banknote: Hourglass,
   shield: Shield,
   file: FileText,
   calendar: CalendarCheck,
@@ -46,7 +47,7 @@ export function TrainerQueueCard({ item }: { item: TrainerQueueItem }) {
       }
       description={item.description}
       facts={[
-        { icon: Route, label: "الخطوة الحالية:", value: item.step },
+        { icon: Signpost, label: "الخطوة الحالية:", value: item.step },
         { icon: User, label: "المسؤول:", value: item.owner, valueClass: item.ownerYou ? "text-state-error" : undefined },
         { icon: Clock, label: "التحديث المتوقع:", value: item.eta },
       ]}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CircleCheck } from "lucide-react";
+import { CircleCheckBig } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { rateTrainerGuide } from "@/app/(trainer)/trainer/help/actions";
@@ -39,7 +39,7 @@ export function GuideFeedback({ articleId, initial }: { articleId: string; initi
       </div>
       {value !== null && !error && (
         <p role="status" className="flex items-center gap-2 type-small text-state-success">
-          <Glyph icon={CircleCheck} size={16} />
+          <Glyph icon={CircleCheckBig} size={16} />
           {value ? "شكرًا — يسعدنا أن الدليل أفادك." : "شكرًا — سنحسّن هذا الدليل. يمكنك سؤال الدعم مباشرة."}
         </p>
       )}

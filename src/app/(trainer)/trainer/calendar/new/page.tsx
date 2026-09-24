@@ -51,7 +51,7 @@ export default async function NewCalendarEventPage(props: PageProps<"/trainer/ca
         <Breadcrumb items={[{ label: "الجدول", href: "/trainer/calendar" }, { label: editing ? "تعديل موعد" : "موعد جديد" }]} />
         <PageHeading
           title={editing ? "عدّل موعدك" : "أضف موعدًا إلى تقويمك"}
-          description="المواعيد التي تضيفها هنا تحجب الوقت أمام الجهات – لكن تفاصيلها تبقى خاصة تمامًا."
+          description="المواعيد التي تضيفها هنا تحجب الوقت أمام الجهات — لكن تفاصيلها تبقى خاصة تمامًا."
         />
         <EventForm initial={initial} />
       </PageBody>

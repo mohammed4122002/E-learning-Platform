@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, Briefcase, CalendarDays, Compass, FileText, Info, LayoutGrid, SquareUser, Users } from "lucide-react";
+import { BookOpen, CalendarDays, Compass, Contact, FileText, Info, LayoutGrid, Users } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
@@ -13,7 +13,7 @@ const WHY: { icon: LucideIcon; title: string; text: string; cls: string }[] = [
   { icon: Users, title: "المتدربون يثقون به", text: "قبل شراء دورتك يقرؤون عنك.", cls: "text-state-success" },
 ];
 const LATER: { icon: LucideIcon; label: string; href: string }[] = [
-  { icon: Briefcase, label: "الخبرات السابقة", href: "/trainer/profile/edit#experience" },
+  { icon: Compass, label: "الخبرات السابقة", href: "/trainer/profile/edit#experience" },
   { icon: FileText, label: "السيرة الذاتية", href: "/trainer/profile/edit#experience" },
   { icon: BookOpen, label: "دوراتك", href: "/trainer/courses" },
   { icon: CalendarDays, label: "تقويم توفّرك", href: "/trainer/calendar" },
@@ -45,7 +45,7 @@ export function EmptyProfile({ o }: { o: TrainerOverview }) {
             </ButtonLink>
           </div>
           <span className="hidden size-[88px] shrink-0 items-center justify-center rounded-22 bg-action-primary text-text-on-brand sm:flex">
-            <Glyph icon={SquareUser} size={32} />
+            <Glyph icon={Contact} size={32} />
           </span>
         </section>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">

@@ -1,4 +1,4 @@
-import { CircleCheck, GraduationCap } from "lucide-react";
+import { CircleCheckBig, CircleUser } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
 import { toArabicDigits } from "@/lib/format";
 
@@ -10,7 +10,7 @@ export function TrainerWizardBar({ step, total }: { step: number; total: number 
     <header className="flex w-full items-center gap-5 border-b border-border-divider bg-bg-surface px-4 py-6 sm:px-12">
       <div className="flex shrink-0 items-center gap-3">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-action-primary text-text-on-brand">
-          <Glyph icon={GraduationCap} size={20} />
+          <Glyph icon={CircleUser} size={20} />
         </span>
         <div className="hidden flex-col sm:flex">
           <p className="type-subtitle text-text-primary">بوابة التدريب</p>
@@ -20,7 +20,7 @@ export function TrainerWizardBar({ step, total }: { step: number; total: number 
       <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
         <div className="flex w-full max-w-[600px] items-center gap-2.5">
           <p className="flex items-center gap-1.5 type-caption text-state-success">
-            <Glyph icon={CircleCheck} size={16} />
+            <Glyph icon={CircleCheckBig} size={16} />
             <span className="hidden sm:inline">تُحفظ إجاباتك تلقائيًا</span>
           </p>
           <p className="min-w-0 flex-1 text-end type-caption text-text-muted sm:text-start">

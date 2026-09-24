@@ -1,13 +1,15 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, ChevronLeft, CircleCheck, CircleDot, CircleQuestionMark, FileText, Hourglass, Archive } from "lucide-react";
+import { Archive, BookOpen, ChevronLeft, CircleAlert, CircleCheckBig, CircleQuestionMark, FileText, Hourglass } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { formatRelative, pluralAr, toArabicDigits } from "@/lib/format";
 import type { TrainerProgram } from "@/lib/data/trainer";
+import { PHASE_LABEL, type ProgramPhase } from "@/lib/trainer-programs";
 
-/* Building blocks of TRR-DSH-01 (256:848 · 296:8159 · 296:8468). Values from the Figma frames; tokens only. */
+/* Building blocks of TRR-DSH-01 (256:848 · 296:8159 · 296:8468). Values from the Figma frames; tokens only.
+ * Icons follow the rendered TG components: TG/Status/Success = circle-check-big, TG/Status/Pending = hourglass. */
 
 /** Card shell used by the dashboard / journey side cards: surface, 1px border, r16 or r22, card shadow. */
 export function DashCard({ children, className, radius = 16, labelledBy }: { children: ReactNode; className?: string; radius?: 16 | 22; labelledBy?: string }) {
@@ -52,10 +54,10 @@ export function HeroPill({ icon, tone, children }: { icon: LucideIcon; tone: "su
   );
 }
 
-/** Stage pill of the hero ("إنشاء الحساب" done = success tint, others = surface + circle-dot / current hourglass). */
+/** Stage pill of the hero ("إنشاء الحساب" done = success tint + TG/Status/Success, others = surface + TG/Status/Pending). */
 export function StagePill({ label, state }: { label: string; state: "done" | "current" | "todo" }) {
   const cls = state === "done" ? "bg-state-success-bg text-state-success" : "bg-bg-surface text-text-secondary";
-  const icon = state === "done" ? CircleCheck : state === "current" ? Hourglass : CircleDot;
+  const icon = state === "done" ? CircleCheckBig : Hourglass;
   return (
     <li className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 type-caption ${cls}`}>
       <Glyph icon={icon} size={16} />
@@ -155,22 +157,24 @@ export function FaqCard({ title, items, action }: { title: string; items: { q: s
   );
 }
 
-const PROGRAM_STATUS: Record<string, { label: string; icon: LucideIcon; cls: string }> = {
-  draft: { label: "مسودة", icon: FileText, cls: "bg-bg-disabled text-text-muted" },
-  published: { label: "منشور", icon: CircleCheck, cls: "bg-state-success-bg text-state-success" },
-  archived: { label: "مؤرشف", icon: Archive, cls: "bg-bg-disabled text-text-muted" },
+const PHASE_PILL: Record<ProgramPhase, { icon: LucideIcon; cls: string }> = {
+  draft: { icon: FileText, cls: "bg-bg-disabled text-text-muted" },
+  under_review: { icon: Hourglass, cls: "bg-bg-surface text-state-warning" },
+  needs_changes: { icon: CircleAlert, cls: "bg-state-error-bg text-state-error" },
+  rejected: { icon: CircleAlert, cls: "bg-state-error-bg text-state-error" },
+  published: { icon: CircleCheckBig, cls: "bg-state-success-bg text-state-success" },
+  suspended: { icon: Archive, cls: "bg-bg-disabled text-text-muted" },
 };
-const REVIEW = { label: "قيد المراجعة", icon: Hourglass, cls: "bg-bg-surface text-state-warning" };
 
 /** Program row of «برامجي» (256:1112): r12 bg/page (in review = warning tint + 1.5px border), status pill, «اعرض». */
 export function ProgramRow({ program }: { program: TrainerProgram }) {
-  const s = PROGRAM_STATUS[program.status] ?? REVIEW;
-  const review = !PROGRAM_STATUS[program.status];
+  const s = PHASE_PILL[program.phase];
+  const review = program.phase === "under_review";
   const caption =
-    program.status === "draft"
+    program.phase === "draft" || program.phase === "needs_changes"
       ? `لم يُرسل بعد · محفوظ ${formatRelative(program.updatedAt)}`
       : review
-        ? `أُرسل ${formatRelative(program.updatedAt)}`
+        ? `أُرسل ${formatRelative(program.submittedAt ?? program.updatedAt)}`
         : `${pluralAr(program.coursesCount, ["دورة واحدة", "دورتان", "دورات", "دورة"])} · ${toArabicDigits(program.learners)} مسجّلًا`;
   return (
     <li className={`flex w-full items-center gap-3.5 rounded-12 px-4 py-3.5 ${review ? "border-[1.5px] border-state-warning bg-state-warning-bg" : "bg-bg-page"}`}>
@@ -182,7 +186,7 @@ export function ProgramRow({ program }: { program: TrainerProgram }) {
           <span className="min-w-0 flex-1 type-subtitle text-text-primary">{program.title}</span>
           <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-[5px] type-caption ${s.cls}`}>
             <Glyph icon={s.icon} size={16} />
-            {s.label}
+            {PHASE_LABEL[program.phase]}
           </span>
         </span>
         <span className="type-caption text-text-muted">{caption}</span>

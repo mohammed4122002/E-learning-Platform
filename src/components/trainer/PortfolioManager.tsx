@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { BookMarked, BookOpen, CircleX, FileText, Info, LoaderCircle, Pencil, Presentation, Trash2, Upload, X } from "lucide-react";
+import { BookMarked, BookOpen, FileText, Info, LoaderCircle, OctagonX, SquarePen, Trash2, Tv, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Feedback";
 import { Input, Select } from "@/components/ui/Field";
@@ -19,13 +19,16 @@ import type { PortfolioItem } from "@/lib/data/trainer-profile";
 /* TRR-PRF-03 · معرض الأعمال — empty (464:34920), default (464:35114), saving (464:35384), error (464:35658). */
 
 const KIND: Record<PortfolioItem["kind"], { icon: LucideIcon; tone: string; label: string }> = {
-  delivered: { icon: Presentation, tone: "text-state-success", label: "ورشة أو دورة نفّذتها" },
+  delivered: { icon: Tv, tone: "text-state-success", label: "ورشة أو دورة نفّذتها" },
   material: { icon: FileText, tone: "text-state-info", label: "مادة تدريبية أعددتها" },
   program: { icon: BookOpen, tone: "text-state-success", label: "برنامج بنيته لجهة" },
 };
 
 const worksWord = (n: number) => pluralAr(n, ["عمل واحد", "عملان", "أعمال", "عملًا"]);
-const imagesWord = (n: number) => pluralAr(n, ["صورة واحدة", "صورتان", "صور", "صورة"]);
+/** Object of «رفع» (464:35658 «فشل رفع صورتين من ثلاث»): accusative dual, small totals spelled out. */
+const imagesWord = (n: number) => (n === 2 ? "صورتين" : pluralAr(n, ["صورة واحدة", "صورتان", "صور", "صورة"]));
+const TOTAL_FEM = ["", "واحدة", "اثنتين", "ثلاث", "أربع", "خمس", "ست", "سبع", "ثماني", "تسع", "عشر"];
+const ofTotal = (n: number) => (n >= 1 && n <= 10 ? TOTAL_FEM[n] : toArabicDigits(n));
 
 export function itemMeta(i: PortfolioItem): string {
   if (i.kind === "material") return [i.fileFormat, i.pageCount ? `${toArabicDigits(i.pageCount)} صفحة` : null].filter(Boolean).join(" · ");
@@ -180,12 +183,12 @@ export function PortfolioManager({ userId, items }: { userId: string; items: Por
           role={upload.phase === "failed" ? "alert" : "status"}
           className={`flex items-start gap-3 rounded-12 border-[1.5px] px-4 py-3.5 ${upload.phase === "failed" ? "border-state-error bg-state-error-bg" : "border-state-info bg-state-info-bg"}`}
         >
-          <Glyph icon={upload.phase === "failed" ? CircleX : Info} size={20} className={`mt-1 ${upload.phase === "failed" ? "text-state-error" : "text-state-info"}`} />
+          <Glyph icon={upload.phase === "failed" ? OctagonX : Info} size={20} className={`mt-1 ${upload.phase === "failed" ? "text-state-error" : "text-state-info"}`} />
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <p className={`type-body ${upload.phase === "failed" ? "text-state-error" : "text-state-info"}`}>{upload.phase === "failed" ? "تعذّر حفظ العمل" : "جارٍ حفظ العمل الجديد"}</p>
             <p className="type-small text-text-secondary">
               {upload.phase === "failed"
-                ? `فشل رفع ${imagesWord(upload.failed.length)} من ${toArabicDigits(upload.files.length)} بسبب انقطاع الاتصال. باقي أعمالك محفوظة ولم تتأثر.`
+                ? `فشل رفع ${imagesWord(upload.failed.length)} من ${ofTotal(upload.files.length)} بسبب انقطاع الاتصال. باقي أعمالك محفوظة ولم تتأثر.`
                 : "نرفع الصور ونحدّث ملفك — لا تغلق الصفحة."}
             </p>
           </div>
@@ -250,7 +253,7 @@ export function PortfolioManager({ userId, items }: { userId: string; items: Por
                     <span className="type-body text-text-muted">{itemMeta(i) || k.label}</span>
                   </span>
                   <button type="button" aria-label={`عدّل ${i.title}`} onClick={() => setEditing(i)} className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-secondary hover:bg-bg-brand-tint focus-ring">
-                    <Glyph icon={Pencil} size={20} />
+                    <Glyph icon={SquarePen} size={20} />
                   </button>
                   <button type="button" aria-label={`احذف ${i.title}`} onClick={() => setConfirm(i)} className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-state-error hover:bg-state-error-bg focus-ring">
                     <Glyph icon={Trash2} size={20} />
@@ -261,14 +264,14 @@ export function PortfolioManager({ userId, items }: { userId: string; items: Por
             {upload && (
               <li className={`flex flex-wrap items-center gap-4 rounded-16 px-5 py-5 ${upload.phase === "failed" ? "bg-state-error-bg" : "bg-state-warning-bg"}`}>
                 <span className={`flex size-[52px] shrink-0 items-center justify-center rounded-12 bg-bg-surface ${upload.phase === "failed" ? "text-state-error" : "text-state-warning"}`}>
-                  <Glyph icon={upload.phase === "failed" ? CircleX : LoaderCircle} size={24} className={upload.phase === "failed" ? "" : "animate-[tg-spin_1.2s_linear_infinite]"} />
+                  <Glyph icon={upload.phase === "failed" ? OctagonX : LoaderCircle} size={24} className={upload.phase === "failed" ? "" : "animate-[tg-spin_1.2s_linear_infinite]"} />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col gap-1">
                   <span className="type-title text-text-primary">
                     {upload.title} – {upload.phase === "failed" ? "فشل الرفع" : "قيد الرفع"}
                   </span>
                   <span className={`type-body ${upload.phase === "failed" ? "text-state-error" : "text-state-warning"}`}>
-                    {upload.phase === "failed" ? `فشل رفع ${imagesWord(upload.failed.length)} من ${toArabicDigits(upload.files.length)}` : `جارٍ رفع ${imagesWord(upload.files.length)} · ${toArabicDigits(progress)}٪`}
+                    {upload.phase === "failed" ? `فشل رفع ${imagesWord(upload.failed.length)} من ${ofTotal(upload.files.length)}` : `جارٍ رفع ${imagesWord(upload.files.length)} · ${toArabicDigits(progress)}٪`}
                   </span>
                 </span>
                 {upload.phase === "failed" && (
