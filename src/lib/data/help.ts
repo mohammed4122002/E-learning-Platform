@@ -42,11 +42,11 @@ export async function getHelpHome(query: string, category: HelpCategory | null):
   const supabase = await createClient();
   const q = query.trim().slice(0, 80);
   const [all, results] = await Promise.all([
-    supabase.from("help_articles").select(SELECT).eq("published", true).order("category").order("position"),
+    supabase.from("help_articles").select(SELECT).eq("published", true).eq("audience", "trainee").order("category").order("position"),
     q
-      ? supabase.from("help_articles").select(SELECT).eq("published", true).or(`title.ilike.${likeTerm(q)},body.ilike.${likeTerm(q)}`).order("position").limit(30)
+      ? supabase.from("help_articles").select(SELECT).eq("published", true).eq("audience", "trainee").or(`title.ilike.${likeTerm(q)},body.ilike.${likeTerm(q)}`).order("position").limit(30)
       : category
-        ? supabase.from("help_articles").select(SELECT).eq("published", true).eq("category", category).order("position")
+        ? supabase.from("help_articles").select(SELECT).eq("published", true).eq("audience", "trainee").eq("category", category).order("position")
         : Promise.resolve({ data: null, error: null }),
   ]);
   if (all.error) throw new Error(all.error.message);
@@ -65,13 +65,13 @@ export async function getHelpHome(query: string, category: HelpCategory | null):
 export async function getHelpArticle(slug: string): Promise<{ article: HelpArticle; related: HelpArticle[] } | null> {
   if (!/^[a-z0-9-]{2,120}$/.test(slug)) return null;
   const supabase = await createClient();
-  const { data } = await supabase.from("help_articles").select(SELECT).eq("slug", slug).eq("published", true).maybeSingle();
+  const { data } = await supabase.from("help_articles").select(SELECT).eq("slug", slug).eq("published", true).eq("audience", "trainee").maybeSingle();
   if (!data) return null;
   const article = toArticle(data as Row);
   const { data: rel } = await supabase
     .from("help_articles")
     .select(SELECT)
-    .eq("published", true)
+    .eq("published", true).eq("audience", "trainee")
     .eq("category", article.category)
     .neq("slug", slug)
     .order("position")
@@ -82,6 +82,6 @@ export async function getHelpArticle(slug: string): Promise<{ article: HelpArtic
 /** A few articles for other screens (e.g. TRN-INQ-01 «ربما تجد إجابتك هنا»). */
 export async function getHelpArticlesByCategory(category: HelpCategory, limit = 3): Promise<HelpArticle[]> {
   const supabase = await createClient();
-  const { data } = await supabase.from("help_articles").select(SELECT).eq("published", true).eq("category", category).order("position").limit(limit);
+  const { data } = await supabase.from("help_articles").select(SELECT).eq("published", true).eq("audience", "trainee").eq("category", category).order("position").limit(limit);
   return ((data ?? []) as Row[]).map(toArticle);
 }
