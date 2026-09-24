@@ -50,3 +50,8 @@ the app does today, so nothing is silently faked.
 | T20 | TRR-PRG-01 / 02 meta rows | Figma lays out each «label: value» item left-to-right (value visually right of its label), which reads backwards in Arabic. | Items follow Figma's visual order across the row; inside an item the label precedes its value (proper RTL). |
 | T21 | TRR-PRG-06 · غير مكتمل (447:24061) vs «غير مكتمل · بلا دورة أولى» (4207:652) | Two different layouts for the same state (an unpublished program never has a course). | Status page follows 447:24061; the visibility page follows 450:24600. Tell us if 4207:652 should replace 447:24061. |
 | T22 | TRR-PRG-08 «إشعار فريق المراجعة» | There is no admin/reviewer account yet. | The step is real (`notify_program_reviewers` notifies every admin-workspace user) — today it notifies nobody. |
+| T23 | TRR-CRS-03 standalone page (272:4534) | Its cards (seats, sensitive actions) live inside the «المتدربون» tab and `/seats`; the standalone layout is not built. | Confirm the merged layout or say if the standalone page is needed. |
+| T24 | Several trainer frames (tabs, sequences, seat tiles, cancel-reason chips) | Figma lays them out left-to-right. | Shown in right-to-left reading order, consistent with the rest of the app. |
+| T25 | TRR-CRS-03 seats frames | 462:33421 puts the number before «من ٢٠ مقعدًا», the other frames after it. | Follows the majority of frames. |
+| T26 | TRR-CRS-04 postpone date fields | Figma shows Arabic-digit dates «١٠ / ٠٥ / ٢٠٢٦». | Uses the browser's date picker (Latin digits). A custom Arabic date picker is needed to match exactly. |
+| T27 | TRR-ATT-02 QR panel | Adds «أو يكتب الرمز …» (not in Figma) for trainees without a camera. | Keep or remove? |
