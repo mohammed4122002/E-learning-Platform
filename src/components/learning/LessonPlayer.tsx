@@ -213,7 +213,11 @@ function VideoPlayer({ lesson, next }: { lesson: PlayerLesson; next: NextLesson 
             controls={false}
             aria-label={`فيديو الدرس: ${lesson.title}`}
             className={`absolute inset-0 size-full bg-black object-contain ${started ? "opacity-100" : "opacity-0"}`}
-            onLoadedMetadata={(e) => setRealDuration(Math.round(e.currentTarget.duration) || duration)}
+            onLoadedMetadata={(e) => {
+              // Streams without a duration header (e.g. some WebM files) report Infinity/NaN — keep the stored length.
+              const d = e.currentTarget.duration;
+              setRealDuration(Number.isFinite(d) && d > 0 ? Math.round(d) : duration);
+            }}
             onTimeUpdate={onTime}
             onPlay={() => setPlaying(true)}
             onPause={() => {
