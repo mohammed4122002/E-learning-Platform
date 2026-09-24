@@ -48,7 +48,7 @@ export default async function ContractPage({ params }: PageProps<"/trainer/contr
         />
         <div className="flex w-full flex-row-reverse flex-wrap justify-end gap-3">
           <ActionRowLink href={`/trainer/contracts/${c.id}/sign`}>تابع إلى التوقيع</ActionRowLink>
-          <ActionRowLink href={bid ? `/trainer/bids/${c.sourceId}` : "/trainer/affiliations"} outline>
+          <ActionRowLink href={bid ? `/trainer/bids/${c.sourceId}/negotiation` :"/trainer/affiliations"} outline>
             {bid ? "ارجع إلى التفاوض" : "ارجع إلى الارتباطات"}
           </ActionRowLink>
         </div>
