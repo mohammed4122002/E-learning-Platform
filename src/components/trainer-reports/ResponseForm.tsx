@@ -28,7 +28,7 @@ export function ResponseForm({ reportId, userId, fixHref }: { reportId: string; 
         <textarea
           id={`${formId}-body`}
           name="body"
-          rows={3}
+          rows={2}
           maxLength={4000}
           defaultValue={state.values?.body}
           aria-invalid={Boolean(fe.body)}

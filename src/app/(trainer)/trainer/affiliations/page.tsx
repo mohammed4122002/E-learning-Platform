@@ -23,9 +23,9 @@ import {
 export const metadata: Metadata = { title: "ارتباطاتي بالجهات التدريبية", description: "علاقاتك بالجهات التدريبية" };
 
 const primaryBtn =
-  "inline-flex h-14 w-full cursor-pointer items-center justify-center rounded-12 bg-action-primary px-8 type-body-lg text-text-on-brand shadow-[0_6px_18px_0_rgba(91,60,196,0.28)] hover:bg-action-primary-hover focus-ring sm:w-auto sm:min-w-[120px]";
+  "inline-flex h-14 w-full cursor-pointer items-center justify-center rounded-12 bg-action-primary px-8 type-body-lg text-text-on-brand shadow-[0_6px_18px_0_rgba(91,60,196,0.28)] hover:bg-action-primary-hover focus-ring sm:w-[120px] sm:px-0";
 const outlineBtn =
-  "inline-flex h-14 w-full cursor-pointer items-center justify-center rounded-12 border-[1.5px] border-border-default px-8 type-body-lg text-text-primary hover:bg-bg-brand-tint focus-ring sm:w-auto sm:min-w-[183px]";
+  "inline-flex h-14 w-full cursor-pointer items-center justify-center rounded-12 border-[1.5px] border-border-default px-8 type-body-lg text-text-primary hover:bg-bg-brand-tint focus-ring sm:w-[183px] sm:px-0";
 const ghostBtn = "inline-flex h-14 w-full cursor-pointer items-center justify-center rounded-12 px-8 type-body-lg text-text-brand hover:bg-bg-brand-tint focus-ring sm:w-[120px]";
 
 /** «جهة موثَّقة · ٤٫٦ تقييم · ٣٤ مدربًا مرتبطًا · فرع صلالة» — only facts that exist. */

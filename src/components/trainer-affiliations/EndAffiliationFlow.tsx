@@ -117,7 +117,7 @@ export function EndAffiliationFlow({
                 name="message"
                 form="end-form"
                 label="رسالتك للمعهد (اختيارية)"
-                rows={3}
+                rows={2}
                 maxLength={2000}
                 defaultValue={state.values?.message}
                 error={fe.message}

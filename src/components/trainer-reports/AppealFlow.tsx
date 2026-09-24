@@ -98,7 +98,7 @@ export function AppealFlow({
                 id="appeal-body"
                 name="body"
                 form="appeal-form"
-                rows={3}
+                rows={2}
                 maxLength={4000}
                 defaultValue={state.values?.body}
                 aria-invalid={Boolean(fe.body)}

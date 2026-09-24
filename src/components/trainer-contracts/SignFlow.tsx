@@ -64,23 +64,23 @@ export function SignFlow({
           )}
           <section className="flex w-full flex-col gap-2.5 rounded-[14px] border-2 border-border-default bg-bg-surface p-5 sm:p-6">
             <h2 className="text-[20px] leading-[1.4] font-bold text-text-primary">التوقيع الإلكتروني</h2>
-            <p className="text-[15px] leading-normal text-text-secondary">بالتوقيع تُقرّ بأنك راجعت العقد ووافقت على شروطه.</p>
+            <p className="text-[15px] leading-[1.2] text-text-secondary">بالتوقيع تُقرّ بأنك راجعت العقد ووافقت على شروطه.</p>
             <div className="flex flex-col gap-2.5">
               {sourceRef && (
                 <div className="flex flex-wrap items-center gap-2.5 rounded-[10px] border border-border-default bg-bg-page px-4 py-[13px]">
-                  <span className="text-[13.5px] leading-normal text-text-secondary">{refLabel}</span>
-                  <span className="text-[15px] leading-normal font-bold text-text-primary" dir="ltr">
+                  <span className="text-[13.5px] leading-[1.2] text-text-secondary">{refLabel}</span>
+                  <span className="text-[15px] leading-[1.2] font-bold text-text-primary" dir="ltr">
                     {sourceRef}
                   </span>
                 </div>
               )}
               <div className="flex flex-wrap items-center gap-2.5 rounded-[10px] border border-border-default bg-bg-page px-4 py-[13px]">
-                <span className="text-[13.5px] leading-normal text-text-secondary">قيمة العقد</span>
-                <span className="text-[15px] leading-normal font-bold text-text-primary">{valueText}</span>
+                <span className="text-[13.5px] leading-[1.2] text-text-secondary">قيمة العقد</span>
+                <span className="text-[15px] leading-[1.2] font-bold text-text-primary">{valueText}</span>
               </div>
               <div className="flex flex-col gap-1 rounded-[10px] border border-border-default bg-bg-page px-4 py-[9px]">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <label htmlFor="typed-name" className="text-[13.5px] leading-normal text-text-secondary">
+                  <label htmlFor="typed-name" className="text-[13.5px] leading-[1.2] text-text-secondary">
                     التوقيع
                   </label>
                   <input
@@ -93,15 +93,15 @@ export function SignFlow({
                     required
                     aria-invalid={Boolean(fe.typedName)}
                     aria-describedby="typed-name-hint"
-                    className="min-w-0 flex-1 rounded-8 border-[1.5px] border-border-default bg-bg-surface px-3 py-1 text-[15px] leading-normal font-bold text-text-primary placeholder:font-normal placeholder:text-text-muted focus-ring aria-[invalid=true]:border-state-error"
+                    className="min-w-0 flex-1 rounded-8 border-[1.5px] border-border-default bg-bg-surface px-3 py-1 text-[15px] leading-[1.2] font-bold text-text-primary placeholder:font-normal placeholder:text-text-muted focus-ring aria-[invalid=true]:border-state-error"
                   />
                 </div>
-                <p id="typed-name-hint" className={`text-[13.5px] leading-normal ${fe.typedName ? "text-state-error" : "text-text-muted"}`}>
+                <p id="typed-name-hint" className={`text-[13.5px] leading-[1.2] ${fe.typedName ? "text-state-error" : "text-text-muted"}`}>
                   {fe.typedName ?? "اكتب اسمك الكامل كما في ملفك — يُسجَّل مع وقت التوقيع."}
                 </p>
               </div>
               <label className="flex cursor-pointer flex-wrap items-center gap-2.5 rounded-[10px] border border-border-default bg-bg-page px-4 py-[13px]">
-                <span className="text-[13.5px] leading-normal text-text-secondary">إقرار المراجعة</span>
+                <span className="text-[13.5px] leading-[1.2] text-text-secondary">إقرار المراجعة</span>
                 <input
                   type="checkbox"
                   name="consent"
@@ -110,12 +110,12 @@ export function SignFlow({
                   aria-invalid={Boolean(fe.consent)}
                   className="size-[18px] shrink-0 cursor-pointer accent-[var(--color-action-primary)] focus-ring"
                 />
-                <span className="text-[15px] leading-normal font-bold text-text-brand">راجعتُ العقد وأوافق على شروطه</span>
+                <span className="text-[15px] leading-[1.2] font-bold text-text-brand">راجعتُ العقد وأوافق على شروطه</span>
                 {fe.consent && <span className="w-full text-[13.5px] text-state-error">{fe.consent}</span>}
               </label>
               <div className="flex flex-wrap items-center gap-2.5 rounded-[10px] border border-border-default bg-bg-page px-4 py-[13px]">
-                <span className="text-[13.5px] leading-normal text-text-secondary">الطرف الآخر</span>
-                <span className="text-[15px] leading-normal font-bold text-state-warning">بانتظار توقيع {orgName}</span>
+                <span className="text-[13.5px] leading-[1.2] text-text-secondary">الطرف الآخر</span>
+                <span className="text-[15px] leading-[1.2] font-bold text-state-warning">بانتظار توقيع {orgName}</span>
               </div>
             </div>
           </section>
