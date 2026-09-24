@@ -74,7 +74,8 @@ function ActionLinkRow({ icon, title, sub, href, onClick, disabled }: { icon: Lu
   );
   const cls = "flex w-full items-center gap-3 rounded-16 bg-bg-page px-4 py-3.5 focus-ring hover:bg-bg-brand-tint disabled:cursor-wait disabled:opacity-60";
   return href ? (
-    <Link href={href} className={cls}>
+    // The CSV export is a route handler: prefetching it only produces a 400 RSC request.
+    <Link href={href} prefetch={href.startsWith("/trainer/courses/export") ? false : undefined} className={cls}>
       {body}
     </Link>
   ) : (

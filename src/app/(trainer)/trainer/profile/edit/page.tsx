@@ -64,7 +64,7 @@ export default async function TrainerProfileEditPage(props: PageProps<"/trainer/
             <h2 className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">إدارة ملفي المهني</h2>
             <p className="type-body-lg text-text-secondary">كل قسم موسوم بمن يراه. اضغط «عاين ملفي العام» في أي وقت لترى النتيجة بعيني الجهة.</p>
           </div>
-          <ButtonLink href="/trainer/profile" size="l" className="w-full sm:w-auto">
+          <ButtonLink href="/trainer/profile?view=preview" size="l" className="w-full sm:w-auto">
             عاين ملفي العام
           </ButtonLink>
           <p className="flex items-center gap-2 type-subtitle text-state-success">
@@ -166,7 +166,7 @@ export default async function TrainerProfileEditPage(props: PageProps<"/trainer/
                   ))}
                 </ul>
               )}
-              <ButtonLink href="/trainer/opportunities" variant="outline" size="l" fullWidth>
+              <ButtonLink href="/trainer/affiliations" variant="outline" size="l" fullWidth>
                 أدر الارتباطات
               </ButtonLink>
             </DashCard>

@@ -14,11 +14,17 @@ export function ListControls({
   sort,
   q,
   searchLabel,
+  sortWidth = "sm:w-[220px]",
+  searchPlaceholder,
 }: {
   sortOptions: { value: string; label: string }[];
   sort: string;
   q: string;
   searchLabel: string;
+  /** Width of the sort dropdown (220px in the course frames, 260px in TRR-BID-01/03). */
+  sortWidth?: string;
+  /** Placeholder when it differs from the accessible label. */
+  searchPlaceholder?: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -51,14 +57,14 @@ export function ListControls({
           name="q"
           type="search"
           defaultValue={q}
-          placeholder={searchLabel}
+          placeholder={searchPlaceholder ?? searchLabel}
           onChange={(e) => {
             if (e.currentTarget.value === "" && q) push("q", "");
           }}
           className="h-12 w-full rounded-12 border-[1.5px] border-border-default bg-bg-surface ps-11 pe-4 type-body text-text-primary outline-none placeholder:text-text-muted focus:border-2 focus:border-action-primary"
         />
       </form>
-      <div className="relative flex w-full items-center sm:w-[220px]">
+      <div className={`relative flex w-full items-center ${sortWidth}`}>
         <label htmlFor="list-sort" className="sr-only">
           الترتيب
         </label>

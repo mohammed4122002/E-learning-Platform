@@ -21,13 +21,13 @@ const under = (pathname: string, prefix: string) => pathname === prefix || pathn
 
 /** Figma "Nav / Sidebar — Trainer" (TRR-DSH-01 · 256:848) — items, order and TG icons (Calendar ×2, Opportunities, Status/Pending). */
 export const TRAINER_NAV: NavItem[] = [
-  { label: "الرئيسية", href: "/trainer", icon: House, also: ["/trainer/queue", "/trainer/onboarding", "/trainer/journey", "/trainer/profile"] },
+  { label: "الرئيسية", href: "/trainer", icon: House, also: ["/trainer/queue", "/trainer/onboarding", "/trainer/journey", "/trainer/profile", "/trainer/affiliations"] },
   { label: "برامجي", href: "/trainer/programs", icon: BookOpen },
   { label: "دوراتي", href: "/trainer/courses", icon: CalendarDays },
-  { label: "تصفّح الفرص", href: "/trainer/opportunities", icon: Compass, also: ["/trainer/bids"] },
+  { label: "تصفّح الفرص", href: "/trainer/opportunities", icon: Compass, also: ["/trainer/bids", "/trainer/contracts"] },
   { label: "الجدول", href: "/trainer/calendar", icon: CalendarDays },
   { label: "الرصيد", href: "/trainer/finance", icon: Hourglass },
-  { label: "مركز المساعدة", href: "/trainer/help", icon: CircleQuestionMark },
+  { label: "مركز المساعدة", href: "/trainer/help", icon: CircleQuestionMark, also: ["/trainer/reports"] },
 ];
 
 export type ShellWorkspace = "trainee" | "trainer";

@@ -33,8 +33,8 @@ npm run dev                  # http://localhost:3000
 
 ## What is implemented
 
-The trainee workspace end to end, the trainer workspace (Wave 1), plus shared and public pages. The trainer's
-Wave 2 and the other workspaces (provider, studio, requester, admin) are the next waves — see
+The trainee workspace end to end, the trainer workspace (Waves 1 and 2), plus shared and public pages. The other
+workspaces (provider, requester, studio, admin) are the next waves — see
 [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
 
 | Area | Routes |
@@ -57,6 +57,9 @@ Wave 2 and the other workspaces (provider, studio, requester, admin) are the nex
 | Trainer · programs | `/trainer/programs`, `/new`, `/[id]` (+ `edit/[step]`, `curriculum`, `preview`, `declaration`, `review`, `visibility`, `withdraw`, `new-version`) |
 | Trainer · courses | `/trainer/courses`, `/new`, `/[id]` (+ `setup/[step]`, `content`, `files`, `assignments`, `preview`, `dashboard`, `sales`, `content/publish`) |
 | Trainer · running a course | `/trainer/courses/[id]/trainees`, `seats`, `postpone`, `cancel`, `attendance` (+ `[sessionId]`), `results` (+ `record`, `approve`), `assignments/[aId]/submissions`, `certificates` (+ `issue`, `program`), `ratings`; `/trainer/ratings` (+ `reply`, `review`) |
+| Trainer · opportunities & bids | `/trainer/opportunities`, `/trainer/opportunities/[id]/bid`, `/trainer/bids`, `/trainer/bids/[id]/decision`, `/trainer/bids/[id]/negotiation` |
+| Trainer · affiliations & contracts | `/trainer/affiliations` (+ `invitations/[id]`, `[id]/end`), `/trainer/contracts/new`, `/trainer/contracts/[id]` (+ `sign`, `document`), `/trainer/reports` (+ `[id]/appeal`) |
+| Trainer · finance | `/trainer/finance` (+ `?tab=operations`, `export`), `/trainer/finance/settlements/[id]`, `/trainer/finance/bank`, `/trainer/finance/withdraw` |
 
 Every dynamic route has `loading.tsx`, `error.tsx` (Arabic message + retry) and empty states.
 

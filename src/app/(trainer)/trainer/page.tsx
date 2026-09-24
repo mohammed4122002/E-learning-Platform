@@ -5,6 +5,8 @@ import { DefaultHome, NewTrainerHome, PartialHome } from "@/components/trainer/T
 import { requireTrainer } from "@/lib/auth";
 import { computeJourney, getSessionsBetween, homeState, profileStrength, riyadhDayStart } from "@/lib/data/trainer";
 import { getTrainerQueue } from "@/lib/data/trainer-queue";
+import { listOpportunities } from "@/lib/data/trainer-bids";
+import { daysLabel } from "@/lib/trainer-bids";
 import { formatSessionTime, pluralAr } from "@/lib/format";
 import { firstName, greeting } from "@/lib/trainer";
 
@@ -30,10 +32,19 @@ export default async function TrainerHomePage() {
     body = <PartialHome o={o} journey={journey} greetingLine={greetingLine} queue={items} strength={profileStrength(o)} />;
   } else {
     const start = riyadhDayStart(new Date());
-    const today = await getSessionsBetween(o, start, new Date(start.getTime() + 86_400_000));
+    const [today, opps] = await Promise.all([
+      getSessionsBetween(o, start, new Date(start.getTime() + 86_400_000)),
+      // «فرص تناسبك» (256:1239): open requests in the trainer's specialties, best match first. Read-only.
+      listOpportunities().catch(() => []),
+    ]);
+    const opportunities = opps
+      .filter((x) => x.scoreSpecialty > 0 && (!x.myBidStatus || x.myBidStatus === "draft"))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 2)
+      .map((x) => ({ id: x.id, organizationName: x.organizationName, score: x.score, caption: `${x.title} · ${daysLabel(x.days)}` }));
     const dayLabel = formatSessionTime(start).split(" · ")[0];
     const todayLabel = `${dayLabel} · ${today.length === 0 ? "لا جلسات" : pluralAr(today.length, ["جلسة واحدة", "جلستان", "جلسات", "جلسة"])}`;
-    body = <DefaultHome o={o} journey={journey} greetingLine={greetingLine} queue={items} today={today} todayLabel={todayLabel} />;
+    body = <DefaultHome o={o} journey={journey} greetingLine={greetingLine} queue={items} today={today} todayLabel={todayLabel} opportunities={opportunities} />;
   }
 
   return (

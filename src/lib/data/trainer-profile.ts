@@ -134,10 +134,18 @@ export async function getPublicProfile(userId: string): Promise<PublicProfileDat
 /** Organizations the trainer belongs to (الجهات المرتبطة). */
 export async function getTrainerOrganizations(userId: string): Promise<Organization[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("organization_members").select("created_at, organizations(id, name)").eq("user_id", userId);
-  if (error) return [];
-  return (data ?? [])
-    .map((m) => ({ org: m.organizations as { id: string; name: string } | null, since: m.created_at }))
+  const [members, affiliations] = await Promise.all([
+    supabase.from("organization_members").select("created_at, organizations(id, name)").eq("user_id", userId),
+    // TRR-AFL: a live affiliation shows the provider on the profile until the end takes effect.
+    supabase.from("trainer_affiliations").select("started_at, organization:organizations(id, name)").eq("trainer_id", userId).in("status", ["active", "ending"]),
+  ]);
+  const rows = [
+    ...(members.data ?? []).map((m) => ({ org: m.organizations as { id: string; name: string } | null, since: m.created_at })),
+    ...(affiliations.data ?? []).map((a) => ({ org: a.organization as { id: string; name: string } | null, since: a.started_at })),
+  ];
+  const seen = new Set<string>();
+  return rows
     .filter((m): m is { org: { id: string; name: string }; since: string } => Boolean(m.org))
+    .filter((m) => (seen.has(m.org.id) ? false : (seen.add(m.org.id), true)))
     .map((m) => ({ id: m.org.id, name: m.org.name, since: m.since }));
 }

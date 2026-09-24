@@ -32,11 +32,11 @@ real screens backed by the database (no mock data), with loading, empty and erro
 | Part | Screens | Status |
 | --- | --- | --- |
 | Wave 1 | onboarding, dashboard, queue, journey, profile, portfolio, calendar, help, programs + publishing, course builder (3 modes), course operations (trainees, seats, postpone/cancel, attendance, results, grading, certificates, ratings) | ✅ built, Figma-QA'd (see OPEN_QUESTIONS T1–T32 for open design points) |
-| Wave 2 | opportunities & bids & negotiation, finance & withdrawals, contracts, affiliations, content reports | not started |
+| Wave 2 | opportunities & bids & negotiation, finance & withdrawals, contracts, affiliations, content reports | ✅ built and independently Figma-QA'd: opportunities & bids (BID-01…05), finance (FIN-01…04), affiliations (AFL-01…03), contracts (CTR-01…03), content reports (RPT-01…02), PRF-01 owner preview. Open design points: OPEN_QUESTIONS W2-AFL-*, W2-BID-*, W2-FIN-*, W2-QA-*. Withdrawals are paid out manually by an admin until a payout provider is chosen. |
 
 ## Wave 4 — Other workspaces (not started)
 
-Trainer, training provider, studio, requester and admin workspaces. The schema already has the
+Training provider, studio, requester and admin workspaces. The schema already has the
 tables and policies they need (course management, sessions, attendance codes, approvals, refunds,
 disputes, identity review). Their screens are the next waves.
 
