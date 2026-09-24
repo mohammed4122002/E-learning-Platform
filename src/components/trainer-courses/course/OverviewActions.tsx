@@ -55,7 +55,7 @@ export function OverviewActions({
           </Button>
         </ActionRow>
         <ActionRow icon={FileText} title="صدّر كشوف الدورة" sub="حضور · نتائج · مسجّلون">
-          <ButtonLink href={`/trainer/courses/export?ids=${courseId}`} size="s" variant="outline" className="w-[120px]">
+          <ButtonLink href={`/trainer/courses/export?ids=${courseId}`} prefetch={false} size="s" variant="outline" className="w-[120px]">
             صدّر
           </ButtonLink>
         </ActionRow>

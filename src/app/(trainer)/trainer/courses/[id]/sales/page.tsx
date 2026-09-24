@@ -81,7 +81,7 @@ export default async function CourseSalesPage({ params, searchParams }: PageProp
 
   const crumbs = <Breadcrumb items={[{ label: "دوراتي", href: "/trainer/courses" }, { label: course.title, href: course.mode === "recorded" ? `/trainer/courses/${id}/dashboard` : `/trainer/courses/${id}` }, { label: "المبيعات" }]} />;
   const exportBtn = (
-    <ButtonLink href={`/trainer/courses/export?ids=${id}`} size="l" variant="outline">
+    <ButtonLink href={`/trainer/courses/export?ids=${id}`} prefetch={false} size="l" variant="outline">
       صدّر كشف المبيعات
     </ButtonLink>
   );
