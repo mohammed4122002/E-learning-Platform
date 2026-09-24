@@ -15,7 +15,11 @@ export function OtpInput({ name = "token", error, autoFocus = true }: { name?: s
   const normalise = (v: string) => v.replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d))).replace(/\D/g, "");
 
   function setAt(index: number, value: string) {
-    const clean = normalise(value);
+    let clean = normalise(value);
+    // Typing over a filled box: keep only the newly typed digit.
+    if (clean.length === 2 && digits[index] && clean.includes(digits[index])) {
+      clean = clean[0] === digits[index] ? clean[1] : clean[0];
+    }
     if (clean.length > 1) {
       // Paste or autofill: spread the digits from this box on.
       const next = [...digits];
