@@ -31,7 +31,7 @@ real screens backed by the database (no mock data), with loading, empty and erro
 
 | Part | Screens | Status |
 | --- | --- | --- |
-| Wave 1 | onboarding, dashboard, queue, journey, profile, portfolio, calendar, help, programs + publishing, course builder (3 modes), course operations (trainees, seats, postpone/cancel, attendance, results, grading, certificates, ratings) | ✅ built, Figma-QA'd (see OPEN_QUESTIONS T1–T35 for open design points) |
+| Wave 1 | onboarding, dashboard, queue, journey, profile, portfolio, calendar, help, programs + publishing, course builder (3 modes), course operations (trainees, seats, postpone/cancel, attendance, results, grading, certificates, ratings) | ✅ built, Figma-QA'd (see OPEN_QUESTIONS T1–T32 for open design points) |
 | Wave 2 | opportunities & bids & negotiation, finance & withdrawals, contracts, affiliations, content reports | not started |
 
 ## Wave 4 — Other workspaces (not started)
