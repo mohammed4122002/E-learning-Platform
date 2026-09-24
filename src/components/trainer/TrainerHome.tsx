@@ -241,7 +241,7 @@ export function PartialHome({
     .join(" ");
   const prep = [
     o.eventsCount === 0 && { icon: CalendarDays, title: "تقويمك فارغ", caption: "حدّد أيامك المتاحة ليظهر «أقرب موعد» للجهات", label: "افتح التقويم", href: "/trainer/calendar" },
-    { icon: Hourglass, title: "بيانات التحويل غير مكتملة", caption: "لن تستطيع سحب أرباحك بدونها", label: "أضف بياناتي", href: "/trainer/finance" },
+    !o.stats.bankStatus && { icon: Hourglass, title: "بيانات التحويل غير مكتملة", caption: "لن تستطيع سحب أرباحك بدونها", label: "أضف بياناتي", href: "/trainer/finance/bank" },
     o.portfolioCount === 0 && { icon: Contact, title: "معرض أعمالك فارغ", caption: "أضف نموذج حقيبة تدريبية لرفع ثقة الجهات", label: "أضف عملًا", href: "/trainer/profile/portfolio" },
   ].filter(Boolean) as { icon: LucideIcon; title: string; caption: string; label: string; href: string }[];
   return (
