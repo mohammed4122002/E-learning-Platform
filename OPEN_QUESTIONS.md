@@ -42,3 +42,8 @@ the app does today, so nothing is silently faked.
 | T12 | TRR-RES-01 / TRR-CRT-01 | Figma copy on the results screen says certificates are issued automatically after approval; the flow in CRT-01 issues them as a separate step. | Copy adjusted to match the separate issuance step. Confirm which behaviour you want. |
 | T13 | TRR-RTG-01 / TRR-RES-01 / ٩ التقييمات | «متوسط الاعتماد ٣ أيام», «ضمن أعلى ١٠٪» and the repeated-phrase analysis have no data source. | Hidden until the platform collects that data. |
 | T14 | Shared avatar initials | `initialsOf` now skips the article «ال» (e.g. «سالم الحارثي» → «س ح») to match Figma. | Affects avatars in every workspace. |
+| T15 | TRR-CRS-05 ٢ المحاور والمحتوى (334:12859) | Figma's content tab for in-person/live courses has no lesson editor. | The lesson editor is also shown there so lessons/quizzes can be authored for every mode. |
+| T16 | TRR-CRS-05 grading-method card | Figma shows weights for attendance and a final exam; the database has no such weights. | Shows the real rules (80 % attendance, assignment weights, quiz pass mark). «رابط الانضمام قبل ساعة» and «حد الاحتساب ٣٠ دقيقة» rows hidden (not enforced). |
+| T17 | TRR-CRS-01 bulk actions (327:11990) | Figma has no entry point into bulk-selection mode. | A link opens `?view=select`. |
+| T18 | Inquiries («ردّ الآن») and trainer receipts | No screen for trainers answering pre-enrolment inquiries or printing a sale receipt. | «ردّ الآن» goes to the trainees tab; «نزّل الإيصال» prints the sale page. |
+| T19 | Trainee side of scheduled courses | Trainee screens do not list lessons or course files for in-person/live courses. | Needs a trainee design for those. |
