@@ -55,6 +55,7 @@ export const WORKSPACE_SHELL: Record<ShellWorkspace, { label: string; home: stri
 };
 
 export function isActive(pathname: string, item: Pick<NavItem, "href" | "also">) {
-  if (item.href === "/trainee") return pathname === "/trainee";
+  // Workspace homes match exactly (plus their `also` prefixes); other items match their whole subtree.
+  if (item.href === "/trainee" || item.href === "/trainer") return pathname === item.href || (item.also ?? []).some((p) => under(pathname, p));
   return [item.href, ...(item.also ?? [])].some((p) => under(pathname, p));
 }
