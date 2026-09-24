@@ -55,3 +55,7 @@ the app does today, so nothing is silently faked.
 | T25 | TRR-CRS-03 seats frames | 462:33421 puts the number before «من ٢٠ مقعدًا», the other frames after it. | Follows the majority of frames. |
 | T26 | TRR-CRS-04 postpone date fields | Figma shows Arabic-digit dates «١٠ / ٠٥ / ٢٠٢٦». | Uses the browser's date picker (Latin digits). A custom Arabic date picker is needed to match exactly. |
 | T27 | TRR-ATT-02 QR panel | Adds «أو يكتب الرمز …» (not in Figma) for trainees without a camera. | Keep or remove? |
+| T28 | Trainer frames drawn left-to-right (breadcrumbs, PRF-01 header and availability strip, PRF-03 «أعمالك» count chip, HLP «اقرأ الدليل» badge, HLP-02 «نعم/لا») | Several auto-layout rows in the trainer page are laid out LTR in Figma (e.g. the DS «Nav / Breadcrumb» puts the root on the left). Should they mirror for RTL? | Kept in RTL order (root/first item at the inline start), consistent with the trainee workspace. CAL-02 (303:9062) keeps Figma's physical order for «من/إلى» and the three appointment types. |
+| T29 | TRR-ONB-01 wizard bar | Figma shows «الخطوة 1 من 5» with Latin digits; every other screen uses Arabic-Indic digits. | Arabic-Indic digits («الخطوة ١ من ٥»). |
+| T30 | TRR-QUE-01 empty (464:36175) «هذا الأسبوع» | «متوسط ردّك ٦ ساعات» and «أسرع من ٨٢٪ من المدربين» have no data source. | Only «مهام أنجزتها» is shown. |
+| T31 | Trainer sidebar collapse toggle (I256:877) | Figma shows a desktop collapse chevron; there is no collapsed-sidebar design. | The toggle closes the drawer below `lg` only. |

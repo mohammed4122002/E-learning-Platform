@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
-  Award, BadgeCheck, BookOpen, Briefcase, CalendarDays, CircleCheck, CircleUser, CircleX, Clock, Download, FileText, GraduationCap, Info, MapPin, Shield, Star, Users,
+  BadgeCheck, BadgePlus, BookOpen, CalendarDays, CircleCheckBig, CircleUser, Clock, Compass, Contact, Download, FileText, Info, MapPin, OctagonX, Shield, Star, Users,
 } from "lucide-react";
 import Link from "next/link";
 import { CourseCard } from "@/components/course/CourseCard";
@@ -84,7 +84,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
       <header className="flex w-full items-center gap-5 border-b border-border-divider bg-bg-surface px-4 py-5 sm:px-12">
         <Link href="/trainer" className="flex items-center gap-3 rounded-12 focus-ring">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-action-primary text-text-on-brand">
-            <Glyph icon={GraduationCap} size={20} />
+            <Glyph icon={CircleUser} size={20} />
           </span>
           <span className="flex flex-col">
             <span className="type-subtitle text-text-primary">بوابة التدريب</span>
@@ -100,7 +100,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
       <main id="main" className="mx-auto flex w-full max-w-[1100px] flex-col gap-7 px-4 pt-9 pb-16 sm:px-6">
         {/* HERO (289:7423) */}
         <section className="overflow-hidden rounded-22 border border-border-default bg-bg-card shadow-float">
-          <div className="h-[140px] w-full bg-gradient-to-l from-action-primary to-[#8b67f6]" aria-hidden />
+          <div className="h-[140px] w-full bg-gradient-to-r from-action-primary to-[#8b67f6]" aria-hidden />
           <div className="flex flex-col gap-3.5 px-5 pt-6 pb-8 sm:px-9">
             <div className="flex items-center gap-4">
               <Avatar name={o.account.fullName} src={avatarUrl(o.account.avatarPath)} size="l" />
@@ -156,7 +156,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
         </section>
 
         {show("profile") && o.account.bio && (
-          <Section id="bio" title="نبذة عن المدرب" subtitle="بقلمه" icon={CircleUser} tone="bg-bg-brand-tint text-text-brand">
+          <Section id="bio" title="نبذة عن المدرب" subtitle="بقلمه" icon={Contact} tone="bg-bg-brand-tint text-text-brand">
             <p className="type-body-lg whitespace-pre-line text-text-secondary">{o.account.bio}</p>
           </Section>
         )}
@@ -166,7 +166,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
             id="credentials"
             title="الاعتمادات والمؤهلات"
             subtitle={pluralAr(o.qualifications.length + (verified ? 1 : 0), ["مُدخَل واحد", "مُدخَلان", "مُدخَلات", "مُدخَلًا"])}
-            icon={Award}
+            icon={BadgePlus}
             tone="bg-state-warning-bg text-state-warning"
           >
             <p className="flex items-start gap-2.5 rounded-12 bg-state-info-bg px-4 py-[13px] type-body text-state-info">
@@ -184,7 +184,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
                     <span className="type-body text-text-muted">المنصة{o.identityVerifiedAt ? ` · ${formatDate(o.identityVerifiedAt)}` : ""}</span>
                   </span>
                   <span className="inline-flex shrink-0 items-center gap-[7px] rounded-full bg-bg-surface px-[11px] py-1.5 type-small text-state-success">
-                    <Glyph icon={CircleCheck} size={16} />
+                    <Glyph icon={CircleCheckBig} size={16} />
                     متحقَّق منه
                   </span>
                 </li>
@@ -192,7 +192,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
               {o.qualifications.map((q) => (
                 <li key={q.id} className={`flex items-center gap-3 rounded-16 px-5 pt-5 pb-[22px] ${q.verified ? "border-2 border-state-success bg-state-success-bg" : "bg-bg-page"}`}>
                   <span className="flex size-12 shrink-0 items-center justify-center rounded-12 bg-bg-surface text-text-brand">
-                    <Glyph icon={q.kind === "academic" ? GraduationCap : Award} size={20} />
+                    <Glyph icon={q.kind === "academic" ? CircleUser : BadgePlus} size={20} />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
                     <span className="type-title text-text-primary">{q.title}</span>
@@ -202,7 +202,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
                     </span>
                   </span>
                   <span className={`inline-flex shrink-0 items-center gap-[7px] rounded-full bg-bg-surface px-[11px] py-1.5 type-small ${q.verified ? "text-state-success" : "text-state-warning"}`}>
-                    <Glyph icon={q.verified ? CircleCheck : Info} size={16} />
+                    <Glyph icon={q.verified ? CircleCheckBig : Info} size={16} />
                     {q.verified ? "متحقَّق منه" : q.hasFile ? "مُدخَل من صاحبه · مستند مرفق" : "مُدخَل من صاحبه"}
                   </span>
                 </li>
@@ -216,7 +216,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
             id="experience"
             title="الخبرات والأعمال"
             subtitle={totalYears > 0 ? `${pluralAr(totalYears, ["سنة واحدة", "سنتان", "سنوات", "سنة"])} خبرة عملية` : undefined}
-            icon={Briefcase}
+            icon={Compass}
             tone="bg-state-info-bg text-state-info"
             aside={o.profile?.cv_path ? <a href="#cv" className="shrink-0 rounded-8 type-subtitle text-text-brand hover:underline focus-ring">السيرة الذاتية ↓</a> : undefined}
           >
@@ -224,7 +224,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
               {o.experiences.map((e) => (
                 <li key={e.id} className="flex flex-wrap items-center gap-4 rounded-12 bg-bg-page px-[18px] py-4">
                   <span className="flex size-12 shrink-0 items-center justify-center rounded-12 bg-bg-surface text-text-brand">
-                    <Glyph icon={Briefcase} size={20} />
+                    <Glyph icon={Compass} size={20} />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
                     <span className="type-title text-text-primary">{e.title}</span>
@@ -348,7 +348,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
                   <span className="type-body text-text-secondary">{weekday(d.day)}</span>
                   <span className={`type-h3 ${d.busy ? "text-text-disabled" : "text-state-success"}`}>{dayNum(d.day)}</span>
                   <span className={`inline-flex items-center gap-[5px] type-caption ${d.busy ? "text-text-disabled" : "text-state-success"}`}>
-                    <Glyph icon={d.busy ? CircleX : CircleCheck} size={16} />
+                    <Glyph icon={d.busy ? OctagonX : CircleCheckBig} size={16} />
                     {d.busy ? "غير متاح" : "متاح"}
                   </span>
                 </li>

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Building2, CircleCheck, CircleDot, Star } from "lucide-react";
+import { CircleCheckBig, Hourglass, Landmark, Star } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { LabeledProgress } from "@/components/trainings/ui";
 import { DashCard } from "@/components/trainer/DashboardParts";
 import { ExperienceSection, PhotoAndBio, ProgramsVisibility, QualificationsSection, VisibilityCard, type VisibilityRow } from "@/components/trainer/ProfileEditor";
+import { PHASE_LABEL, type ProgramPhase } from "@/lib/trainer-programs";
 import { requireTrainer } from "@/lib/auth";
 import { getTrainerOverview, profileStrength, type TrainerOverview } from "@/lib/data/trainer";
 import { getTrainerOrganizations, visibilityOf } from "@/lib/data/trainer-profile";
@@ -32,8 +33,9 @@ function suggestBio(o: TrainerOverview): string {
     .join(" ");
 }
 
-const programCaption = (courses: number, rating: number | null, status: string) =>
-  status === "draft" ? "مسودة · لا تظهر قبل النشر" : `${pluralAr(courses, ["دورة واحدة", "دورتان", "دورات", "دورة"])}${rating ? ` · ${formatRating(rating)} تقييم` : ""}`;
+/** Only published programs can be shown; others say why not (their lifecycle label comes from status + review_state). */
+const programCaption = (courses: number, rating: number | null, phase: ProgramPhase) =>
+  phase !== "published" ? `${PHASE_LABEL[phase]} · لا تظهر قبل النشر` : `${pluralAr(courses, ["دورة واحدة", "دورتان", "دورات", "دورة"])}${rating ? ` · ${formatRating(rating)} تقييم` : ""}`;
 
 /** TRR-PRF-02 · إدارة الملف المهني (290:7769). */
 export default async function TrainerProfileEditPage(props: PageProps<"/trainer/profile/edit">) {
@@ -55,7 +57,7 @@ export default async function TrainerProfileEditPage(props: PageProps<"/trainer/
 
   return (
     <>
-      <TopBar title="إدارة ملفي المهني" subtitle="تحكّم بما يظهر للجهات" />
+      <TopBar title="إدارة ملفي المهني" subtitle="عدّل ما يظهر للجهات" />
       <PageBody className="gap-6">
         <div className="flex flex-col gap-4 rounded-22 bg-bg-brand-tint px-5 py-[18px] sm:flex-row sm:items-center sm:px-[22px]">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -66,7 +68,7 @@ export default async function TrainerProfileEditPage(props: PageProps<"/trainer/
             عاين ملفي العام
           </ButtonLink>
           <p className="flex items-center gap-2 type-subtitle text-state-success">
-            <Glyph icon={CircleCheck} size={20} />
+            <Glyph icon={CircleCheckBig} size={20} />
             كل تعديل يُحفظ فورًا
           </p>
         </div>
@@ -98,8 +100,8 @@ export default async function TrainerProfileEditPage(props: PageProps<"/trainer/
             <ProgramsVisibility
               level="public"
               programs={o.programs
-                .filter((p) => p.status !== "archived")
-                .map((p) => ({ id: p.id, title: p.title, caption: programCaption(p.coursesCount, p.ratingAvg, p.status), visible: p.status !== "draft" && !hidden.has(p.id), disabled: p.status === "draft" }))}
+                .filter((p) => p.phase !== "suspended")
+                .map((p) => ({ id: p.id, title: p.title, caption: programCaption(p.coursesCount, p.ratingAvg, p.phase), visible: p.phase === "published" && !hidden.has(p.id), disabled: p.phase !== "published" }))}
             />
           </div>
 
@@ -113,7 +115,7 @@ export default async function TrainerProfileEditPage(props: PageProps<"/trainer/
               <ul className="flex flex-col gap-[18px]">
                 {strength.items.map((i) => (
                   <li key={i.key} className={`flex items-center gap-2.5 rounded-12 px-3.5 py-[11px] type-subtitle ${i.done ? "bg-state-success-bg text-state-success" : "bg-bg-page text-text-secondary"}`}>
-                    <Glyph icon={i.done ? CircleCheck : CircleDot} size={20} className={i.done ? "" : "text-text-muted"} />
+                    <Glyph icon={i.done ? CircleCheckBig : Hourglass} size={20} className={i.done ? "" : "text-text-muted"} />
                     <span className="flex-1">{i.label}</span>
                   </li>
                 ))}
@@ -154,7 +156,7 @@ export default async function TrainerProfileEditPage(props: PageProps<"/trainer/
                   {orgs.map((g) => (
                     <li key={g.id} className="flex items-center gap-3 rounded-12 bg-bg-page px-3.5 py-[13px]">
                       <span className="flex size-10 shrink-0 items-center justify-center rounded-12 bg-bg-surface text-state-success">
-                        <Glyph icon={Building2} size={20} />
+                        <Glyph icon={Landmark} size={20} />
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="type-subtitle text-text-primary">{g.name}</span>

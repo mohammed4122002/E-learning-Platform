@@ -3,6 +3,7 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { CurrentUser } from "@/lib/auth";
 import type { Database } from "@/types/database";
+import { programPhase, type ProgramPhase } from "@/lib/trainer-programs";
 
 /* Trainer workspace read models (TRR-*). Everything runs as the signed-in trainer (RLS); cross-table figures that
  * RLS does not expose to trainers (payments, ratings aggregates) come from the `trainer_stats()` RPC. */
@@ -84,6 +85,9 @@ export type TrainerProgram = {
   slug: string;
   title: string;
   status: string;
+  /** Lifecycle from status + review_state (`programPhase`): draft · under_review · needs_changes · rejected · published · suspended. */
+  phase: ProgramPhase;
+  submittedAt: string | null;
   createdAt: string;
   updatedAt: string;
   coursesCount: number;
@@ -138,7 +142,7 @@ export const getTrainerOverview = cache(async (userId: string): Promise<TrainerO
     supabase.from("identity_verifications").select("status, submitted_at, reviewed_at").eq("user_id", userId).order("submitted_at", { ascending: false }).limit(1).maybeSingle(),
     supabase.from("trainer_qualifications").select("id, kind, title, issuer, year, file_path, verified_at, created_at").eq("trainer_id", userId).order("created_at"),
     supabase.from("experiences").select("id, title, organization, start_date, end_date, is_current, created_at").eq("user_id", userId).order("start_date", { ascending: false }),
-    supabase.from("programs").select("id, slug, title, status, created_at, updated_at").eq("owner_id", userId).order("updated_at", { ascending: false }),
+    supabase.from("programs").select("id, slug, title, status, review_state, submitted_at, created_at, updated_at").eq("owner_id", userId).order("updated_at", { ascending: false }),
     supabase
       .from("courses")
       .select("id, slug, title, program_id, mode, status, starts_at, ends_at, learners_count, capacity, rating_avg, rating_count, price, city, venue, cover_path, duration_hours, created_at, organizations(name)")
@@ -182,6 +186,8 @@ export const getTrainerOverview = cache(async (userId: string): Promise<TrainerO
       slug: p.slug,
       title: p.title,
       status: p.status,
+      phase: programPhase(p.status, p.review_state),
+      submittedAt: p.submitted_at,
       createdAt: p.created_at,
       updatedAt: p.updated_at,
       coursesCount: own.length,
@@ -241,7 +247,8 @@ export type Stage = {
   href: string;
 };
 
-const SUBMITTED = (status: string) => status !== "draft" && status !== "archived";
+/** Sent to the platform: waiting for its decision or already approved. */
+const SUBMITTED = (p: TrainerProgram) => p.phase === "under_review" || p.phase === "published";
 
 export function qualificationChecklist(o: TrainerOverview) {
   return [
@@ -261,9 +268,9 @@ export function computeJourney(o: TrainerOverview): { stages: Stage[]; doneCount
   const missingQuals = checklist.filter((c) => !c.done).length;
   const latest = (dates: (string | null | undefined)[]) => dates.filter(Boolean).sort().at(-1) ?? null;
   const earliest = (dates: (string | null | undefined)[]) => dates.filter(Boolean).sort()[0] ?? null;
-  const submitted = o.programs.filter((p) => SUBMITTED(p.status));
-  const published = o.programs.filter((p) => p.status === "published");
-  const hasDraft = o.programs.some((p) => p.status === "draft");
+  const submitted = o.programs.filter(SUBMITTED);
+  const published = o.programs.filter((p) => p.phase === "published");
+  const hasDraft = o.programs.some((p) => p.phase === "draft" || p.phase === "needs_changes");
 
   const raw: Omit<Stage, "state" | "n">[] = [
     { key: "account", title: "إنشاء الحساب", description: "سجّلت ووصلت للمنصة.", done: true, doneAt: o.workspaceSince, note: "", href: "/account" },
@@ -299,7 +306,7 @@ export function computeJourney(o: TrainerOverview): { stages: Stage[]; doneCount
       title: "إنشاء البرنامج التدريبي",
       description: "المنتج التعليمي: الوصف والأهداف والمحتوى والسعر.",
       done: submitted.length > 0,
-      doneAt: earliest(submitted.map((p) => p.createdAt)),
+      doneAt: earliest(submitted.map((p) => p.submittedAt ?? p.createdAt)),
       note: hasDraft ? "مسودة" : "يحتاج ملفًا مكتملًا",
       href: "/trainer/programs",
     },

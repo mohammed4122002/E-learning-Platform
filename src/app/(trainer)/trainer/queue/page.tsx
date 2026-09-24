@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CircleCheck, Info } from "lucide-react";
+import { CircleCheckBig, Info } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
@@ -41,7 +41,7 @@ export default async function TrainerQueuePage(props: PageProps<"/trainer/queue"
             <div className="flex min-w-0 flex-1 flex-col gap-6">
               <section className="flex flex-col items-center gap-[18px] rounded-22 bg-state-success-bg px-6 pt-14 pb-[58px] text-center sm:px-12">
                 <span className="flex size-24 items-center justify-center rounded-22 bg-bg-surface text-state-success">
-                  <Glyph icon={CircleCheck} size={32} />
+                  <Glyph icon={CircleCheckBig} size={32} />
                 </span>
                 <h2 className="text-[30px] leading-[1.15] font-bold text-text-primary sm:text-[38px]">لا شيء ينتظر إجراءك</h2>
                 <p className="type-h3 text-text-secondary">أنهيت كل مهامك — لا واجبات بلا تقييم ولا حضور بلا رصد ولا عروض بلا رد. أحسنت.</p>
@@ -82,7 +82,7 @@ export default async function TrainerQueuePage(props: PageProps<"/trainer/queue"
                   هذا الأسبوع
                 </h2>
                 <p className="flex items-start gap-2.5 rounded-12 bg-bg-page px-3.5 pt-3 pb-[13px] type-body text-text-primary">
-                  <Glyph icon={CircleCheck} size={20} className="mt-1 text-state-success" />
+                  <Glyph icon={CircleCheckBig} size={20} className="mt-1 text-state-success" />
                   <span className="flex-1">
                     {doneThisWeek === 0 ? "لا مهام منجزة بعد" : `${toArabicDigits(doneThisWeek)} ${doneThisWeek === 1 ? "مهمة أنجزتها" : doneThisWeek === 2 ? "مهمتان أنجزتهما" : "مهام أنجزتها"}`}
                   </span>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, FileText, Presentation, X } from "lucide-react";
+import { BookOpen, FileText, Tv, X } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
@@ -12,7 +12,7 @@ import { getPortfolio } from "@/lib/data/trainer-profile";
 export const metadata: Metadata = { title: "معرض الأعمال", description: "أعمال حقيقية تنظر إليها الجهات قبل قبول عرضك" };
 
 const COUNTS: { icon: LucideIcon; text: string; cls: string }[] = [
-  { icon: Presentation, text: "ورشة أو دورة نفّذتها", cls: "text-state-success" },
+  { icon: Tv, text: "ورشة أو دورة نفّذتها", cls: "text-state-success" },
   { icon: FileText, text: "مادة تدريبية أعددتها", cls: "text-state-info" },
   { icon: BookOpen, text: "برنامج بنيته لجهة", cls: "text-text-brand" },
   { icon: X, text: "لا ترفع مواد لا تملك حقوقها", cls: "text-state-error" },

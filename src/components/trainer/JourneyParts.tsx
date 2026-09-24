@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CircleCheck, CircleQuestionMark, Lock, Play } from "lucide-react";
+import { CircleCheckBig, CircleQuestionMark, Lock, SquareActivity } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { formatDayMonth, toArabicDigits } from "@/lib/format";
@@ -7,8 +7,8 @@ import type { Stage, TrainerOverview } from "@/lib/data/trainer";
 
 /** CTA of the current stage (TRR-JRN-01 · 253:240 «أكمل المؤهلات»). */
 export function stageAction(stage: Stage, o: TrainerOverview): { label: string; href: string } {
-  const draft = o.programs.find((p) => p.status === "draft");
-  const review = o.programs.find((p) => !["draft", "published", "archived"].includes(p.status));
+  const draft = o.programs.find((p) => p.phase === "draft" || p.phase === "needs_changes");
+  const review = o.programs.find((p) => p.phase === "under_review");
   switch (stage.key) {
     case "account":
       return { label: "ابدأ", href: "/account" };
@@ -43,14 +43,14 @@ export function StageCard({ stage, o, next }: { stage: Stage; o: TrainerOverview
   if (done) {
     pill = (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-state-success-bg px-2.5 py-[5px] type-caption text-state-success">
-        <Glyph icon={CircleCheck} size={16} />
+        <Glyph icon={CircleCheckBig} size={16} />
         {stage.doneAt ? `مكتمل · ${formatDayMonth(stage.doneAt)}` : "مكتمل"}
       </span>
     );
   } else if (current) {
     pill = (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-state-warning">
-        <Glyph icon={Play} size={16} />
+        <Glyph icon={SquareActivity} size={16} />
         {["qualifications", "identity", "review"].includes(stage.key) || stage.note === "مسودة" ? stage.note || "ابدأ من هنا" : "ابدأ من هنا"}
       </span>
     );
@@ -74,7 +74,7 @@ export function StageCard({ stage, o, next }: { stage: Stage; o: TrainerOverview
           done ? "bg-state-success text-text-on-brand" : current ? "bg-action-primary text-text-on-brand" : "bg-bg-disabled text-text-disabled"
         }`}
       >
-        {done ? <Glyph icon={CircleCheck} size={20} /> : <span className="type-h2">{toArabicDigits(stage.n)}</span>}
+        {done ? <Glyph icon={CircleCheckBig} size={20} /> : <span className="type-h2">{toArabicDigits(stage.n)}</span>}
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-1.5">
         <span className="flex flex-wrap items-center gap-2.5">

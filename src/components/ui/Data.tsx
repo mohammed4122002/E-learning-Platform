@@ -54,7 +54,7 @@ export function Badge({
 const avatarSizes = { s: "size-8 text-[13px]", m: "size-10 text-[15px]", l: "size-14 text-[19px]", xl: "size-24 text-[28px]" } as const;
 
 export function initialsOf(name: string): string {
-  const parts = name.replace(/^(م\.|د\.|أ\.)\s*/, "").trim().split(/\s+/).filter(Boolean);
+  const parts = name.replace(/^(م\.|د\.|أ\.)\s*/, "").trim().split(/\s+/).filter((w) => /^\p{L}/u.test(w)); // «(QA)», «-» … are not initials
   if (parts.length === 0) return "؟";
   // Figma: «سالم الحارثي» → «س ح» — the definite article is not an initial.
   const first = (w: string) => (w.length > 2 && w.startsWith("ال") ? w.slice(2, 3) : w.slice(0, 1));

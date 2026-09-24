@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { BadgeCheck, BookOpen, BookOpenText, ChevronLeft, Compass, LibraryBig, Wallet } from "lucide-react";
+import { BadgeCheck, BookOpen, ChevronLeft, Compass, Library, Wallet } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 import { toArabicDigits } from "@/lib/format";
@@ -11,10 +11,10 @@ export const SUPPORT_HREF = "/messages?f=support";
 
 export const CATEGORY_STYLE: Record<TrainerHelpCategory, { icon: LucideIcon; tile: string; guide: string }> = {
   trainer_programs: { icon: BookOpen, tile: "bg-bg-inverse text-text-on-brand", guide: "text-text-brand" },
-  trainer_courses: { icon: LibraryBig, tile: "bg-state-info-bg text-state-info", guide: "text-state-info" },
+  trainer_courses: { icon: Library, tile: "bg-state-info-bg text-state-info", guide: "text-state-info" },
   trainer_opportunities: { icon: Compass, tile: "bg-state-warning-bg text-state-warning", guide: "text-state-warning" },
   trainer_finance: { icon: Wallet, tile: "bg-state-success-bg text-state-success", guide: "text-state-success" },
-  trainer_profile: { icon: BadgeCheck, tile: "bg-bg-brand-tint text-text-brand", guide: "text-text-brand" },
+  trainer_profile: { icon: BadgeCheck, tile: "bg-state-info-bg text-state-info", guide: "text-state-info" },
 };
 
 /** "٥ دقائق" · "٢ دقيقة" (Figma copy). */
@@ -29,16 +29,16 @@ export function guidesWord(n: number): string {
   return `${toArabicDigits(n)} ${n >= 3 && n <= 10 ? "أدلة" : "دليلًا"}`;
 }
 
-/** Guide row (468:36150): guide icon · title 17 Medium + meta 14 muted · chevron-left. The top guide gets «اقرأ الدليل». */
+/** Guide row (468:36150): TG/AI/Guide (book-open) · title Type/Title + meta 14 muted · chevron-left. The top guide gets «اقرأ الدليل». */
 export function GuideRow({ guide, lead }: { guide: TrainerGuide; lead?: boolean }) {
   const meta = [lead ? `${minutesText(guide.readMinutes)} قراءة` : minutesText(guide.readMinutes), guide.featured ? "الأكثر قراءة" : ""].filter(Boolean).join(" · ");
   return (
     <li>
-      <Link href={`${HELP_BASE}/${guide.slug}`} className="group flex w-full items-center gap-3.5 rounded-16 bg-bg-page px-4 py-[15px] hover:bg-bg-brand-tint focus-ring">
-        <Glyph icon={BookOpenText} size={20} className={CATEGORY_STYLE[guide.category].guide} />
+      <Link href={`${HELP_BASE}/${guide.slug}`} className="group flex w-full items-center gap-3.5 rounded-16 bg-bg-page px-[18px] pt-[15px] pb-4 hover:bg-bg-brand-tint focus-ring">
+        <Glyph icon={BookOpen} size={20} className={CATEGORY_STYLE[guide.category].guide} />
         <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
-          {lead && <span className="mb-1 self-start rounded-8 bg-action-primary px-[18px] py-2 text-[14px] leading-none text-text-on-brand">اقرأ الدليل</span>}
-          <span className="type-subtitle text-text-primary">{guide.title}</span>
+          {lead && <span className="mb-1 self-start rounded-8 bg-action-primary px-[18px] py-2 text-[14px] leading-none font-bold text-text-on-brand">اقرأ الدليل</span>}
+          <span className="type-title text-text-primary">{guide.title}</span>
           {meta && <span className="type-caption text-text-muted">{meta}</span>}
         </span>
         <Glyph icon={ChevronLeft} size={20} className="text-text-secondary" />

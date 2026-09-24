@@ -111,7 +111,7 @@ export const getTrainerQueue = cache(async (userId: string): Promise<{ items: Tr
   }
 
   // 2 · Draft programs waiting to be completed and submitted.
-  for (const p of o.programs.filter((x) => x.status === "draft")) {
+  for (const p of o.programs.filter((x) => x.phase === "draft" || x.phase === "needs_changes")) {
     const key = `program_draft:${p.id}`;
     items.push({
       key,
@@ -158,7 +158,7 @@ export const getTrainerQueue = cache(async (userId: string): Promise<{ items: Tr
   }
 
   // 4 · Programs under platform review.
-  for (const p of o.programs.filter((x) => !["draft", "published", "archived"].includes(x.status))) {
+  for (const p of o.programs.filter((x) => x.phase === "under_review")) {
     const key = `program_review:${p.id}`;
     items.push({
       key,
@@ -172,11 +172,11 @@ export const getTrainerQueue = cache(async (userId: string): Promise<{ items: Tr
       ownerYou: false,
       eta: "خلال ٣ أيام عمل",
       ref: refFor(key),
-      age: `أُرسل ${formatRelative(p.updatedAt)}`,
+      age: `أُرسل ${formatRelative(p.submittedAt ?? p.updatedAt)}`,
       primary: { label: "تتبّع الطلب", href: `/trainer/programs/${p.id}` },
       secondary: "hide",
-      sortAt: new Date(p.updatedAt).getTime() + 3 * DAY,
-      summary: `أُرسل ${formatRelative(p.updatedAt)}`,
+      sortAt: new Date(p.submittedAt ?? p.updatedAt).getTime() + 3 * DAY,
+      summary: `أُرسل ${formatRelative(p.submittedAt ?? p.updatedAt)}`,
     });
   }
 

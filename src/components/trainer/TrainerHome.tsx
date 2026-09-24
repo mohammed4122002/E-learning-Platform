@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
-  BadgeCheck, Banknote, BookOpen, Briefcase, Building2, CalendarDays, CircleAlert, CircleUser, FileText, GraduationCap, Route, Star, Users,
+  BadgeCheck, BookOpen, CalendarDays, CircleAlert, CircleUser, Compass, Contact, FileText, Hourglass, Signpost, Star, Users,
 } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
@@ -24,16 +24,16 @@ const FAQ = [
 const COMING_SOON: { icon: LucideIcon; label: string }[] = [
   { icon: CalendarDays, label: "جدول دوراتك اليومي" },
   { icon: Users, label: "متدربوك النشطون" },
-  { icon: Briefcase, label: "عروض الجهات المطابقة" },
-  { icon: Banknote, label: "رصيدك ومستحقاتك" },
+  { icon: Compass, label: "عروض الجهات المطابقة" },
+  { icon: Hourglass, label: "رصيدك ومستحقاتك" },
   { icon: Star, label: "تقييمات متدربيك" },
   { icon: CircleAlert, label: "ما يحتاج إجراءك" },
 ];
 
 /** Copy of the "current step" card per journey stage (296:8300 new trainer · 296:8603 partial accreditation). */
 function stageCopy(stage: Stage | null, o: TrainerOverview) {
-  const review = o.programs.find((p) => !["draft", "published", "archived"].includes(p.status));
-  const draft = o.programs.find((p) => p.status === "draft");
+  const review = o.programs.find((p) => p.phase === "under_review");
+  const draft = o.programs.find((p) => p.phase === "draft" || p.phase === "needs_changes");
   switch (stage?.key) {
     case "identity":
       return {
@@ -50,12 +50,12 @@ function stageCopy(stage: Stage | null, o: TrainerOverview) {
         ? { title: "أكمل برنامجك الأول", body: `مسودة «${draft.title}» محفوظة ${formatRelative(draft.updatedAt)}. أكملها وأرسلها للمراجعة.`, cta: { label: "أكمل المسودة", href: `/trainer/programs/${draft.id}` } }
         : { title: "أنشئ برنامجك الأول", body: "المحتوى المعتمد الذي تبيعه — ثم تنشئ منه دورات.", cta: { label: "ابدأ برنامجك الأول", href: "/trainer/programs" } };
     case "review": {
-      const since = review ? Math.floor((Date.now() - new Date(review.updatedAt).getTime()) / 86_400_000) : 0;
+      const since = review ? Math.floor((Date.now() - new Date(review.submittedAt ?? review.updatedAt).getTime()) / 86_400_000) : 0;
       const left = Math.max(1, 3 - since);
       return {
         title: "برنامجك الأول قيد المراجعة",
         body: review
-          ? `أرسلت «${review.title}» ${formatRelative(review.updatedAt)}. يتبقى ${left === 1 ? "يوم عمل واحد" : left === 2 ? "يوما عمل" : "٣ أيام عمل"} على القرار — ويصلك إشعار فور صدوره.`
+          ? `أرسلت «${review.title}» ${formatRelative(review.submittedAt ?? review.updatedAt)}. يتبقى ${left === 1 ? "يوم عمل واحد" : left === 2 ? "يوما عمل" : "٣ أيام عمل"} على القرار — ويصلك إشعار فور صدوره.`
           : "تراجعه المنصة خلال ٣ أيام عمل — ويصلك إشعار فور صدوره.",
         cta: { label: "تتبّع حالة الطلب", href: review ? `/trainer/programs/${review.id}` : "/trainer/programs" },
       };
@@ -75,7 +75,7 @@ function CurrentStepCard({ o, journey, pills }: { o: TrainerOverview; journey: J
     <section aria-labelledby="step-title" className="flex w-full flex-col-reverse items-center gap-[26px] rounded-22 border-2 border-action-primary bg-bg-brand-tint px-5 py-7 sm:flex-row sm:px-[30px]">
       <div className="flex min-w-0 flex-1 flex-col items-start gap-2.5">
         <span className="inline-flex items-center gap-[7px] rounded-full bg-bg-surface px-3.5 py-[9px] type-subtitle text-text-brand">
-          <Glyph icon={Route} size={20} />
+          <Glyph icon={Signpost} size={20} />
           الخطوة {toArabicDigits(n)} من ٩
         </span>
         <h2 id="step-title" className="text-[28px] leading-[1.2] font-bold text-text-primary sm:text-[36px]">
@@ -111,7 +111,7 @@ function CurrentStepCard({ o, journey, pills }: { o: TrainerOverview; journey: J
 export function NewTrainerHome({ o, journey, firstName }: { o: TrainerOverview; journey: Journey; firstName: string }) {
   const steps = [
     { key: "identity" as const, icon: BadgeCheck, title: "وثّق هويتك", caption: "٣ دقائق · ارفع صورة هويتك ونراجعها خلال يومين", href: "/account" },
-    { key: "profile" as const, icon: CircleUser, title: "أكمل ملفك المهني", caption: "٥ دقائق · صورة ونبذة ومؤهل واحد يكفي للبداية", href: "/trainer/profile/edit" },
+    { key: "profile" as const, icon: Contact, title: "أكمل ملفك المهني", caption: "٥ دقائق · صورة ونبذة ومؤهل واحد يكفي للبداية", href: "/trainer/profile/edit" },
     { key: "program" as const, icon: BookOpen, title: "أنشئ برنامجك الأول", caption: "المحتوى المعتمد الذي تبيعه — ثم تنشئ منه دورات", href: "/trainer/programs" },
   ];
   const stageOf = (k: Stage["key"]) => journey.stages.find((s) => s.key === k)!;
@@ -124,7 +124,7 @@ export function NewTrainerHome({ o, journey, firstName }: { o: TrainerOverview; 
           <p className="type-body-lg text-text-secondary">حسابك جاهز. تفصلك ثلاث خطوات قصيرة عن استقبال أول عرض تدريب — تستغرق عشر دقائق مجتمعة.</p>
         </div>
         <span className="hidden size-[88px] shrink-0 items-center justify-center rounded-22 bg-action-primary text-text-on-brand sm:flex">
-          <Glyph icon={GraduationCap} size={32} />
+          <Glyph icon={CircleUser} size={32} />
         </span>
       </section>
       <CurrentStepCard
@@ -238,8 +238,8 @@ export function PartialHome({
     .join(" ");
   const prep = [
     o.eventsCount === 0 && { icon: CalendarDays, title: "تقويمك فارغ", caption: "حدّد أيامك المتاحة ليظهر «أقرب موعد» للجهات", label: "افتح التقويم", href: "/trainer/calendar" },
-    { icon: Banknote, title: "بيانات التحويل غير مكتملة", caption: "لن تستطيع سحب أرباحك بدونها", label: "أضف بياناتي", href: "/trainer/finance" },
-    o.portfolioCount === 0 && { icon: CircleUser, title: "معرض أعمالك فارغ", caption: "أضف نموذج حقيبة تدريبية لرفع ثقة الجهات", label: "أضف عملًا", href: "/trainer/profile/portfolio" },
+    { icon: Hourglass, title: "بيانات التحويل غير مكتملة", caption: "لن تستطيع سحب أرباحك بدونها", label: "أضف بياناتي", href: "/trainer/finance" },
+    o.portfolioCount === 0 && { icon: Contact, title: "معرض أعمالك فارغ", caption: "أضف نموذج حقيبة تدريبية لرفع ثقة الجهات", label: "أضف عملًا", href: "/trainer/profile/portfolio" },
   ].filter(Boolean) as { icon: LucideIcon; title: string; caption: string; label: string; href: string }[];
   return (
     <>
@@ -392,7 +392,7 @@ export function DefaultHome({
   const running = o.courses.filter((c) => c.status === "in_progress").length;
   const upcoming = o.courses.filter((c) => c.status === "open" && (!c.startsAt || new Date(c.startsAt).getTime() > new Date().getTime())).length;
   const remaining = 9 - journey.doneCount;
-  const reviewCount = o.programs.filter((p) => !["draft", "published", "archived"].includes(p.status)).length;
+  const reviewCount = o.programs.filter((p) => p.phase === "under_review").length;
   const actions = queue.filter((i) => i.kind === "action");
   const lead = [
     `لديك ${running === 0 ? "لا دورات جارية" : pluralAr(running, ["دورة جارية واحدة", "دورتان جاريتان", "دورات جارية", "دورة جارية"])} و${s.activeTrainees === 0 ? "لا متدربين نشطين بعد" : pluralAr(s.activeTrainees, ["متدرب نشط واحد", "متدربان نشطان", "متدربين نشطين", "متدربًا نشطًا"])}.`,
@@ -409,7 +409,7 @@ export function DefaultHome({
       <section className="flex w-full flex-col-reverse items-center gap-7 rounded-22 bg-bg-brand-tint px-5 py-7 sm:flex-row sm:px-[30px]">
         <div className="flex min-w-0 flex-1 flex-col items-start gap-2.5">
           <div className="flex flex-wrap gap-2">
-            <HeroPill icon={Route} tone="brand">
+            <HeroPill icon={Signpost} tone="brand">
               {toArabicDigits(journey.doneCount)} من ٩ مراحل
             </HeroPill>
             {o.identityStatus === "verified" && (
@@ -433,7 +433,7 @@ export function DefaultHome({
       </section>
 
       <div className="grid grid-cols-1 gap-5 min-[480px]:grid-cols-2 xl:grid-cols-4">
-        <Kpi icon={Banknote} label="ر.س رصيد متاح" value={formatNumber(Math.round(s.available))} note={`و${formatNumber(Math.round(s.pending))} معلّقة`} noteTone="warning" />
+        <Kpi icon={Hourglass} label="ر.س رصيد متاح" value={formatNumber(Math.round(s.available))} note={`و${formatNumber(Math.round(s.pending))} معلّقة`} noteTone="warning" />
         <Kpi icon={CalendarDays} label="دورة جارية" value={toArabicDigits(running)} note={`و${toArabicDigits(upcoming)} قادمة`} />
         <Kpi icon={Users} label="متدرب نشط" value={toArabicDigits(s.activeTrainees)} note={`+${toArabicDigits(s.newTraineesMonth)} هذا الشهر`} noteTone="success" />
         <Kpi
@@ -565,7 +565,7 @@ export function DefaultHome({
             </h2>
             <p className="type-caption text-text-muted">طلبات تدريب من جهات، مطابقة لمجالاتك وتوفّرك.</p>
             <ul className="flex flex-col gap-4">
-              <MiniRow icon={Building2} title="لا توجد طلبات مطابقة الآن" caption="تظهر هنا طلبات الجهات فور نشرها." />
+              <MiniRow icon={Compass} title="لا توجد طلبات مطابقة الآن" caption="تظهر هنا طلبات الجهات فور نشرها." />
             </ul>
             <ButtonLink href="/trainer/opportunities" variant="outline" fullWidth>
               اعرض كل الفرص

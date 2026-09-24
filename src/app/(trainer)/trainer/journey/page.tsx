@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
-import { BadgeCheck, BookOpen, CircleCheck, CircleDot, Hourglass, Lightbulb, Play, Route, Scale } from "lucide-react";
+import { BadgeCheck, BookOpen, CircleCheckBig, Hourglass, Lightbulb, Signpost, SquareActivity } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
@@ -25,10 +25,11 @@ const NEW_FAQ = [
   { q: "كم تستغرق المراجعة؟", a: "٣ أيام عمل. إن طُلب تعديل يصلك السبب المصنَّف والحقل المعني." },
   { q: "متى أستلم أرباحي؟", a: "بعد انتهاء الدورة وانقضاء مهلة الاسترداد، تُضاف للرصيد المتاح للسحب." },
 ];
-const WHY: { icon: LucideIcon; title: string; text: string }[] = [
-  { icon: BadgeCheck, title: "التوثيق أولًا", text: "بلا هوية موثّقة لا تُصدر شهادات قابلة للتحقق لمتدربيك." },
-  { icon: BookOpen, title: "البرنامج قبل الدورة", text: "البرنامج هو المحتوى المعتمد. الدورة تنفيذ مجدول له — ولا تُنشأ قبل اعتماده." },
-  { icon: Scale, title: "المراجعة تحمي الطرفين", text: "برنامج مراجَع يعني متدربين يثقون ومنصة تحميك من البلاغات." },
+/** 253:350 — TG/Trainer Verification (success) · Programs/Program (brand) · Status/Pending (info). */
+const WHY: { icon: LucideIcon; title: string; text: string; cls: string }[] = [
+  { icon: BadgeCheck, title: "التوثيق أولًا", text: "بلا هوية موثّقة لا تُصدر شهادات قابلة للتحقق لمتدربيك.", cls: "text-state-success" },
+  { icon: BookOpen, title: "البرنامج قبل الدورة", text: "البرنامج هو المحتوى المعتمد. الدورة تنفيذ مجدول له — ولا تُنشأ قبل اعتماده.", cls: "text-text-brand" },
+  { icon: Hourglass, title: "المراجعة تحمي الطرفين", text: "برنامج مراجَع يعني متدربين يثقون ومنصة تحميك من البلاغات.", cls: "text-state-info" },
 ];
 
 /** TRR-JRN-01 · مسار اعتماد المدرب — in progress (253:3) and new trainer (253:385). */
@@ -73,7 +74,7 @@ export default async function TrainerJourneyPage() {
               </div>
             </div>
             <span className="hidden size-20 shrink-0 items-center justify-center rounded-22 bg-action-primary text-text-on-brand sm:flex">
-              <Glyph icon={Route} size={32} />
+              <Glyph icon={Signpost} size={32} />
             </span>
           </section>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -110,12 +111,12 @@ export default async function TrainerJourneyPage() {
             <div className="flex flex-wrap gap-2">
               {current && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-state-warning">
-                  <Glyph icon={Play} size={16} />
+                  <Glyph icon={SquareActivity} size={16} />
                   المرحلة الحالية: {current.title}
                 </span>
               )}
               <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-text-brand">
-                <Glyph icon={Route} size={16} />
+                <Glyph icon={Signpost} size={16} />
                 {toArabicDigits(journey.doneCount)} من ٩ مراحل
               </span>
             </div>
@@ -149,7 +150,7 @@ export default async function TrainerJourneyPage() {
                   <ul className="flex flex-col gap-4">
                     {checklist.map((c) => (
                       <li key={c.key} className={`flex items-center gap-2.5 rounded-12 px-3 py-[11px] type-small ${c.done ? "bg-state-success-bg text-state-success" : "bg-bg-page text-text-primary"}`}>
-                        <Glyph icon={c.done ? CircleCheck : CircleDot} size={20} className={c.done ? "" : "text-text-muted"} />
+                        <Glyph icon={c.done ? CircleCheckBig : Hourglass} size={20} className={c.done ? "" : "text-text-muted"} />
                         <span className="flex-1">
                           {c.label} — {c.done ? "مضاف" : c.missingLabel}
                         </span>
@@ -172,7 +173,7 @@ export default async function TrainerJourneyPage() {
               <ul className="flex flex-col gap-4">
                 {WHY.map((w) => (
                   <li key={w.title} className="flex items-start gap-2.5 rounded-12 bg-bg-page px-3 py-[11px]">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-text-brand">
+                    <span className={`flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface ${w.cls}`}>
                       <Glyph icon={w.icon} size={20} />
                     </span>
                     <span className="flex min-w-0 flex-1 flex-col gap-0.5">
