@@ -14,6 +14,7 @@ import { Glyph } from "@/components/ui/Icon";
 import { Breadcrumb, Pagination } from "@/components/ui/Navigation";
 import { requireTrainer } from "@/lib/auth";
 import { getCourseSales, salesTotals, type SaleRow } from "@/lib/data/trainer-course-page";
+import { getLedger } from "@/lib/data/trainer-finance";
 import { getCourseHeader } from "@/lib/data/trainer-courses";
 import { env } from "@/lib/env";
 import { pluralAr, toArabicDigits } from "@/lib/format";
@@ -126,8 +127,15 @@ export default async function CourseSalesPage({ params, searchParams }: PageProp
   const active = all.filter((r) => saleState(r) !== "refunded");
   const monthCount = all.filter((r) => matches(r, "month")).length;
   const now = new Date().getTime();
-  const available = active.filter((r) => now - Date.parse(soldAt(r)) >= 14 * DAY).reduce((s, r) => s + netOfSale(r), 0);
-  const held = active.filter((r) => now - Date.parse(soldAt(r)) < 14 * DAY).reduce((s, r) => s + netOfSale(r), 0);
+  // «متى يصلك المال؟» follows the trainer ledger (TRR-FIN, same release rule as /trainer/finance) when the viewer
+  // is the course's trainer; other course staff keep the per-sale estimate.
+  const ledger = (await getLedger()).filter((r) => r.courseId === id);
+  const available = ledger.length
+    ? ledger.filter((r) => r.released).reduce((s, r) => s + r.net, 0) / 100
+    : active.filter((r) => now - Date.parse(soldAt(r)) >= 14 * DAY).reduce((s, r) => s + netOfSale(r), 0);
+  const held = ledger.length
+    ? ledger.filter((r) => !r.released).reduce((s, r) => s + r.net, 0) / 100
+    : active.filter((r) => now - Date.parse(soldAt(r)) < 14 * DAY).reduce((s, r) => s + netOfSale(r), 0);
   const refundedRows = all.filter((r) => saleState(r) === "refunded");
 
   const needle = q.toLowerCase();

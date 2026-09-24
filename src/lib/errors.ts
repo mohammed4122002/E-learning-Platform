@@ -113,6 +113,21 @@ const MESSAGES: Record<string, string> = {
   lessons_without_material: "بعض الدروس بلا مادة — ارفع الفيديو أو الملف أو اكتب النص أولًا.",
   sales_paused: "البيع موقوف مؤقتًا لهذه الدورة.",
   waitlist_disabled: "قائمة الانتظار غير مفعّلة لهذه الدورة.",
+  // Trainer finance (TRR-FIN-03 / TRR-FIN-04)
+  invalid_iban: "رقم الآيبان غير صحيح — يبدأ بـ SA ويتكوّن من ٢٤ خانة.",
+  invalid_bank: "اختر البنك من القائمة.",
+  iban_bank_mismatch: "البنك المختار لا يطابق رقم الآيبان.",
+  document_required: "ارفع شهادة الآيبان أو كشف حساب يُظهر اسمك ورقم الحساب.",
+  bank_change_pending: "لديك تغيير حساب قيد التحقق — انتظر اكتماله أو ألغِه أولًا.",
+  same_bank_account: "هذا هو حسابك الموثَّق نفسه.",
+  profile_name_required: "أكمل اسمك في ملفك أولًا — نحوّل فقط لحساب باسمك.",
+  change_window_closed: "انقضت مهلة الـ٤٨ ساعة لإلغاء التغيير.",
+  bank_account_required: "أضف حسابًا بنكيًا موثَّقًا قبل طلب السحب.",
+  bank_hold_active: "السحب موقوف ٤٨ ساعة بعد إضافة الحساب أو تغييره — حماية من الاحتيال.",
+  withdrawal_in_progress: "لديك طلب سحب قيد المعالجة — انتظر اكتماله قبل طلب جديد.",
+  withdrawal_below_minimum: "المبلغ أقل من الحد الأدنى للسحب.",
+  insufficient_balance: "المبلغ أكبر من رصيدك المتاح للسحب.",
+  invalid_amount: "اكتب مبلغًا صحيحًا بحد أقصى خانتين عشريتين.",
 };
 
 export const GENERIC_ERROR = "حدث خطأ غير متوقع. أعد المحاولة، وإن تكرر تواصل مع الدعم.";

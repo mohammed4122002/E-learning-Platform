@@ -37,7 +37,8 @@ TypeScript types: `src/types/database.ts`, generated from the live schema
 | Enrollment & money | `discount_codes`, `enrollments` (price lock BR-L3, `hold_expires_at` BR-L7, `vat_amount`), `payments` (unique `idempotency_key` BR-L12), `receipts` (`RC-` sequence), `waitlist_entries`, `refund_requests`, `disputes`, `dispute_attachments` |
 | Learning | `lesson_progress`, `attendance`, `attendance_codes`, `quizzes`, `quiz_attempts`, `assignments`, `assignment_submissions`, `certificates` (12-hex public code), `external_certificates`, `course_ratings` |
 | Engagement & support | `trainee_preferences`, `experiences`, `favorites`, `follows`, `inquiries`, `notifications`, `conversations`, `conversation_participants`, `messages`, `violation_reports`, `identity_verifications`, `help_articles`, `queue_dismissals`, `terms_acceptances` |
-| Config | `app_settings` (VAT rate, sandbox flag, auth value panel) |
+| Trainer finance | `trainer_ledger_entries` (frozen sale / refund / chargeback rows, written by triggers), `trainer_bank_accounts` (owner-only; full IBAN not selectable through the API), `trainer_withdrawals`, `saudi_banks` |
+| Config | `app_settings` (VAT rate, sandbox flag, auth value panel, commission, withdrawal minimum/fee, refund processing fee) |
 
 ## Main RPCs
 
@@ -50,6 +51,7 @@ TypeScript types: `src/types/database.ts`, generated from the live schema
 | Money | `refund_quote`, `cancel_refund_request`, `withdraw_enrollment`, `withdraw_dispute`, `my_waitlist_positions` |
 | Live & learning extras | `join_live_session`, `course_quizzes`, `quiz_attempt_review`, `submit_quiz_attempt`, `submit_assignment_file`, `certificate_conditions` |
 | Discovery | `discover_courses`, `discover_facets`, `discover_suggest`, `course_public_facts` |
+| Trainer finance | `trainer_ledger`, `trainer_balance`, `trainer_stats`, `submit_bank_account`, `cancel_bank_account_change`, `request_withdrawal`, `cancel_withdrawal`; admin only: `admin_review_bank_account`, `admin_update_withdrawal` |
 | Account | `add_workspace`, `submit_identity_verification`, `submit_identity_documents`, `account_deletion_blockers`, `freeze_account`, `request_account_deletion`, `public_profile`, `start_conversation`, `withdraw_violation_report` |
 
 ## Pricing
@@ -57,6 +59,25 @@ TypeScript types: `src/types/database.ts`, generated from the live schema
 VAT is 15 % and **exclusive** (Figma TG · Configuration `Tax/Inclusive = false`):
 `subtotal = list_price − discount`, `vat = round(subtotal × rate, 2)`, `total = subtotal + vat`.
 `quote_enrollment` is the single source for these numbers; the enrollment stores them at hold time.
+
+## Trainer money (TRR-FIN, `…141000_trainer_finance.sql`)
+
+- **Ledger**: `payments` → `succeeded` inserts a `sale` row (gross = price paid − VAT, commission =
+  `platform_commission_percent()` frozen on the row). An approved `refund_requests` row inserts a `refund` row (refunded
+  share, commission returned pro rata, plus `refund_processing_fee_percent` when a trainee left a scheduled course
+  before it started). A payment marked `refunded` without an approved request inserts a `chargeback`.
+- **Release**: scheduled courses 7 days after the (completed) course ends; recorded courses 14 days after each purchase.
+  A refund before release nets out inside its sale's settlement. Settlement = release month (Asia/Riyadh), `STL-YYYY-MMDD`.
+- **Balance** (`trainer_balance_for`): available = released net − completed withdrawals; the same function feeds
+  `trainer_stats()` (dashboard «رصيدك») and `/trainer/finance`.
+- **Withdrawals**: `request_withdrawal(amount)` needs a verified account submitted ≥ 48 h ago, no pending account change,
+  no request in flight, amount ≥ `withdrawal_min_amount` and ≤ available; fee `withdrawal_fee_amount`.
+  **There is no payout provider** — the finance team transfers manually and then, signed in with an admin workspace, calls
+  `admin_update_withdrawal(id, 'processing' | 'completed' | 'failed', reason, transfer_ref)` (e.g. from the SQL editor
+  with the admin's JWT, or a future admin screen). Only `completed` reduces the balance; `failed` requires a reason.
+- **Bank accounts**: `submit_bank_account(iban, bank_code, document_path)` validates the Saudi IBAN (mod-97), the bank code,
+  and the IBAN certificate in the private `bank-documents` bucket; the holder is the profile name. The trainer can cancel
+  within 48 h; an admin verifies with `admin_review_bank_account(id, approve, note)`.
 
 ## Jobs
 

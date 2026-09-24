@@ -33,6 +33,8 @@ export type TrainerStats = {
   ratingOrganization: number | null;
   lowRatings: number;
   platformRatingAvg: number | null;
+  /** Payout account (TRR-FIN-03): verified, awaiting verification, or none. */
+  bankStatus: "verified" | "pending" | null;
 };
 
 const num = (v: unknown) => (v === null || v === undefined ? null : Number(v));
@@ -58,6 +60,7 @@ export const getTrainerStats = cache(async (): Promise<TrainerStats> => {
     ratingOrganization: num(s.rating_organization),
     lowRatings: num(s.low_ratings) ?? 0,
     platformRatingAvg: num(s.platform_rating_avg),
+    bankStatus: s.bank_status === "verified" || s.bank_status === "pending" ? s.bank_status : null,
   };
 });
 

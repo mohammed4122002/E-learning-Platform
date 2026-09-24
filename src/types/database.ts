@@ -58,6 +58,91 @@ export type Database = {
           },
         ]
       }
+      affiliation_invitations: {
+        Row: {
+          commission_percent: number
+          created_at: string
+          exclusive: boolean
+          execution_scope: string | null
+          expires_at: string
+          id: string
+          invited_by: string | null
+          message: string | null
+          notice_days: number
+          organization_id: string
+          renewable: boolean
+          responded_at: string | null
+          scope_label: string
+          scope_program_ids: string[]
+          status: string
+          term_months: number
+          trainer_id: string
+          updated_at: string
+        }
+        Insert: {
+          commission_percent: number
+          created_at?: string
+          exclusive?: boolean
+          execution_scope?: string | null
+          expires_at: string
+          id?: string
+          invited_by?: string | null
+          message?: string | null
+          notice_days?: number
+          organization_id: string
+          renewable?: boolean
+          responded_at?: string | null
+          scope_label: string
+          scope_program_ids?: string[]
+          status?: string
+          term_months?: number
+          trainer_id: string
+          updated_at?: string
+        }
+        Update: {
+          commission_percent?: number
+          created_at?: string
+          exclusive?: boolean
+          execution_scope?: string | null
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          message?: string | null
+          notice_days?: number
+          organization_id?: string
+          renewable?: boolean
+          responded_at?: string | null
+          scope_label?: string
+          scope_program_ids?: string[]
+          status?: string
+          term_months?: number
+          trainer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliation_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliation_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliation_invitations_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_settings: {
         Row: {
           key: string
@@ -2905,6 +2990,197 @@ export type Database = {
           },
         ]
       }
+      report_appeals: {
+        Row: {
+          acknowledged: boolean
+          attachments: Json
+          basis: string
+          body: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_id: string
+          decision_note: string | null
+          id: string
+          report_id: string
+          status: string
+          submitted_at: string
+          trainer_id: string
+        }
+        Insert: {
+          acknowledged: boolean
+          attachments?: Json
+          basis: string
+          body: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_id: string
+          decision_note?: string | null
+          id?: string
+          report_id: string
+          status?: string
+          submitted_at?: string
+          trainer_id: string
+        }
+        Update: {
+          acknowledged?: boolean
+          attachments?: Json
+          basis?: string
+          body?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_id?: string
+          decision_note?: string | null
+          id?: string
+          report_id?: string
+          status?: string
+          submitted_at?: string
+          trainer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_appeals_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_appeals_decision_id_fkey"
+            columns: ["decision_id"]
+            isOneToOne: true
+            referencedRelation: "report_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_appeals_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "violation_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_appeals_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_decisions: {
+        Row: {
+          accepted_at: string | null
+          appeal_deadline: string
+          decided_at: string
+          decided_by: string | null
+          id: string
+          outcome: string
+          report_id: string
+          summary: string
+          violation_recorded: boolean
+        }
+        Insert: {
+          accepted_at?: string | null
+          appeal_deadline: string
+          decided_at?: string
+          decided_by?: string | null
+          id?: string
+          outcome: string
+          report_id: string
+          summary: string
+          violation_recorded?: boolean
+        }
+        Update: {
+          accepted_at?: string | null
+          appeal_deadline?: string
+          decided_at?: string
+          decided_by?: string | null
+          id?: string
+          outcome?: string
+          report_id?: string
+          summary?: string
+          violation_recorded?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_decisions_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_decisions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: true
+            referencedRelation: "violation_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_responses: {
+        Row: {
+          admitted: boolean
+          attachments: Json
+          body: string
+          created_at: string
+          id: string
+          report_id: string
+          trainer_id: string
+        }
+        Insert: {
+          admitted?: boolean
+          attachments?: Json
+          body: string
+          created_at?: string
+          id?: string
+          report_id: string
+          trainer_id: string
+        }
+        Update: {
+          admitted?: boolean
+          attachments?: Json
+          body?: string
+          created_at?: string
+          id?: string
+          report_id?: string
+          trainer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_responses_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: true
+            referencedRelation: "violation_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_responses_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saudi_banks: {
+        Row: {
+          code: string
+          name: string
+          sort: number
+        }
+        Insert: {
+          code: string
+          name: string
+          sort?: number
+        }
+        Update: {
+          code?: string
+          name?: string
+          sort?: number
+        }
+        Relationships: []
+      }
       submission_reviews: {
         Row: {
           feedback: string | null
@@ -3041,6 +3317,185 @@ export type Database = {
           },
         ]
       }
+      trainer_affiliations: {
+        Row: {
+          commission_percent: number
+          created_at: string
+          end_effective_at: string | null
+          end_message: string | null
+          end_reason: string | null
+          end_requested_at: string | null
+          ended_at: string | null
+          ended_by: string | null
+          ended_by_party: string | null
+          exclusive: boolean
+          execution_scope: string | null
+          id: string
+          invitation_id: string | null
+          notice_days: number
+          organization_id: string
+          renewable: boolean
+          scope_label: string
+          scope_program_ids: string[]
+          started_at: string
+          status: string
+          term_months: number
+          trainer_id: string
+          updated_at: string
+        }
+        Insert: {
+          commission_percent: number
+          created_at?: string
+          end_effective_at?: string | null
+          end_message?: string | null
+          end_reason?: string | null
+          end_requested_at?: string | null
+          ended_at?: string | null
+          ended_by?: string | null
+          ended_by_party?: string | null
+          exclusive?: boolean
+          execution_scope?: string | null
+          id?: string
+          invitation_id?: string | null
+          notice_days?: number
+          organization_id: string
+          renewable?: boolean
+          scope_label: string
+          scope_program_ids?: string[]
+          started_at?: string
+          status?: string
+          term_months?: number
+          trainer_id: string
+          updated_at?: string
+        }
+        Update: {
+          commission_percent?: number
+          created_at?: string
+          end_effective_at?: string | null
+          end_message?: string | null
+          end_reason?: string | null
+          end_requested_at?: string | null
+          ended_at?: string | null
+          ended_by?: string | null
+          ended_by_party?: string | null
+          exclusive?: boolean
+          execution_scope?: string | null
+          id?: string
+          invitation_id?: string | null
+          notice_days?: number
+          organization_id?: string
+          renewable?: boolean
+          scope_label?: string
+          scope_program_ids?: string[]
+          started_at?: string
+          status?: string
+          term_months?: number
+          trainer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_affiliations_ended_by_fkey"
+            columns: ["ended_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_affiliations_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: true
+            referencedRelation: "affiliation_invitations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_affiliations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_affiliations_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainer_bank_accounts: {
+        Row: {
+          bank_code: string
+          bank_name: string
+          cancelled_at: string | null
+          created_at: string
+          currency: string
+          decided_at: string | null
+          document_path: string
+          holder_name: string
+          iban: string
+          iban_last4: string
+          id: string
+          replaced_at: string | null
+          status: string
+          status_note: string | null
+          trainer_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          bank_code: string
+          bank_name: string
+          cancelled_at?: string | null
+          created_at?: string
+          currency?: string
+          decided_at?: string | null
+          document_path: string
+          holder_name: string
+          iban: string
+          iban_last4: string
+          id?: string
+          replaced_at?: string | null
+          status?: string
+          status_note?: string | null
+          trainer_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          bank_code?: string
+          bank_name?: string
+          cancelled_at?: string | null
+          created_at?: string
+          currency?: string
+          decided_at?: string | null
+          document_path?: string
+          holder_name?: string
+          iban?: string
+          iban_last4?: string
+          id?: string
+          replaced_at?: string | null
+          status?: string
+          status_note?: string | null
+          trainer_id?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_bank_accounts_bank_code_fkey"
+            columns: ["bank_code"]
+            isOneToOne: false
+            referencedRelation: "saudi_banks"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "trainer_bank_accounts_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trainer_calendar_events: {
         Row: {
           all_day: boolean
@@ -3078,6 +3533,321 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "trainer_calendar_events_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainer_contract_signatures: {
+        Row: {
+          consent_text: string
+          consented: boolean
+          contract_id: string
+          document_hash: string
+          id: string
+          ip_hash: string | null
+          party: string
+          signed_at: string
+          signer_id: string
+          typed_name: string
+          user_agent_hash: string | null
+          version_id: string
+        }
+        Insert: {
+          consent_text: string
+          consented: boolean
+          contract_id: string
+          document_hash: string
+          id?: string
+          ip_hash?: string | null
+          party: string
+          signed_at?: string
+          signer_id: string
+          typed_name: string
+          user_agent_hash?: string | null
+          version_id: string
+        }
+        Update: {
+          consent_text?: string
+          consented?: boolean
+          contract_id?: string
+          document_hash?: string
+          id?: string
+          ip_hash?: string | null
+          party?: string
+          signed_at?: string
+          signer_id?: string
+          typed_name?: string
+          user_agent_hash?: string | null
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_contract_signatures_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "trainer_contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_contract_signatures_signer_id_fkey"
+            columns: ["signer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_contract_signatures_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "trainer_contract_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainer_contract_versions: {
+        Row: {
+          contract_id: string
+          created_at: string
+          created_by: string | null
+          document_hash: string
+          id: string
+          sent_at: string | null
+          terms: Json
+          version: number
+        }
+        Insert: {
+          contract_id: string
+          created_at?: string
+          created_by?: string | null
+          document_hash: string
+          id?: string
+          sent_at?: string | null
+          terms: Json
+          version: number
+        }
+        Update: {
+          contract_id?: string
+          created_at?: string
+          created_by?: string | null
+          document_hash?: string
+          id?: string
+          sent_at?: string | null
+          terms?: Json
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_contract_versions_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "trainer_contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_contract_versions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainer_contracts: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          created_by: string | null
+          current_version: number
+          expired_at: string | null
+          id: string
+          number: string
+          organization_id: string
+          sent_at: string | null
+          sign_deadline: string | null
+          source_id: string
+          source_ref: string | null
+          source_type: string
+          status: string
+          terminated_at: string | null
+          terminated_by: string | null
+          termination_reason: string | null
+          title: string
+          trainer_id: string
+          trainer_signed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          expired_at?: string | null
+          id?: string
+          number?: string
+          organization_id: string
+          sent_at?: string | null
+          sign_deadline?: string | null
+          source_id: string
+          source_ref?: string | null
+          source_type: string
+          status?: string
+          terminated_at?: string | null
+          terminated_by?: string | null
+          termination_reason?: string | null
+          title: string
+          trainer_id: string
+          trainer_signed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          expired_at?: string | null
+          id?: string
+          number?: string
+          organization_id?: string
+          sent_at?: string | null
+          sign_deadline?: string | null
+          source_id?: string
+          source_ref?: string | null
+          source_type?: string
+          status?: string
+          terminated_at?: string | null
+          terminated_by?: string | null
+          termination_reason?: string | null
+          title?: string
+          trainer_id?: string
+          trainer_signed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_contracts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_contracts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_contracts_terminated_by_fkey"
+            columns: ["terminated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_contracts_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainer_ledger_entries: {
+        Row: {
+          commission: number
+          commission_percent: number
+          course_id: string
+          created_at: string
+          currency: string
+          days_before_start: number | null
+          enrollment_id: string
+          fee: number
+          gross: number
+          id: string
+          kind: string
+          net: number
+          occurred_at: string
+          payment_id: string
+          reference: string | null
+          refund_percent: number | null
+          refund_request_id: string | null
+          trainer_id: string
+        }
+        Insert: {
+          commission: number
+          commission_percent: number
+          course_id: string
+          created_at?: string
+          currency?: string
+          days_before_start?: number | null
+          enrollment_id: string
+          fee?: number
+          gross: number
+          id?: string
+          kind: string
+          net: number
+          occurred_at: string
+          payment_id: string
+          reference?: string | null
+          refund_percent?: number | null
+          refund_request_id?: string | null
+          trainer_id: string
+        }
+        Update: {
+          commission?: number
+          commission_percent?: number
+          course_id?: string
+          created_at?: string
+          currency?: string
+          days_before_start?: number | null
+          enrollment_id?: string
+          fee?: number
+          gross?: number
+          id?: string
+          kind?: string
+          net?: number
+          occurred_at?: string
+          payment_id?: string
+          reference?: string | null
+          refund_percent?: number | null
+          refund_request_id?: string | null
+          trainer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_ledger_entries_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_ledger_entries_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_ledger_entries_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_ledger_entries_refund_request_id_fkey"
+            columns: ["refund_request_id"]
+            isOneToOne: false
+            referencedRelation: "refund_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_ledger_entries_trainer_id_fkey"
             columns: ["trainer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -3262,6 +4032,81 @@ export type Database = {
           },
         ]
       }
+      trainer_withdrawals: {
+        Row: {
+          amount: number
+          bank_account_id: string
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          currency: string
+          failed_at: string | null
+          failure_reason: string | null
+          fee: number
+          id: string
+          net_amount: number
+          number: string
+          processing_at: string | null
+          status: string
+          trainer_id: string
+          transfer_ref: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          bank_account_id: string
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          failed_at?: string | null
+          failure_reason?: string | null
+          fee: number
+          id?: string
+          net_amount: number
+          number: string
+          processing_at?: string | null
+          status?: string
+          trainer_id: string
+          transfer_ref?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          bank_account_id?: string
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          failed_at?: string | null
+          failure_reason?: string | null
+          fee?: number
+          id?: string
+          net_amount?: number
+          number?: string
+          processing_at?: string | null
+          status?: string
+          trainer_id?: string
+          transfer_ref?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_withdrawals_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "trainer_bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_withdrawals_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_workspaces: {
         Row: {
           created_at: string
@@ -3311,6 +4156,7 @@ export type Database = {
           evidence_path: string | null
           id: string
           reason: string
+          report_number: number
           reporter_id: string
           status: string
           target_id: string
@@ -3323,6 +4169,7 @@ export type Database = {
           evidence_path?: string | null
           id?: string
           reason: string
+          report_number?: number
           reporter_id: string
           status?: string
           target_id: string
@@ -3335,6 +4182,7 @@ export type Database = {
           evidence_path?: string | null
           id?: string
           reason?: string
+          report_number?: number
           reporter_id?: string
           status?: string
           target_id?: string
@@ -3401,6 +4249,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_affiliation_invitation: {
+        Args: { p_invitation: string }
+        Returns: string
+      }
+      accept_report_decision: { Args: { p_report: string }; Returns: undefined }
       accept_waitlist_invite: {
         Args: { p_entry: string }
         Returns: {
@@ -3444,8 +4297,43 @@ export type Database = {
         }
         Returns: string
       }
+      admin_decide_appeal: {
+        Args: { p_appeal: string; p_note: string; p_upheld: boolean }
+        Returns: undefined
+      }
+      admin_decide_report: {
+        Args: {
+          p_outcome: string
+          p_report: string
+          p_summary: string
+          p_violation: boolean
+        }
+        Returns: string
+      }
+      admin_review_bank_account: {
+        Args: { p_account: string; p_approve: boolean; p_note?: string }
+        Returns: undefined
+      }
+      admin_update_withdrawal: {
+        Args: {
+          p_reason?: string
+          p_status: string
+          p_transfer_ref?: string
+          p_withdrawal: string
+        }
+        Returns: undefined
+      }
+      affiliations_housekeeping: { Args: never; Returns: undefined }
       approve_course_results: { Args: { p_course: string }; Returns: number }
       can_edit_program: { Args: { p: string }; Returns: boolean }
+      cancel_affiliation_end: {
+        Args: { p_affiliation: string }
+        Returns: undefined
+      }
+      cancel_bank_account_change: {
+        Args: { p_account: string }
+        Returns: undefined
+      }
       cancel_course: {
         Args: { p_course: string; p_message: string; p_reason: string }
         Returns: {
@@ -3455,6 +4343,7 @@ export type Database = {
         }[]
       }
       cancel_refund_request: { Args: { p_refund: string }; Returns: undefined }
+      cancel_withdrawal: { Args: { p_withdrawal: string }; Returns: undefined }
       certificate_conditions: {
         Args: { p_enrollment: string }
         Returns: {
@@ -3492,6 +4381,8 @@ export type Database = {
           remaining: number
         }[]
       }
+      contract_hash: { Args: { p_terms: Json }; Returns: string }
+      contracts_housekeeping: { Args: never; Returns: undefined }
       course_dashboard: { Args: { p_course: string }; Returns: Json }
       course_outline: {
         Args: { p_course: string }
@@ -3622,6 +4513,21 @@ export type Database = {
           expires_at: string
         }[]
       }
+      create_contract_internal: {
+        Args: {
+          p_creator: string
+          p_org: string
+          p_send: boolean
+          p_sign_days: number
+          p_source_id: string
+          p_source_ref: string
+          p_source_type: string
+          p_terms: Json
+          p_title: string
+          p_trainer: string
+        }
+        Returns: string
+      }
       create_course: {
         Args: {
           p_mode: Database["public"]["Enums"]["course_mode"]
@@ -3639,6 +4545,10 @@ export type Database = {
         Returns: string
       }
       create_program: { Args: { p_title: string }; Returns: string }
+      decline_affiliation_invitation: {
+        Args: { p_invitation: string }
+        Returns: undefined
+      }
       discard_program_clone: { Args: { p_program: string }; Returns: undefined }
       discover_courses: {
         Args: {
@@ -3689,6 +4599,15 @@ export type Database = {
           slug: string
         }[]
       }
+      end_affiliation: {
+        Args: {
+          p_ack: boolean
+          p_affiliation: string
+          p_message: string
+          p_reason: string
+        }
+        Returns: string
+      }
       expire_stale_holds: { Args: never; Returns: number }
       freeze_account: { Args: never; Returns: undefined }
       get_quiz: {
@@ -3725,7 +4644,9 @@ export type Database = {
       }
       is_conversation_member: { Args: { c: string }; Returns: boolean }
       is_enrolled: { Args: { c: string }; Returns: boolean }
+      is_org_manager: { Args: { p_org: string }; Returns: boolean }
       is_org_member: { Args: { org: string }; Returns: boolean }
+      is_valid_saudi_iban: { Args: { p: string }; Returns: boolean }
       issue_certificate: { Args: { p_enrollment: string }; Returns: string }
       issue_program_certificates: {
         Args: { p_course: string }
@@ -3740,7 +4661,48 @@ export type Database = {
       }
       join_waitlist: { Args: { p_course: string }; Returns: string }
       leave_waitlist: { Args: { p_entry: string }; Returns: undefined }
+      ledger_record_chargeback: {
+        Args: { p_at: string; p_payment: string }
+        Returns: undefined
+      }
+      ledger_record_refund: {
+        Args: { p_at: string; p_refund: string }
+        Returns: undefined
+      }
+      ledger_record_sale: {
+        Args: { p_at: string; p_payment: string }
+        Returns: undefined
+      }
       manages_course: { Args: { c: string }; Returns: boolean }
+      my_content_reports: {
+        Args: never
+        Returns: {
+          appeal_deadline: string
+          appeal_decided_at: string
+          appeal_id: string
+          appeal_note: string
+          appeal_status: string
+          appeal_submitted_at: string
+          created_at: string
+          decided_at: string
+          decision_accepted_at: string
+          decision_id: string
+          decision_summary: string
+          details: string
+          id: string
+          outcome: string
+          reason: string
+          report_number: number
+          response_admitted: boolean
+          response_at: string
+          response_due_at: string
+          status: string
+          target_id: string
+          target_title: string
+          target_type: string
+          violation_recorded: boolean
+        }[]
+      }
       my_waitlist_positions: {
         Args: never
         Returns: {
@@ -3767,6 +4729,16 @@ export type Database = {
             Args: { p_body: string; p_course: string; p_title: string }
             Returns: number
           }
+      notify_org_managers: {
+        Args: {
+          p_body: string
+          p_kind: string
+          p_link: string
+          p_org: string
+          p_title: string
+        }
+        Returns: undefined
+      }
       notify_program_reviewers: {
         Args: { p_event: string; p_program: string }
         Returns: number
@@ -3775,7 +4747,63 @@ export type Database = {
         Args: { p_details: string; p_payment: string; p_reason: string }
         Returns: string
       }
+      org_countersign_contract: {
+        Args: {
+          p_consent: boolean
+          p_contract: string
+          p_ip_hash: string
+          p_typed_name: string
+          p_ua_hash: string
+        }
+        Returns: undefined
+      }
+      org_create_affiliation_contract: {
+        Args: {
+          p_affiliation: string
+          p_source_ref: string
+          p_terms: Json
+          p_title: string
+        }
+        Returns: string
+      }
+      org_end_affiliation: {
+        Args: { p_affiliation: string; p_message: string; p_reason: string }
+        Returns: string
+      }
+      org_revise_contract: {
+        Args: { p_contract: string; p_terms: Json }
+        Returns: number
+      }
+      org_send_affiliation_invitation: {
+        Args: {
+          p_commission: number
+          p_exclusive: boolean
+          p_execution_scope: string
+          p_expires_days?: number
+          p_message: string
+          p_notice_days: number
+          p_org: string
+          p_scope_label: string
+          p_scope_programs: string[]
+          p_term_months: number
+          p_trainer: string
+        }
+        Returns: string
+      }
+      org_send_contract: {
+        Args: { p_contract: string; p_sign_days?: number }
+        Returns: undefined
+      }
+      org_terminate_contract: {
+        Args: { p_contract: string; p_reason: string }
+        Returns: undefined
+      }
+      org_withdraw_affiliation_invitation: {
+        Args: { p_invitation: string }
+        Returns: undefined
+      }
       owns_program: { Args: { p: string }; Returns: boolean }
+      owns_reported_content: { Args: { p_report: string }; Returns: boolean }
       platform_commission_percent: { Args: never; Returns: number }
       postpone_course: {
         Args: {
@@ -3916,6 +4944,7 @@ export type Database = {
         Args: { p_ids: string[]; p_program: string }
         Returns: undefined
       }
+      report_target_trainer: { Args: { p_report: string }; Returns: string }
       request_account_deletion: { Args: never; Returns: undefined }
       request_attendance_unlock: {
         Args: { p_reason: string; p_session: string }
@@ -3935,8 +4964,18 @@ export type Database = {
         Args: { p_details: string; p_enrollment: string; p_reason: string }
         Returns: string
       }
+      request_withdrawal: { Args: { p_amount: number }; Returns: string }
       require_course_manager: { Args: { p_course: string }; Returns: string }
       require_user: { Args: never; Returns: string }
+      respond_to_report: {
+        Args: {
+          p_admit: boolean
+          p_attachments: Json
+          p_body: string
+          p_report: string
+        }
+        Returns: undefined
+      }
       review_program: {
         Args: {
           p_decision: string
@@ -3977,6 +5016,10 @@ export type Database = {
         Args: { p_course: string; p_paused: boolean }
         Returns: undefined
       }
+      setting_numeric: {
+        Args: { p_default: number; p_key: string }
+        Returns: number
+      }
       settle_payment: {
         Args: {
           p_failure?: string
@@ -3987,6 +5030,30 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["payment_status"]
       }
+      sign_contract: {
+        Args: {
+          p_consent: boolean
+          p_contract: string
+          p_ip_hash: string
+          p_typed_name: string
+          p_ua_hash: string
+          p_version: number
+        }
+        Returns: undefined
+      }
+      sign_contract_internal: {
+        Args: {
+          c: Database["public"]["Tables"]["trainer_contracts"]["Row"]
+          p_consent: boolean
+          p_ip_hash: string
+          p_party: string
+          p_signer: string
+          p_typed_name: string
+          p_ua_hash: string
+        }
+        Returns: string
+      }
+      start_bid_contract: { Args: { p_bid: string }; Returns: string }
       start_conversation: {
         Args: { p_body: string; p_course: string; p_subject: string }
         Returns: string
@@ -4000,6 +5067,10 @@ export type Database = {
           total: number
         }[]
       }
+      start_org_conversation: {
+        Args: { p_org: string; p_subject: string }
+        Returns: string
+      }
       submit_assignment: {
         Args: { p_assignment: string; p_file_path: string; p_note: string }
         Returns: string
@@ -4012,6 +5083,10 @@ export type Database = {
           p_file_size: number
           p_note: string
         }
+        Returns: string
+      }
+      submit_bank_account: {
+        Args: { p_bank_code: string; p_document_path: string; p_iban: string }
         Returns: string
       }
       submit_identity_documents: {
@@ -4058,6 +5133,18 @@ export type Database = {
           total: number
         }[]
       }
+      submit_report_appeal: {
+        Args: {
+          p_ack: boolean
+          p_attachments: Json
+          p_basis: string
+          p_body: string
+          p_report: string
+        }
+        Returns: string
+      }
+      trainer_balance: { Args: never; Returns: Json }
+      trainer_balance_for: { Args: { p_trainer: string }; Returns: Json }
       trainer_busy_days: {
         Args: { p_days?: number; p_from: string; p_trainer: string }
         Returns: {
@@ -4093,6 +5180,68 @@ export type Database = {
         Returns: {
           issued: number
           skipped: number
+        }[]
+      }
+      trainer_ledger: {
+        Args: never
+        Returns: {
+          commission: number
+          commission_percent: number
+          course_ends_at: string
+          course_id: string
+          course_mode: Database["public"]["Enums"]["course_mode"]
+          course_starts_at: string
+          course_status: Database["public"]["Enums"]["course_status"]
+          course_title: string
+          days_before_start: number
+          enrollment_id: string
+          entry_id: string
+          fee: number
+          gross: number
+          kind: string
+          net: number
+          occurred_at: string
+          organization_id: string
+          organization_name: string
+          projected_release_at: string
+          reference: string
+          refund_percent: number
+          release_at: string
+          released: boolean
+          settlement_period: string
+          trainee_name: string
+          unit_price: number
+        }[]
+      }
+      trainer_ledger_for: {
+        Args: { p_trainer: string }
+        Returns: {
+          commission: number
+          commission_percent: number
+          course_ends_at: string
+          course_id: string
+          course_mode: Database["public"]["Enums"]["course_mode"]
+          course_starts_at: string
+          course_status: Database["public"]["Enums"]["course_status"]
+          course_title: string
+          days_before_start: number
+          enrollment_id: string
+          entry_id: string
+          fee: number
+          gross: number
+          kind: string
+          net: number
+          occurred_at: string
+          organization_id: string
+          organization_name: string
+          projected_release_at: string
+          reference: string
+          refund_percent: number
+          release_at: string
+          released: boolean
+          settlement_period: string
+          trainee_name: string
+          unit_price: number
         }[]
       }
       trainer_public_stats: {
