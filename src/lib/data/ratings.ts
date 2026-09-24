@@ -28,6 +28,8 @@ export type SentRating = {
   average: number;
   comment: string | null;
   createdAt: string;
+  /** Published reply of the course provider (TRN-RTG-02 «رد المقدّم — …»); null when none. */
+  reply?: string | null;
 };
 
 export type RatingsOverview = { awaiting: AwaitingRating[]; sent: SentRating[]; averageGiven: number | null };
@@ -49,7 +51,7 @@ export async function getRatingsOverview(userId: string): Promise<RatingsOvervie
     supabase.from("enrollments").select(`id, status, completed_at, courses(${COURSE_LITE})`).eq("trainee_id", userId).eq("status", "completed").order("completed_at", { ascending: false }),
     supabase
       .from("course_ratings")
-      .select(`id, enrollment_id, content_score, trainer_score, organization_score, comment, created_at, courses(${COURSE_LITE})`)
+      .select(`id, enrollment_id, content_score, trainer_score, organization_score, comment, created_at, rating_replies(body, status), courses(${COURSE_LITE})`)
       .eq("trainee_id", userId)
       .order("created_at", { ascending: false }),
   ]);
@@ -64,8 +66,13 @@ export async function getRatingsOverview(userId: string): Promise<RatingsOvervie
     organization_score: number | null;
     comment: string | null;
     created_at: string;
+    rating_replies: { body: string | null; status: string } | { body: string | null; status: string }[] | null;
     courses: CourseLite | null;
   }[];
+  const replyOf = (r: (typeof ratings)[number]) => {
+    const x = Array.isArray(r.rating_replies) ? r.rating_replies[0] : r.rating_replies;
+    return x?.status === "published" && x.body ? x.body : null;
+  };
   const rated = new Set(ratings.map((r) => r.enrollment_id));
   const now = Date.now();
 
@@ -98,6 +105,7 @@ export async function getRatingsOverview(userId: string): Promise<RatingsOvervie
     average: averageOf(r),
     comment: r.comment,
     createdAt: r.created_at,
+    reply: replyOf(r),
   }));
   const averageGiven = sent.length ? Math.round((sent.reduce((a, s) => a + s.average, 0) / sent.length) * 10) / 10 : null;
   return { awaiting, sent, averageGiven };
