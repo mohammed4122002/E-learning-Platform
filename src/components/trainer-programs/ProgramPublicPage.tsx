@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
+  AlignRight,
   Award,
   BadgeCheck,
   CalendarDays,
@@ -13,6 +14,7 @@ import {
   ClipboardList,
   Clock,
   Eye,
+  FileText,
   Film,
   Flag,
   GraduationCap,
@@ -39,7 +41,7 @@ import type { ProgramCourse, ProgramDetail, ProgramRatings } from "@/lib/data/tr
 import { env } from "@/lib/env";
 import { formatDate, formatDayMonth, formatMonthYear, formatNumber, formatPrice, formatRating, formatRelative, pluralAr, toArabicDigits } from "@/lib/format";
 import { LEVEL_LABELS } from "@/lib/labels";
-import { LANGUAGE_LABELS, MISSING_FIELDS, hoursWord, lessonsWord, unitsWord, versionLabel } from "@/lib/trainer-programs";
+import { LANGUAGE_LABELS, MISSING_FIELDS, businessDaysWord, hoursWord, lessonsWord, reviewDaysLeft, unitsWord, versionLabel } from "@/lib/trainer-programs";
 
 /*
  * TRR-PRG-06 · حالة نشر البرنامج (447:23369 published · 447:23751 draft · 447:24061/4207:652 incomplete · 447:24400 under review)
@@ -99,7 +101,11 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
   const url = `${env.siteUrl}/trainee/programs/${p.slug}`;
   const displayUrl = url.replace(/^https?:\/\//, "");
   const editHref = variant === "published" ? `/trainer/programs/${p.id}/new-version` : `/trainer/programs/${p.id}/edit/basics`;
-  const modesLine = p.courses.modes.map((m) => MODE_WORD[m]).join(" · ");
+  const modeWords = p.courses.modes.map((m) => MODE_WORD[m]);
+  // Figma: status frames «حضوري · مباشر · مسجَّل», visibility frames «حضوري ومباشر ومسجَّل».
+  const modesLine = mode === "visibility" ? modeWords.join(" و") : modeWords.join(" · ");
+  const daysLeft = p.submittedAt ? reviewDaysLeft(p.submittedAt) : 0;
+  const daysLeftWord = daysLeft > 0 ? pluralAr(daysLeft, ["يوم واحد متبقٍ", "يومان متبقيان", "أيام متبقية", "يومًا متبقيًا"]) : "القرار قريبًا";
   const nextCourse = courses.find((c) => c.startsAt) ?? null;
 
   const strip = {
@@ -117,7 +123,10 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
       title: mode === "status" ? "معاينة برنامج ناقص — لا يمكن إرساله" : `${p.missing.length === 3 ? "ثلاثة شروط" : pluralAr(p.missing.length, ["شرط واحد", "شرطان", "شروط", "شرطًا"])} ${p.missing.length > 2 ? "تمنع" : "يمنع"} الإرسال للاعتماد`,
       body: mode === "status" ? `${pluralAr(p.missing.length, ["عنصر واحد ناقص يظهر", "عنصران ناقصان يظهران", "عناصر ناقصة تظهر", "عنصرًا ناقصًا يظهر"])} فراغات في صفحتك. أكملها قبل الإرسال.` : "أكملها من المحرّر — كل بند أدناه يأخذك لمكانه مباشرة.",
     },
-    under_review: { tone: "bg-state-warning-bg text-state-warning", icon: Hourglass, title: "قيد مراجعة المنصة — لا تعديل الآن", body: "صفحتك مجمّدة حتى صدور القرار خلال ٣ أيام عمل." },
+    under_review:
+      mode === "status"
+        ? { tone: "bg-state-warning-bg text-state-warning", icon: Hourglass, title: "قيد مراجعة المنصة — لا تعديل الآن", body: "صفحتك مجمَّدة حتى صدور القرار خلال ٣ أيام عمل." }
+        : { tone: "bg-state-info-bg text-state-info", icon: Hourglass, title: "البرنامج قيد مراجعة فريق المنصة", body: "لا يمكن التعديل أثناء المراجعة. تصلك النتيجة بإشعار." },
   }[variant];
 
   const statusPill =
@@ -127,14 +136,14 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
       </Pill>
     ) : variant === "under_review" ? (
       <Pill icon={Hourglass} tone="warning">
-        قيد المراجعة
+        {mode === "visibility" ? `قيد المراجعة · ${daysLeftWord}` : "قيد المراجعة"}
       </Pill>
     ) : variant === "incomplete" ? (
       <Pill icon={TriangleAlert} tone="error">
-        ناقص — لا يمكن الإرسال
+        {mode === "visibility" ? "ناقص · لا يمكن الإرسال" : "ناقص — لا يمكن الإرسال"}
       </Pill>
     ) : (
-      <Pill icon={ClipboardList} tone="neutral">
+      <Pill icon={FileText} tone="neutral">
         {mode === "visibility" ? "مسودة · غير منشور" : "مسودة"}
       </Pill>
     );
@@ -146,6 +155,51 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
     { icon: Award, text: "شهادة إتمام قابلة للتحقق" },
     ...(modesLine ? [{ icon: Layers, text: modesLine }] : []),
   ];
+
+  const prerequisitesBox = (
+    <div className="flex flex-col gap-3 rounded-16 bg-bg-page px-5 pt-5 pb-[22px]">
+      {mode === "status" && (
+        <p className="flex items-center gap-2.5 type-title !font-normal text-text-primary">
+          <Glyph icon={ClipboardList} size={20} className="text-text-brand" />
+          المتطلبات المسبقة
+        </p>
+      )}
+      {p.prerequisites ? (
+        p.prerequisites
+          .split(/\n+/)
+          .filter(Boolean)
+          .map((r) => (
+            <p key={r} className="flex items-center gap-2.5 type-body text-text-secondary">
+              <Glyph icon={mode === "status" ? CircleCheck : ClipboardList} size={16} className={mode === "status" ? "text-state-success" : "text-text-muted"} />
+              {r}
+            </p>
+          ))
+      ) : (
+        <p className="type-body text-text-muted">لا متطلبات مسبقة.</p>
+      )}
+    </div>
+  );
+  const skillsNote = <p className="type-caption text-state-success">تُضاف تلقائيًا إلى ملف المتدرب بعد إكماله البرنامج — موثَّقة لا مُدخَلة.</p>;
+  const skillsBlock = (
+    <>
+      <p className="text-[16px] leading-[1.5] text-text-primary">المهارات التي تكتسبها</p>
+      {mode === "visibility" && skillsNote}
+      <ul className="flex flex-wrap gap-2.5">
+        {p.skills.length ? (
+          p.skills.map((s) => (
+            <li key={s}>
+              <Pill icon={Layers} tone="brand">
+                {s}
+              </Pill>
+            </li>
+          ))
+        ) : (
+          <li className="type-body text-text-muted">لم تُحدَّد مهارات بعد.</li>
+        )}
+      </ul>
+      {mode === "status" && skillsNote}
+    </>
+  );
 
   return (
     <>
@@ -177,8 +231,10 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
             )}
             <div className="flex flex-col gap-[18px] px-5 pt-[26px] pb-[30px] sm:px-7">
               <div className="flex flex-col gap-1">
-                <p className={`text-[34px] leading-[1.2] font-bold sm:text-[42px] ${p.price === null ? "text-state-error" : "text-text-primary"}`}>{p.price === null ? "لم يُحدَّد السعر" : formatPrice(p.price)}</p>
-                <p className="type-body text-text-muted">{variant === "incomplete" && mode === "visibility" ? "السعر شرط النشر" : "سعر مرجعي · يُحدَّد نهائيًا في كل دورة"}</p>
+                <p className={`text-[34px] leading-[1.2] font-bold sm:text-[42px] ${p.price === null ? "text-state-error" : "text-text-primary"}`}>{p.price === null ? (mode === "visibility" ? "لم يُحدَّد" : "لم يُحدَّد السعر") : formatPrice(p.price)}</p>
+                <p className={`type-body ${p.price === null && mode === "visibility" ? "text-state-error" : "text-text-muted"}`}>
+                  {mode === "status" ? "سعر مرجعي · يُحدَّد نهائيًا في كل دورة" : p.price === null ? "السعر شرط للنشر" : "السعر المرجعي · يُحدَّد نهائيًا في كل دورة"}
+                </p>
               </div>
               {variant === "published" ? (
                 <>
@@ -188,16 +244,24 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
                   <p className={`flex items-center justify-center gap-2 rounded-12 px-3 py-2.5 type-caption ${courses.length ? "bg-state-success-bg text-state-success" : "bg-bg-page text-text-muted"}`}>
                     <Glyph icon={CalendarDays} size={16} />
                     {courses.length
-                      ? `${pluralAr(courses.length, ["دورة واحدة مفتوحة", "دورتان مفتوحتان", "دورات مفتوحة", "دورة مفتوحة"])} للتسجيل${nextCourse?.startsAt ? ` · أقربها ${formatDayMonth(nextCourse.startsAt)}` : ""}`
+                      ? `${mode === "visibility" ? pluralAr(courses.length, ["دورة واحدة متاحة", "دورتان متاحتان", "دورات متاحة", "دورة متاحة"]) : `${pluralAr(courses.length, ["دورة واحدة مفتوحة", "دورتان مفتوحتان", "دورات مفتوحة", "دورة مفتوحة"])} للتسجيل`}${nextCourse?.startsAt ? ` · أقربها ${formatDayMonth(nextCourse.startsAt)}` : ""}`
                       : "لا دورات مفتوحة للتسجيل الآن"}
                   </p>
                 </>
               ) : (
                 <>
                   <span className="flex h-14 items-center justify-center rounded-12 bg-bg-disabled type-body-lg text-text-disabled">
-                    {variant === "incomplete" && mode === "visibility" ? "أكمل الشروط الثلاثة" : variant === "draft" && mode === "visibility" ? "انشر البرنامج أولًا" : "سجّل في هذا البرنامج (معاينة)"}
+                    {mode === "status"
+                      ? "سجّل في هذا البرنامج (معاينة)"
+                      : variant === "incomplete"
+                        ? p.missing.length === 3
+                          ? "أكمل الشروط الثلاثة"
+                          : "أكمل الشروط"
+                        : variant === "under_review"
+                          ? "بانتظار قرار المراجعة"
+                          : "انشر البرنامج أولًا"}
                   </span>
-                  <p className="text-center type-caption text-text-muted">الزر معطّل في المعاينة — يعمل بعد النشر</p>
+                  {mode === "status" && <p className="text-center type-caption text-text-muted">الزر معطَّل في المعاينة — يعمل بعد النشر.</p>}
                 </>
               )}
               <div aria-hidden className="h-px w-full bg-border-divider" />
@@ -275,7 +339,7 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
                 <>
                   <Row
                     label="حالة البرنامج"
-                    value={variant === "published" ? "منشور · متاح للتسجيل" : variant === "under_review" ? "قيد المراجعة" : variant === "incomplete" ? "ناقص · لا يمكن الإرسال" : "مسودة · غير منشور"}
+                    value={variant === "published" ? "منشور · متاح للتسجيل" : variant === "under_review" ? `قيد المراجعة · ${daysLeftWord}` : variant === "incomplete" ? "ناقص · لا يمكن الإرسال" : "مسودة · غير منشور"}
                     valueClass={variant === "published" ? "text-state-success" : variant === "incomplete" ? "text-state-error" : "text-text-primary"}
                   />
                   <Row label="رقم البرنامج" value={p.reference} mono />
@@ -301,7 +365,7 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
                 <>
                   <Row label="النسخة" value={versionLabel(p.revision)} mono />
                   <Row label="أُرسل في" value={p.submittedAt ? formatDate(p.submittedAt) : "—"} />
-                  <Row label="القرار المتوقع" value="خلال ٣ أيام عمل" />
+                  <Row label="القرار المتوقع" value={daysLeft > 0 ? `خلال ${businessDaysWord(daysLeft)}` : "قريبًا"} />
                   <Row label="التعديل" value="مقفل" valueClass="text-state-warning" />
                 </>
               ) : (
@@ -319,12 +383,20 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
             <h2 className="type-h3 text-text-primary">{mode === "visibility" ? "إجراءات المدرب" : "إجراءات"}</h2>
             {variant === "published" ? (
               <>
+                {/* Figma: status 447:23369 leads with «أنشئ دورة», visibility 450:23832 with «حرّر البرنامج». */}
+                {mode === "visibility" && (
+                  <ButtonLink href={editHref} variant="outline" size="l" fullWidth>
+                    حرّر البرنامج
+                  </ButtonLink>
+                )}
                 <ButtonLink href={`/trainer/courses/new?program=${p.id}`} size="l" fullWidth>
                   أنشئ دورة من هذا البرنامج
                 </ButtonLink>
-                <ButtonLink href={editHref} variant="outline" size="l" fullWidth>
-                  حرّر البرنامج
-                </ButtonLink>
+                {mode === "status" && (
+                  <ButtonLink href={editHref} variant="outline" size="l" fullWidth>
+                    حرّر البرنامج
+                  </ButtonLink>
+                )}
                 <CopyLinkButton url={url} label="شارك الرابط" />
                 <p className="type-caption text-text-secondary">{mode === "visibility" ? "أي تعديل يُنشئ نسخة جديدة ولا يمس الدورات الجارية." : "إنشاء دورة يجمّد نسخة البرنامج الحالية — تعديلك لاحقًا لن يمسّ الدورات القائمة."}</p>
               </>
@@ -336,30 +408,64 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
                 <ButtonLink href={`/trainer/programs/${p.id}/withdraw`} variant="outline" size="l" fullWidth>
                   اسحب الطلب للتعديل
                 </ButtonLink>
-                <ButtonLink href={editHref} size="l" fullWidth disabled>
-                  حرّر البرنامج
+                {mode === "status" && (
+                  <ButtonLink href={editHref} variant="ghost" size="l" fullWidth disabled>
+                    حرّر البرنامج
+                  </ButtonLink>
+                )}
+                <p className="type-caption text-text-secondary">{mode === "visibility" ? "لا يمكن التعديل أثناء المراجعة — السحب يعيده مسودة." : "السحب يعيد البرنامج مسودة ويلغي طلب المراجعة."}</p>
+              </>
+            ) : variant === "incomplete" && mode === "status" ? (
+              <>
+                {/* Figma 447:24061 */}
+                <ButtonLink href={`/trainer/programs/${p.id}/declaration`} size="l" fullWidth disabled>
+                  أرسل للمراجعة
                 </ButtonLink>
-                <p className="type-caption text-text-secondary">السحب يعيد البرنامج مسودة ويلغي طلب المراجعة.</p>
+                <ButtonLink href={`/trainer/programs/${p.id}/edit/${MISSING_FIELDS[p.missing[0]].step}`} variant="outline" size="l" fullWidth>
+                  أكمل الناقص
+                </ButtonLink>
+                <ButtonLink href="/trainer/programs" variant="ghost" size="l" fullWidth>
+                  احفظ وأكمل لاحقًا
+                </ButtonLink>
+                <p className="type-caption text-state-warning">الإرسال يُفعَّل بعد إكمال العناصر{p.missing.length === 3 ? " الثلاثة" : ""}.</p>
               </>
             ) : variant === "incomplete" ? (
               <>
+                {/* Figma 450:24600 */}
                 <ButtonLink href={`/trainer/programs/${p.id}/edit/${MISSING_FIELDS[p.missing[0]].step}`} size="l" fullWidth>
                   {p.missing.length === 3 ? "أكمل النواقص الثلاثة" : "أكمل النواقص"}
                 </ButtonLink>
-                <ButtonLink href={`/trainer/programs/${p.id}/declaration`} size="l" fullWidth disabled>
+                <ButtonLink href={`/trainer/programs/${p.id}/declaration`} variant="outline" size="l" fullWidth disabled>
                   أرسل للاعتماد
                 </ButtonLink>
-                <p className="type-caption text-state-warning">الإرسال يُفعَّل بعد إكمال الشروط.</p>
+                <p className="type-caption text-state-warning">الإرسال يُفعَّل بعد إكمال الشروط{p.missing.length === 3 ? " الثلاثة" : ""}.</p>
               </>
             ) : (
               <>
-                <ButtonLink href={`/trainer/programs/${p.id}/declaration`} size="l" fullWidth>
-                  {mode === "visibility" ? "أرسل للاعتماد" : "أرسل للمراجعة"}
-                </ButtonLink>
-                <ButtonLink href={editHref} variant="outline" size="l" fullWidth>
-                  {mode === "visibility" ? "أكمل المحرّر" : "حرّر البرنامج"}
-                </ButtonLink>
-                <p className="type-caption text-text-secondary">{mode === "visibility" ? "لا أحد يرى هذه الصفحة قبل النشر" : "المراجعة تستغرق ٣ أيام عمل بقرار مسبَّب."}</p>
+                {mode === "visibility" ? (
+                  <>
+                    <ButtonLink href={editHref} size="l" fullWidth>
+                      أكمل المحرّر
+                    </ButtonLink>
+                    <ButtonLink href={`/trainer/programs/${p.id}/declaration`} variant="outline" size="l" fullWidth>
+                      أرسل للاعتماد
+                    </ButtonLink>
+                    <p className="type-caption text-state-warning">لا أحد يرى هذه الصفحة قبل النشر.</p>
+                  </>
+                ) : (
+                  <>
+                    <ButtonLink href={`/trainer/programs/${p.id}/declaration`} size="l" fullWidth>
+                      أرسل للمراجعة
+                    </ButtonLink>
+                    <ButtonLink href={editHref} variant="outline" size="l" fullWidth>
+                      حرّر البرنامج
+                    </ButtonLink>
+                    <ButtonLink href={`/trainer/programs/${p.id}/edit/pricing`} variant="ghost" size="l" fullWidth>
+                      عُد للمحرّر
+                    </ButtonLink>
+                    <p className="type-caption text-text-secondary">المراجعة تستغرق ٣ أيام عمل بقرار مسبَّب.</p>
+                  </>
+                )}
               </>
             )}
           </Card>
@@ -369,24 +475,29 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
         <div className="flex min-w-0 flex-1 flex-col gap-7">
           <div className="flex flex-col gap-[18px]">
             <div className="flex flex-wrap items-center gap-2">
-              {statusPill}
+              {/* Figma order from the start edge: level · category · status. */}
+              <Pill icon={TrendingUp} tone={mode === "visibility" ? "warning" : "info"}>
+                مستوى {LEVEL_LABELS[p.level]}
+              </Pill>
               {p.category && (
                 <Pill icon={Tag} tone="brand">
                   {p.category.name}
                 </Pill>
               )}
-              <Pill icon={TrendingUp} tone={mode === "visibility" ? "warning" : "info"}>
-                مستوى {LEVEL_LABELS[p.level]}
-              </Pill>
+              {statusPill}
             </div>
             <h1 className="text-[34px] leading-[1.15] font-bold text-text-primary sm:text-[50px]">{p.title}</h1>
             {p.summary ? <p className="text-[18px] leading-[1.75] text-text-secondary sm:text-[20px]">{p.summary}</p> : <p className="text-[20px] leading-[1.75] text-state-error">لم يُكتب وصف البرنامج بعد — يظهر هذا الفراغ للمتدرب.</p>}
+            {/* Figma 447:23751 · 447:24061 · 447:24400 (status mode, unpublished) have no stats row. */}
+            {(mode === "visibility" || variant === "published") && (
             <ul className="flex flex-wrap gap-x-6 gap-y-3">
-              {ratings ? <Stat icon={Star} value={formatRating(ratings.average)} label={`من ${pluralAr(ratings.count, ["تقييم واحد", "تقييمين", "تقييمات", "تقييمًا"])}`} /> : null}
-              <Stat icon={Users} value={formatNumber(p.courses.learners)} label={mode === "visibility" ? "متدربًا" : "متدربًا أكملوه"} />
-              {mode === "visibility" ? <Stat icon={Clock} value={p.hours ? hoursWord(p.hours) : "—"} label="مدة البرنامج" /> : <Stat icon={CalendarDays} value={toArabicDigits(p.courses.published)} label="دورات نُفِّذت" />}
               <Stat icon={RefreshCcw} value={mode === "visibility" ? `النسخة ${versionLabel(p.revision)}` : "آخر تحديث"} label={mode === "visibility" ? (variant === "published" ? `آخر تحديث ${formatMonthYear(p.updatedAt)}` : "لم يُنشر بعد") : formatMonthYear(p.updatedAt)} />
+              {mode === "visibility" && variant !== "published" && <Stat icon={Puzzle} value={unitsWord(p.units.length)} label={lessonsWord(p.totals.lessons)} />}
+              {mode === "visibility" ? <Stat icon={Clock} value={p.hours ? hoursWord(p.hours) : "—"} label="مدة البرنامج" /> : <Stat icon={CalendarDays} value={toArabicDigits(p.courses.published)} label="دورات نُفِّذت" />}
+              {variant === "published" && <Stat icon={Users} value={formatNumber(p.courses.learners)} label={mode === "visibility" ? "متدربًا" : "متدربًا أكملوه"} />}
+              {ratings ? <Stat icon={Star} value={formatRating(ratings.average)} label={`من ${pluralAr(ratings.count, ["تقييم واحد", "تقييمين", "تقييمات", "تقييمًا"])}`} /> : null}
             </ul>
+            )}
             <div className="flex flex-wrap items-center gap-3.5 rounded-16 border border-border-default bg-bg-surface px-5 py-[18px]">
               <Avatar name={p.trainer.name} src={p.trainer.avatar} size="l" />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -460,6 +571,7 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
                             <li key={it.id} className="flex items-center gap-3 rounded-12 bg-bg-surface px-4 pt-[13px] pb-3.5">
                               <span className="min-w-0 flex-1 type-body text-text-primary">{it.title}</span>
                               {it.minutes ? <span className="type-caption text-text-muted">{toArabicDigits(it.minutes)} دقيقة</span> : null}
+                              <Glyph icon={AlignRight} size={20} className="text-text-muted" />
                             </li>
                           ))}
                         </ul>
@@ -471,10 +583,12 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
             )}
           </Card>
 
-          <Card>
-            <h2 className="type-h2 text-text-primary">{mode === "visibility" ? "المهارات والمتطلبات" : "لمن هذا البرنامج؟"}</h2>
-            <div className={`grid grid-cols-1 gap-4 ${mode === "status" ? "md:grid-cols-2" : ""}`}>
-              {mode === "status" && (
+          {mode === "status" ? (
+            <Card>
+              <h2 className="type-h2 text-text-primary">لمن هذا البرنامج؟</h2>
+              {/* Figma 447:23369: «المتطلبات المسبقة» at the start edge, «الجمهور المستهدف» beside it. */}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {prerequisitesBox}
                 <div className="flex flex-col gap-3 rounded-16 bg-bg-page px-5 pt-5 pb-[22px]">
                   <p className="flex items-center gap-2.5 type-title !font-normal text-text-primary">
                     <Glyph icon={Users} size={20} className="text-text-brand" />
@@ -491,57 +605,32 @@ export function ProgramPublicPage({ p, mode, courses, ratings }: { p: ProgramDet
                     <p className="type-body text-text-muted">لم يُحدَّد الجمهور بعد.</p>
                   )}
                 </div>
-              )}
-              <div className="flex flex-col gap-3 rounded-16 bg-bg-page px-5 pt-5 pb-[22px]">
-                <p className="flex items-center gap-2.5 type-title !font-normal text-text-primary">
-                  <Glyph icon={ClipboardList} size={20} className="text-text-brand" />
-                  المتطلبات المسبقة
-                </p>
-                {p.prerequisites ? (
-                  p.prerequisites
-                    .split(/\n+/)
-                    .filter(Boolean)
-                    .map((r) => (
-                      <p key={r} className="flex items-center gap-2.5 type-body text-text-secondary">
-                        <Glyph icon={CircleCheck} size={16} className="text-state-success" />
-                        {r}
-                      </p>
-                    ))
-                ) : (
-                  <p className="type-body text-text-muted">لا متطلبات مسبقة.</p>
-                )}
               </div>
-            </div>
-            <p className="text-[16px] leading-[1.5] text-text-primary">المهارات التي تكتسبها</p>
-            <ul className="flex flex-wrap gap-2.5">
-              {p.skills.length ? (
-                p.skills.map((s) => (
-                  <li key={s}>
-                    <Pill icon={Layers} tone="brand">
-                      {s}
-                    </Pill>
-                  </li>
-                ))
-              ) : (
-                <li className="type-body text-text-muted">لم تُحدَّد مهارات بعد.</li>
+              {skillsBlock}
+            </Card>
+          ) : (
+            <Card>
+              <h2 className="type-h2 text-text-primary">المهارات والمتطلبات</h2>
+              {/* Figma 450:23832 order: skills · prerequisites · audience. */}
+              {skillsBlock}
+              <p className="text-[16px] leading-[1.5] text-text-primary">المتطلبات المسبقة</p>
+              {prerequisitesBox}
+              {p.audience.length > 0 && (
+                <>
+                  <p className="text-[16px] leading-[1.5] text-text-primary">لمن هذا البرنامج؟</p>
+                  <ul className="flex flex-wrap gap-2.5">
+                    {p.audience.map((a) => (
+                      <li key={a}>
+                        <Pill icon={Users} tone="info">
+                          {a}
+                        </Pill>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
-            </ul>
-            <p className="type-caption text-state-success">تُضاف تلقائيًا إلى ملف المتدرب بعد إكماله البرنامج — موثَّقة لا مُدخَلة.</p>
-            {mode === "visibility" && p.audience.length > 0 && (
-              <>
-                <p className="text-[16px] leading-[1.5] text-text-primary">لمن هذا البرنامج؟</p>
-                <ul className="flex flex-wrap gap-2.5">
-                  {p.audience.map((a) => (
-                    <li key={a}>
-                      <Pill icon={Users} tone="info">
-                        {a}
-                      </Pill>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </Card>
+            </Card>
+          )}
 
           {ratings && (
             <Card>

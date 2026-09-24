@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { ChevronLeft, CircleCheck, CircleX, FileText, Hourglass, Info, LoaderCircle, OctagonX, Pencil, TriangleAlert } from "lucide-react";
-import { withdrawReview } from "@/app/(trainer)/trainer/programs/actions";
-import { FlowPanel, FlowRow } from "@/components/trainer-programs/FlowPanel";
+import { ChevronLeft, CircleCheck, CircleX, FileText, Hourglass, Info, LoaderCircle, OctagonX, SquarePen, TriangleAlert } from "lucide-react";
+import { notifyReviewersOfWithdrawal, withdrawReview } from "@/app/(trainer)/trainer/programs/actions";
+import { FlowPanel, FlowRow, FlowSteps } from "@/components/trainer-programs/FlowPanel";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 
@@ -23,6 +23,7 @@ export function WithdrawFlow({
   submittedAgo,
   daysLeftText,
   decision,
+  reviewerNote,
 }: {
   programId: string;
   reference: string;
@@ -31,18 +32,26 @@ export function WithdrawFlow({
   submittedAgo: string;
   daysLeftText: string;
   decision: "approved" | "needs_changes" | "rejected" | "draft" | null;
+  reviewerNote?: string | null;
 }) {
   const router = useRouter();
   const [stage, setStage] = useState<Stage>(underReview ? "confirm" : withdrawn ? "success" : "failed");
   const [message, setMessage] = useState<string | null>(null);
+  /** Real server steps: 0 = withdraw_program_review running (stops the review and returns the draft atomically), 1 = reviewers being notified. */
+  const [phase, setPhase] = useState<0 | 1>(0);
   const [, start] = useTransition();
 
   function confirm() {
     setStage("pending");
+    setPhase(0);
     start(async () => {
       const res = await withdrawReview(programId);
-      if (res.ok) setStage("success");
-      else {
+      if (res.ok) {
+        setPhase(1);
+        // The withdrawal is already done; a failed notification does not undo it.
+        await notifyReviewersOfWithdrawal(programId);
+        setStage("success");
+      } else {
         setMessage(res.code === "review_already_decided" ? null : res.message);
         setStage("failed");
       }
@@ -55,7 +64,7 @@ export function WithdrawFlow({
       <FlowPanel tone="warning" icon={TriangleAlert} title="تسحب الطلب من المراجعة؟" subtitle={`الطلب قيد المراجعة منذ ${submittedAgo} — ${daysLeftText}.`}>
         <ul className="flex flex-col gap-3">
           <FlowRow icon={Hourglass} tone="warning" title="يتوقف الدور في طابور المراجعة" body="عند إعادة الإرسال يبدأ الطلب من جديد — لا يعود لمكانه." />
-          <FlowRow icon={Pencil} title="يعود البرنامج مسودة قابلة للتعديل" body="تعدّل ما تشاء ثم تعيد الإرسال." />
+          <FlowRow icon={SquarePen} title="يعود البرنامج مسودة قابلة للتعديل" body="تعدّل ما تشاء ثم تعيد الإرسال." />
           <FlowRow icon={CircleCheck} tone="success" title="لا يضيع شيء من عملك" body="المحتوى والأهداف والتسعير محفوظة كما هي." />
           <FlowRow icon={Info} tone="info" title="ملاحظات المراجع تبقى ظاهرة" body="إن كان الفريق كتب ملاحظة قبل السحب فستراها." />
         </ul>
@@ -72,22 +81,15 @@ export function WithdrawFlow({
   if (stage === "pending") {
     return (
       <FlowPanel tone="info" icon={LoaderCircle} spinning title="جارٍ سحب الطلب…" subtitle="لحظات — نحدّث حالة الطلب ونعيد البرنامج مسودة.">
-        <div role="progressbar" aria-label="سحب الطلب" aria-busy className="h-2.5 w-full overflow-hidden rounded-full bg-border-default">
-          <div className="h-full w-1/3 animate-pulse rounded-full bg-action-accent" />
-        </div>
-        <ul className="flex flex-col gap-3">
-          {["إيقاف المراجعة", "إعادة البرنامج مسودة", "إشعار فريق المراجعة"].map((t) => (
-            <li key={t} className="flex items-center gap-3 rounded-12 bg-state-info-bg px-3.5 py-3.5">
-              <span className="flex size-9 items-center justify-center rounded-8 bg-bg-surface text-state-info">
-                <LoaderCircle aria-hidden size={20} strokeWidth={1.4} absoluteStrokeWidth className="animate-[tg-spin_0.9s_linear_infinite]" />
-              </span>
-              <span className="flex flex-col gap-0.5">
-                <span className="type-small text-state-info">{t}</span>
-                <span className="type-caption text-text-secondary">جارٍ</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+        <FlowSteps
+          label={phase === 0 ? "٠ من ثلاث" : "خطوتان من ثلاث"}
+          percent={phase === 0 ? 0 : (2 / 3) * 100}
+          steps={[
+            { title: "إيقاف المراجعة", state: phase === 0 ? "current" : "done" },
+            { title: "إعادة البرنامج مسودة", state: phase === 0 ? "current" : "done" },
+            { title: "إشعار فريق المراجعة", state: phase === 0 ? "todo" : "current" },
+          ]}
+        />
         <p className="text-center type-caption text-state-info">لا تغلق النافذة حتى اكتمال العملية.</p>
       </FlowPanel>
     );
@@ -110,6 +112,7 @@ export function WithdrawFlow({
         <p dir="ltr" className="text-end font-mono text-[13px] text-text-muted">
           {reference}
         </p>
+        {reviewerNote && <FlowRow icon={Info} tone="info" title="ملاحظة المراجع قبل السحب" body={`«${reviewerNote}»`} />}
         <ButtonLink href={`/trainer/programs/${programId}/edit/basics`} size="l" fullWidth>
           افتح المحرّر وعدّل
         </ButtonLink>
@@ -140,7 +143,7 @@ export function WithdrawFlow({
         icon={Info}
         tone="info"
         title="ماذا لو أردت التعديل؟"
-        body={decision === "approved" ? "البرنامج المعتمد لا يُعدَّل مباشرة — أنشئ نسخة جديدة وعدّلها بحرّية." : "افتح نتيجة المراجعة لترى الخطوة التالية."}
+        body={decision === "approved" ? "عدّل البرنامج مباشرة — التعديل بعد الاعتماد يُنشئ نسخة جديدة تلقائيًا." : "افتح نتيجة المراجعة لترى الخطوة التالية."}
       />
       <ButtonLink href={`/trainer/programs/${programId}/review`} size="l" fullWidth>
         اعرض نتيجة المراجعة

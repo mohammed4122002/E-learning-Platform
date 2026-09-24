@@ -15,7 +15,7 @@ import {
   Info,
   LoaderCircle,
   Lock,
-  Pencil,
+  SquarePen,
   Plus,
   Puzzle,
   Trash2,
@@ -47,12 +47,12 @@ export type CurriculumUnit = { id: string; kind: "module" | "chapter"; title: st
 type DialogKind = "unit" | "chapter" | "lesson" | "assignment";
 type DialogState =
   | { mode: "form"; kind: DialogKind; unitId?: string; editUnit?: CurriculumUnit; editItem?: CurriculumItem }
-  | { mode: "success"; kind: DialogKind; id: string; title: string; unitId?: string };
+  | { mode: "success"; kind: DialogKind; id: string; title: string; unitId?: string; atEnd?: boolean };
 
 const ORDINALS = ["الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة", "السادسة", "السابعة", "الثامنة", "التاسعة", "العاشرة"];
 
 const DIALOG_META: Record<DialogKind, { add: string; edit: string; subtitle: string; icon: LucideIcon; tile: string; titleLabel: string; success: string }> = {
-  unit: { add: "أضف وحدة جديدة", edit: "تعديل الوحدة", subtitle: "الوحدة تجمع دروسًا مترابطة تحت عنوان واحد.", icon: Puzzle, tile: "bg-text-primary text-text-on-brand", titleLabel: "عنوان الوحدة", success: "أضيفت الوحدة بنجاح" },
+  unit: { add: "أضف وحدة جديدة", edit: "تعديل الوحدة", subtitle: "الوحدة تجمع دروسًا مترابطة تحت عنوان واحد.", icon: Puzzle, tile: "bg-text-primary text-text-brand", titleLabel: "عنوان الوحدة", success: "أضيفت الوحدة بنجاح" },
   chapter: { add: "أضف فصلًا", edit: "تعديل الفصل", subtitle: "الفصل يقسّم محتوى البرنامج إلى مراحل كبرى.", icon: Copy, tile: "bg-state-success-bg text-state-success", titleLabel: "عنوان الفصل", success: "أضيف الفصل بنجاح" },
   lesson: { add: "أضف درسًا", edit: "تعديل الدرس", subtitle: "الدرس أصغر وحدة تعليمية — فيديو أو ملف أو نص.", icon: AlignRight, tile: "bg-state-info-bg text-state-info", titleLabel: "عنوان الدرس", success: "أضيف الدرس بنجاح" },
   assignment: { add: "أضف واجبًا", edit: "تعديل الواجب", subtitle: "الواجب تسليم يقيّمه المدرب ويدخل في الدرجة.", icon: ClipboardCheck, tile: "bg-state-warning-bg text-state-warning", titleLabel: "عنوان الواجب", success: "أضيف الواجب بنجاح" },
@@ -200,7 +200,7 @@ export function CurriculumEditor({ programId, units, locked, initialAdd, initial
     }
     if (isUnit) setFresh(res.id ?? null);
     if (!isUnit && dialog.unitId) setOpen((o) => ({ ...o, [dialog.unitId!]: true }));
-    setDialog({ mode: "success", kind: dialog.kind, id: res.id ?? "", title, unitId: dialog.unitId });
+    setDialog({ mode: "success", kind: dialog.kind, id: res.id ?? "", title, unitId: dialog.unitId, atEnd: fd.get("place") === "end" });
   }
 
   function doDelete() {
@@ -295,7 +295,7 @@ export function CurriculumEditor({ programId, units, locked, initialAdd, initial
                     setDragId(null);
                     void persistOrder(next);
                   }}
-                  className={`flex flex-col gap-3 rounded-16 bg-bg-page px-[18px] pt-4 pb-[18px] ${isFresh ? "border-2 border-state-success" : ""} ${dragId === u.id ? "opacity-60" : ""}`}
+                  className={`flex flex-col gap-3 rounded-16 ${isFresh ? "" : "bg-bg-page"} px-[18px] pt-4 pb-[18px] ${isFresh ? "border-2 border-state-success bg-state-success-bg" : ""} ${dragId === u.id ? "opacity-60" : ""}`}
                 >
                   <div className="flex flex-wrap items-center gap-3.5 sm:flex-nowrap">
                     <span className="flex size-12 shrink-0 items-center justify-center rounded-12 bg-bg-surface text-[20px] leading-[1.4] text-text-brand">{toArabicDigits(i + 1)}</span>
@@ -314,7 +314,7 @@ export function CurriculumEditor({ programId, units, locked, initialAdd, initial
                     )}
                     <div className="flex shrink-0 items-center gap-2">
                       <button type="button" onClick={() => openForm(u.kind === "chapter" ? "chapter" : "unit", { editUnit: u })} aria-label={`عدّل ${u.title}`} className="flex size-10 cursor-pointer items-center justify-center rounded-8 bg-bg-surface text-text-primary focus-ring">
-                        <Glyph icon={Pencil} size={20} />
+                        <Glyph icon={SquarePen} size={20} />
                       </button>
                       <button
                         type="button"
@@ -358,7 +358,7 @@ export function CurriculumEditor({ programId, units, locked, initialAdd, initial
                               {it.minutes ? ` · ${toArabicDigits(it.minutes)} دقيقة` : ""}
                             </span>
                             <button type="button" onClick={() => openForm(it.kind === "assignment" ? "assignment" : "lesson", { unitId: u.id, editItem: it })} aria-label={`عدّل ${it.title}`} className="flex size-8 cursor-pointer items-center justify-center rounded-8 bg-bg-page focus-ring">
-                              <Glyph icon={Pencil} size={16} />
+                              <Glyph icon={SquarePen} size={16} />
                             </button>
                             <button
                               type="button"
@@ -516,16 +516,16 @@ export function CurriculumEditor({ programId, units, locked, initialAdd, initial
               <Button type="submit" size="l" loading={saving}>
                 {saving ? "جارٍ الحفظ…" : editing ? "احفظ التعديل" : "احفظ وأضف"}
               </Button>
-              <Button variant="text" size="l" onClick={close} disabled={saving}>
+              <Button variant="text" size="l" onClick={close}>
                 إلغاء
               </Button>
               {d.editUnit && (
-                <Button variant="text" size="l" className="ms-auto !text-state-error" onClick={() => setConfirm({ type: "unit", id: d.editUnit!.id, title: d.editUnit!.title, count: d.editUnit!.items.length })} disabled={saving}>
+                <Button variant="text" size="l" className="ms-auto" onClick={() => setConfirm({ type: "unit", id: d.editUnit!.id, title: d.editUnit!.title, count: d.editUnit!.items.length })} disabled={saving}>
                   {d.kind === "chapter" ? "احذف الفصل" : "احذف الوحدة"}
                 </Button>
               )}
               {d.editItem && (
-                <Button variant="text" size="l" className="ms-auto !text-state-error" onClick={() => setConfirm({ type: "item", id: d.editItem!.id, title: d.editItem!.title })} disabled={saving}>
+                <Button variant="text" size="l" className="ms-auto" onClick={() => setConfirm({ type: "item", id: d.editItem!.id, title: d.editItem!.title })} disabled={saving}>
                   احذف
                 </Button>
               )}
@@ -562,7 +562,7 @@ export function CurriculumEditor({ programId, units, locked, initialAdd, initial
               {(d.kind === "unit" || d.kind === "chapter") && (
                 <p className="flex items-center gap-2.5 rounded-12 bg-bg-page px-4 py-3.5 type-small text-text-secondary">
                   <Glyph icon={Info} size={20} />
-                  أُضيفت في موضعها من قائمة المحاور — يمكنك سحبها لأي موضع.
+                  {d.atEnd ? "أُضيفت في نهاية قائمة المحاور — يمكنك سحبها لأي موضع." : "أُضيفت في موضعها من قائمة المحاور — يمكنك سحبها لأي موضع."}
                 </p>
               )}
             </div>

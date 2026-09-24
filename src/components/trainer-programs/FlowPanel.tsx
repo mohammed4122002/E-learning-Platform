@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
-import { LoaderCircle } from "lucide-react";
+import { Circle, CircleCheck, LoaderCircle } from "lucide-react";
 import { Glyph } from "@/components/ui/Icon";
+import { toArabicDigits } from "@/lib/format";
 
 /*
  * Dialog panel of the TRR-PRG-08 / 09 flows (454:27489 …): 2px tone border, r22, float shadow,
@@ -63,6 +64,47 @@ export function FlowRow({ icon, title, body, tone = "page" }: { icon: LucideIcon
         <span className="type-caption text-text-secondary">{body}</span>
       </span>
     </li>
+  );
+}
+
+export type FlowStep = { title: string; state: "done" | "current" | "todo"; detail?: string };
+
+/**
+ * Step progress of 454:27755 / 454:28838: «n من N» + percentage, a bar and one row per real server step
+ * (done = success tint + check · current = info tint + spinner · todo = page tint).
+ */
+export function FlowSteps({ steps, label, percent }: { steps: FlowStep[]; label: string; percent: number }) {
+  const pct = Math.max(0, Math.min(100, Math.round(percent)));
+  return (
+    <>
+      <div className="flex items-center justify-between gap-3 type-caption text-text-secondary">
+        <span>{label}</span>
+        <span>{toArabicDigits(pct)}٪</span>
+      </div>
+      <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} className="h-2.5 w-full overflow-hidden rounded-full bg-border-default">
+        <div className="h-full rounded-full bg-action-accent transition-[width] duration-300" style={{ width: `${pct}%` }} />
+      </div>
+      <ul className="flex flex-col gap-3">
+        {steps.map((s) => {
+          const tone = s.state === "done" ? "bg-state-success-bg text-state-success" : s.state === "current" ? "bg-state-info-bg text-state-info" : "bg-bg-page text-text-muted";
+          return (
+            <li key={s.title} className={`flex items-start gap-3 rounded-12 px-3.5 py-3.5 ${tone}`}>
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface">
+                {s.state === "current" ? (
+                  <LoaderCircle aria-hidden size={20} strokeWidth={1.4} absoluteStrokeWidth className="animate-[tg-spin_0.9s_linear_infinite]" />
+                ) : (
+                  <Glyph icon={s.state === "done" ? CircleCheck : Circle} size={20} />
+                )}
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="type-small">{s.title}</span>
+                <span className="type-caption">{s.detail ??(s.state === "done" ? "تم" : s.state === "current" ? "جارٍ" : "بالانتظار")}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }
 

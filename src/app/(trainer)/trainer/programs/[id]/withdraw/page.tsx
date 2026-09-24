@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileX2, Hourglass } from "lucide-react";
 import { PageBody, TopBar } from "@/components/layout/TopBar";
-import { InfoRow } from "@/components/trainer-programs/bits";
+import { InfoRow, PHASE_STYLE, PhasePill } from "@/components/trainer-programs/bits";
 import { ProgramSummaryCard } from "@/components/trainer-programs/FlowPanel";
 import { WithdrawFlow } from "@/components/trainer-programs/WithdrawFlow";
 import { ButtonLink } from "@/components/ui/Button";
@@ -35,9 +35,9 @@ export default async function WithdrawPage({ params }: PageProps<"/trainer/progr
       <TopBar title="حالة طلب النشر" subtitle={withdrawn ? "سُحب — مسودة الآن" : underReview ? "قيد المراجعة" : "تعذّر السحب"} />
       <PageBody className="!gap-6">
         <Breadcrumb items={[{ label: "برامجي", href: "/trainer/programs" }, { label: p.title, href: `/trainer/programs/${p.id}` }]} />
-        <div className="flex flex-col-reverse gap-6 lg:flex-row lg:items-start">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex min-w-0 flex-1 justify-center">
-            <div className="w-full max-w-[460px]">
+            <div className="w-full max-w-[600px]">
               <WithdrawFlow
                 programId={p.id}
                 reference={p.reference}
@@ -46,6 +46,7 @@ export default async function WithdrawPage({ params }: PageProps<"/trainer/progr
                 submittedAgo={submittedAt ? formatRelative(submittedAt).replace(/^منذ /, "") : "—"}
                 daysLeftText={daysLeftText}
                 decision={decision}
+                reviewerNote={withdrawn ? (last?.note ?? null) : null}
               />
             </div>
           </div>
@@ -54,10 +55,24 @@ export default async function WithdrawPage({ params }: PageProps<"/trainer/progr
               <ProgramSummaryCard
                 tone="brand"
                 icon={FileX2}
-                pill={<span className="rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-text-primary">مسودة</span>}
+                pill={
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-text-primary">
+                    <Glyph icon={FileX2} size={16} />
+                    مسودة
+                  </span>
+                }
                 reference={p.reference}
                 title={p.title}
                 meta={`سُحب من المراجعة ${formatRelative(last!.decidedAt ?? p.updatedAt)} · قابل للتعديل الآن`}
+              />
+            ) : !underReview ? (
+              <ProgramSummaryCard
+                tone={p.phase === "published" ? "success" : p.phase === "needs_changes" || p.phase === "rejected" ? "error" : "info"}
+                icon={PHASE_STYLE[p.phase].icon}
+                pill={<PhasePill phase={p.phase} />}
+                reference={p.reference}
+                title={p.title}
+                meta={last?.decidedAt ? `صدر القرار ${formatRelative(last.decidedAt)}` : "لا طلب قيد المراجعة"}
               />
             ) : (
               <ProgramSummaryCard

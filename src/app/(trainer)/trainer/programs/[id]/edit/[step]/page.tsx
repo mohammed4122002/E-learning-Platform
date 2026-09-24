@@ -12,7 +12,7 @@ import { Glyph } from "@/components/ui/Icon";
 import { requireTrainer } from "@/lib/auth";
 import { categoryPriceBand, commissionPercent, getTrainerProgram, listCategories, type ProgramDetail } from "@/lib/data/trainer-programs";
 import { formatPrice, pluralAr } from "@/lib/format";
-import { hoursWord, isEditStep, lessonsWord, versionLabelAr, type EditStep } from "@/lib/trainer-programs";
+import { hoursWord, isEditStep, sessionsWord, versionLabelAr, type EditStep } from "@/lib/trainer-programs";
 
 const STEP_TITLE: Record<EditStep, string> = { basics: "الأساسيات والغلاف", goals: "الأهداف والمحتوى", materials: "المواد", pricing: "التسعير" };
 
@@ -138,7 +138,7 @@ export default async function EditProgramStepPage({ params, searchParams }: Page
           units={program.units.map((u) => ({
             id: u.id,
             title: u.title,
-            meta: [u.minutes ? hoursWord(Math.round((u.minutes / 60) * 10) / 10) : null, lessonsWord(u.lessons)].filter(Boolean).join(" · "),
+            meta: [u.minutes ? hoursWord(Math.round((u.minutes / 60) * 10) / 10) : null, sessionsWord(u.lessons)].filter(Boolean).join(" · "),
           }))}
           unitsBadge={`${pluralAr(program.units.length, ["فصل واحد", "فصلان", "فصول", "فصلًا"])}${program.hours ? ` · ${hoursWord(program.hours)}` : totalHours ? ` · ${hoursWord(Math.round(totalHours))}` : ""}`}
           criteria={criteria}
