@@ -457,21 +457,75 @@ export type Database = {
           },
         ]
       }
+      course_files: {
+        Row: {
+          course_id: string
+          created_at: string
+          created_by: string
+          file_path: string
+          file_size: number
+          id: string
+          mime_type: string | null
+          published_at: string | null
+          title: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          created_by?: string
+          file_path: string
+          file_size?: number
+          id?: string
+          mime_type?: string | null
+          published_at?: string | null
+          title: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          created_by?: string
+          file_path?: string
+          file_size?: number
+          id?: string
+          mime_type?: string | null
+          published_at?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_files_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_files_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_modules: {
         Row: {
           course_id: string
+          from_program: boolean
           id: string
           position: number
           title: string
         }
         Insert: {
           course_id: string
+          from_program?: boolean
           id?: string
           position: number
           title: string
         }
         Update: {
           course_id?: string
+          from_program?: boolean
           id?: string
           position?: number
           title?: string
@@ -481,6 +535,32 @@ export type Database = {
             foreignKeyName: "course_modules_course_id_fkey"
             columns: ["course_id"]
             isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_private: {
+        Row: {
+          course_id: string
+          meeting_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          meeting_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          meeting_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_private_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: true
             referencedRelation: "courses"
             referencedColumns: ["id"]
           },
@@ -551,6 +631,7 @@ export type Database = {
           id: string
           location: string | null
           meeting_url: string | null
+          module_id: string | null
           position: number
           starts_at: string
           status: string
@@ -562,6 +643,7 @@ export type Database = {
           id?: string
           location?: string | null
           meeting_url?: string | null
+          module_id?: string | null
           position: number
           starts_at: string
           status?: string
@@ -573,6 +655,7 @@ export type Database = {
           id?: string
           location?: string | null
           meeting_url?: string | null
+          module_id?: string | null
           position?: number
           starts_at?: string
           status?: string
@@ -586,11 +669,21 @@ export type Database = {
             referencedRelation: "courses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "course_sessions_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "course_modules"
+            referencedColumns: ["id"]
+          },
         ]
       }
       courses: {
         Row: {
+          allow_downloads: boolean
+          auto_attendance: boolean
           capacity: number | null
+          certificate_on_completion: boolean
           city: string | null
           cover_crop: Json | null
           cover_path: string | null
@@ -601,16 +694,24 @@ export type Database = {
           id: string
           learners_count: number
           level: Database["public"]["Enums"]["course_level"]
+          lifetime_access: boolean
+          live_questions: boolean
+          meeting_platform: string | null
           min_capacity: number | null
           mode: Database["public"]["Enums"]["course_mode"]
           organization_id: string | null
+          page_views: number
           price: number
           price_locked_at: string | null
+          pricing_set_at: string | null
           program_id: string
           program_version_id: string
+          published_at: string | null
           rating_avg: number
           rating_count: number
+          record_sessions: boolean
           requires_provider_approval: boolean
+          sales_paused_at: string | null
           slug: string
           starts_at: string | null
           status: Database["public"]["Enums"]["course_status"]
@@ -619,9 +720,13 @@ export type Database = {
           trainer_id: string
           updated_at: string
           venue: string | null
+          waitlist_enabled: boolean
         }
         Insert: {
+          allow_downloads?: boolean
+          auto_attendance?: boolean
           capacity?: number | null
+          certificate_on_completion?: boolean
           city?: string | null
           cover_crop?: Json | null
           cover_path?: string | null
@@ -632,16 +737,24 @@ export type Database = {
           id?: string
           learners_count?: number
           level?: Database["public"]["Enums"]["course_level"]
+          lifetime_access?: boolean
+          live_questions?: boolean
+          meeting_platform?: string | null
           min_capacity?: number | null
           mode: Database["public"]["Enums"]["course_mode"]
           organization_id?: string | null
+          page_views?: number
           price?: number
           price_locked_at?: string | null
+          pricing_set_at?: string | null
           program_id: string
           program_version_id: string
+          published_at?: string | null
           rating_avg?: number
           rating_count?: number
+          record_sessions?: boolean
           requires_provider_approval?: boolean
+          sales_paused_at?: string | null
           slug: string
           starts_at?: string | null
           status?: Database["public"]["Enums"]["course_status"]
@@ -650,9 +763,13 @@ export type Database = {
           trainer_id: string
           updated_at?: string
           venue?: string | null
+          waitlist_enabled?: boolean
         }
         Update: {
+          allow_downloads?: boolean
+          auto_attendance?: boolean
           capacity?: number | null
+          certificate_on_completion?: boolean
           city?: string | null
           cover_crop?: Json | null
           cover_path?: string | null
@@ -663,16 +780,24 @@ export type Database = {
           id?: string
           learners_count?: number
           level?: Database["public"]["Enums"]["course_level"]
+          lifetime_access?: boolean
+          live_questions?: boolean
+          meeting_platform?: string | null
           min_capacity?: number | null
           mode?: Database["public"]["Enums"]["course_mode"]
           organization_id?: string | null
+          page_views?: number
           price?: number
           price_locked_at?: string | null
+          pricing_set_at?: string | null
           program_id?: string
           program_version_id?: string
+          published_at?: string | null
           rating_avg?: number
           rating_count?: number
+          record_sessions?: boolean
           requires_provider_approval?: boolean
+          sales_paused_at?: string | null
           slug?: string
           starts_at?: string | null
           status?: Database["public"]["Enums"]["course_status"]
@@ -681,6 +806,7 @@ export type Database = {
           trainer_id?: string
           updated_at?: string
           venue?: string | null
+          waitlist_enabled?: boolean
         }
         Relationships: [
           {
@@ -1114,34 +1240,82 @@ export type Database = {
           },
         ]
       }
+      help_article_feedback: {
+        Row: {
+          article_id: string
+          created_at: string
+          helpful: boolean
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          helpful: boolean
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          helpful?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_article_feedback_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_article_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       help_articles: {
         Row: {
+          audience: string
           body: string
           category: string
+          cta_href: string | null
+          cta_label: string | null
           id: string
           is_featured: boolean
           position: number
           published: boolean
+          read_minutes: number | null
           slug: string
           title: string
         }
         Insert: {
+          audience?: string
           body: string
           category: string
+          cta_href?: string | null
+          cta_label?: string | null
           id?: string
           is_featured?: boolean
           position?: number
           published?: boolean
+          read_minutes?: number | null
           slug: string
           title: string
         }
         Update: {
+          audience?: string
           body?: string
           category?: string
+          cta_href?: string | null
+          cta_label?: string | null
           id?: string
           is_featured?: boolean
           position?: number
           published?: boolean
+          read_minutes?: number | null
           slug?: string
           title?: string
         }
@@ -1325,6 +1499,8 @@ export type Database = {
           is_preview: boolean
           kind: Database["public"]["Enums"]["lesson_kind"]
           media_path: string | null
+          media_size: number | null
+          media_type: string | null
           module_id: string
           position: number
           published_at: string | null
@@ -1339,6 +1515,8 @@ export type Database = {
           is_preview?: boolean
           kind?: Database["public"]["Enums"]["lesson_kind"]
           media_path?: string | null
+          media_size?: number | null
+          media_type?: string | null
           module_id: string
           position: number
           published_at?: string | null
@@ -1353,6 +1531,8 @@ export type Database = {
           is_preview?: boolean
           kind?: Database["public"]["Enums"]["lesson_kind"]
           media_path?: string | null
+          media_size?: number | null
+          media_type?: string | null
           module_id?: string
           position?: number
           published_at?: string | null
@@ -1649,6 +1829,251 @@ export type Database = {
         }
         Relationships: []
       }
+      program_declarations: {
+        Row: {
+          clauses: string[]
+          content_hash: string
+          created_at: string
+          id: string
+          program_id: string
+          reference: string
+          revision: number
+          snapshot: Json
+          user_id: string
+        }
+        Insert: {
+          clauses: string[]
+          content_hash: string
+          created_at?: string
+          id?: string
+          program_id: string
+          reference: string
+          revision: number
+          snapshot: Json
+          user_id: string
+        }
+        Update: {
+          clauses?: string[]
+          content_hash?: string
+          created_at?: string
+          id?: string
+          program_id?: string
+          reference?: string
+          revision?: number
+          snapshot?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_declarations_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_declarations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      program_items: {
+        Row: {
+          created_at: string
+          due_note: string | null
+          duration_minutes: number | null
+          id: string
+          kind: string
+          max_score: number | null
+          media_name: string | null
+          media_path: string | null
+          media_size: number | null
+          media_type: string | null
+          position: number
+          program_id: string
+          summary: string | null
+          title: string
+          unit_id: string
+          weight_percent: number | null
+        }
+        Insert: {
+          created_at?: string
+          due_note?: string | null
+          duration_minutes?: number | null
+          id?: string
+          kind: string
+          max_score?: number | null
+          media_name?: string | null
+          media_path?: string | null
+          media_size?: number | null
+          media_type?: string | null
+          position?: number
+          program_id: string
+          summary?: string | null
+          title: string
+          unit_id: string
+          weight_percent?: number | null
+        }
+        Update: {
+          created_at?: string
+          due_note?: string | null
+          duration_minutes?: number | null
+          id?: string
+          kind?: string
+          max_score?: number | null
+          media_name?: string | null
+          media_path?: string | null
+          media_size?: number | null
+          media_type?: string | null
+          position?: number
+          program_id?: string
+          summary?: string | null
+          title?: string
+          unit_id?: string
+          weight_percent?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_items_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_items_unit_id_program_id_fkey"
+            columns: ["unit_id", "program_id"]
+            isOneToOne: false
+            referencedRelation: "program_units"
+            referencedColumns: ["id", "program_id"]
+          },
+        ]
+      }
+      program_review_requests: {
+        Row: {
+          decided_at: string | null
+          decided_by: string | null
+          declaration_id: string
+          findings: Json
+          id: string
+          note: string | null
+          program_id: string
+          reason: string | null
+          revision: number
+          status: string
+          submitted_at: string
+          submitted_by: string
+          version_id: string | null
+        }
+        Insert: {
+          decided_at?: string | null
+          decided_by?: string | null
+          declaration_id: string
+          findings?: Json
+          id?: string
+          note?: string | null
+          program_id: string
+          reason?: string | null
+          revision: number
+          status?: string
+          submitted_at?: string
+          submitted_by: string
+          version_id?: string | null
+        }
+        Update: {
+          decided_at?: string | null
+          decided_by?: string | null
+          declaration_id?: string
+          findings?: Json
+          id?: string
+          note?: string | null
+          program_id?: string
+          reason?: string | null
+          revision?: number
+          status?: string
+          submitted_at?: string
+          submitted_by?: string
+          version_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_review_requests_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_review_requests_declaration_id_fkey"
+            columns: ["declaration_id"]
+            isOneToOne: false
+            referencedRelation: "program_declarations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_review_requests_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_review_requests_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_review_requests_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "program_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      program_units: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          position: number
+          program_id: string
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          position?: number
+          program_id: string
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          position?: number
+          program_id?: string
+          summary?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_units_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       program_versions: {
         Row: {
           created_at: string
@@ -1683,48 +2108,90 @@ export type Database = {
       }
       programs: {
         Row: {
+          audience: string[]
           category_id: string | null
+          cover_path: string | null
           created_at: string
           current_version: number
+          decided_at: string | null
+          derived_from: string | null
           description: string | null
           id: string
+          language: string
           level: Database["public"]["Enums"]["course_level"]
+          objectives: string[]
           organization_id: string | null
           owner_id: string
+          prerequisites: string | null
+          published_at: string | null
+          reference_price: number | null
+          review_state: Database["public"]["Enums"]["program_review_state"]
+          revision: number
+          skills: string[]
           slug: string
           status: Database["public"]["Enums"]["program_status"]
+          submitted_at: string | null
           summary: string | null
           title: string
+          total_hours: number | null
           updated_at: string
         }
         Insert: {
+          audience?: string[]
           category_id?: string | null
+          cover_path?: string | null
           created_at?: string
           current_version?: number
+          decided_at?: string | null
+          derived_from?: string | null
           description?: string | null
           id?: string
+          language?: string
           level?: Database["public"]["Enums"]["course_level"]
+          objectives?: string[]
           organization_id?: string | null
           owner_id: string
+          prerequisites?: string | null
+          published_at?: string | null
+          reference_price?: number | null
+          review_state?: Database["public"]["Enums"]["program_review_state"]
+          revision?: number
+          skills?: string[]
           slug: string
           status?: Database["public"]["Enums"]["program_status"]
+          submitted_at?: string | null
           summary?: string | null
           title: string
+          total_hours?: number | null
           updated_at?: string
         }
         Update: {
+          audience?: string[]
           category_id?: string | null
+          cover_path?: string | null
           created_at?: string
           current_version?: number
+          decided_at?: string | null
+          derived_from?: string | null
           description?: string | null
           id?: string
+          language?: string
           level?: Database["public"]["Enums"]["course_level"]
+          objectives?: string[]
           organization_id?: string | null
           owner_id?: string
+          prerequisites?: string | null
+          published_at?: string | null
+          reference_price?: number | null
+          review_state?: Database["public"]["Enums"]["program_review_state"]
+          revision?: number
+          skills?: string[]
           slug?: string
           status?: Database["public"]["Enums"]["program_status"]
+          submitted_at?: string | null
           summary?: string | null
           title?: string
+          total_hours?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -1733,6 +2200,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "programs_derived_from_fkey"
+            columns: ["derived_from"]
+            isOneToOne: false
+            referencedRelation: "programs"
             referencedColumns: ["id"]
           },
           {
@@ -2065,6 +2539,221 @@ export type Database = {
           },
         ]
       }
+      trainer_calendar_events: {
+        Row: {
+          all_day: boolean
+          created_at: string
+          ends_at: string
+          id: string
+          kind: string
+          recurrence: string
+          starts_at: string
+          title: string
+          trainer_id: string
+        }
+        Insert: {
+          all_day?: boolean
+          created_at?: string
+          ends_at: string
+          id?: string
+          kind: string
+          recurrence?: string
+          starts_at: string
+          title: string
+          trainer_id: string
+        }
+        Update: {
+          all_day?: boolean
+          created_at?: string
+          ends_at?: string
+          id?: string
+          kind?: string
+          recurrence?: string
+          starts_at?: string
+          title?: string
+          trainer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_calendar_events_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainer_portfolio_items: {
+        Row: {
+          courses_count: number | null
+          created_at: string
+          duration_days: number | null
+          file_format: string | null
+          happened_on: string | null
+          id: string
+          image_paths: string[]
+          kind: string
+          organization: string | null
+          page_count: number | null
+          title: string
+          trainees_count: number | null
+          trainer_id: string
+          updated_at: string
+        }
+        Insert: {
+          courses_count?: number | null
+          created_at?: string
+          duration_days?: number | null
+          file_format?: string | null
+          happened_on?: string | null
+          id?: string
+          image_paths?: string[]
+          kind: string
+          organization?: string | null
+          page_count?: number | null
+          title: string
+          trainees_count?: number | null
+          trainer_id: string
+          updated_at?: string
+        }
+        Update: {
+          courses_count?: number | null
+          created_at?: string
+          duration_days?: number | null
+          file_format?: string | null
+          happened_on?: string | null
+          id?: string
+          image_paths?: string[]
+          kind?: string
+          organization?: string | null
+          page_count?: number | null
+          title?: string
+          trainees_count?: number | null
+          trainer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_portfolio_items_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainer_profiles: {
+        Row: {
+          audience: string | null
+          created_at: string
+          cv_name: string | null
+          cv_path: string | null
+          cv_size: number | null
+          delivery_modes: Database["public"]["Enums"]["course_mode"][]
+          experience_band: string | null
+          goal: string | null
+          hidden_program_ids: string[]
+          languages: string[]
+          onboarding_completed_at: string | null
+          onboarding_step: number
+          profile_completed_at: string | null
+          skills: string[]
+          specialties: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audience?: string | null
+          created_at?: string
+          cv_name?: string | null
+          cv_path?: string | null
+          cv_size?: number | null
+          delivery_modes?: Database["public"]["Enums"]["course_mode"][]
+          experience_band?: string | null
+          goal?: string | null
+          hidden_program_ids?: string[]
+          languages?: string[]
+          onboarding_completed_at?: string | null
+          onboarding_step?: number
+          profile_completed_at?: string | null
+          skills?: string[]
+          specialties?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audience?: string | null
+          created_at?: string
+          cv_name?: string | null
+          cv_path?: string | null
+          cv_size?: number | null
+          delivery_modes?: Database["public"]["Enums"]["course_mode"][]
+          experience_band?: string | null
+          goal?: string | null
+          hidden_program_ids?: string[]
+          languages?: string[]
+          onboarding_completed_at?: string | null
+          onboarding_step?: number
+          profile_completed_at?: string | null
+          skills?: string[]
+          specialties?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainer_qualifications: {
+        Row: {
+          created_at: string
+          file_path: string | null
+          id: string
+          issuer: string
+          kind: string
+          title: string
+          trainer_id: string
+          verified_at: string | null
+          year: number | null
+        }
+        Insert: {
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          issuer: string
+          kind: string
+          title: string
+          trainer_id: string
+          verified_at?: string | null
+          year?: number | null
+        }
+        Update: {
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          issuer?: string
+          kind?: string
+          title?: string
+          trainer_id?: string
+          verified_at?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_qualifications_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_workspaces: {
         Row: {
           created_at: string
@@ -2228,6 +2917,17 @@ export type Database = {
         }
         Returns: string
       }
+      add_trainer_event: {
+        Args: {
+          p_all_day: boolean
+          p_ends: string
+          p_kind: string
+          p_recurrence: string
+          p_starts: string
+          p_title: string
+        }
+        Returns: string
+      }
       add_workspace: {
         Args: {
           p_kind: Database["public"]["Enums"]["workspace_kind"]
@@ -2236,6 +2936,7 @@ export type Database = {
         }
         Returns: string
       }
+      can_edit_program: { Args: { p: string }; Returns: boolean }
       cancel_refund_request: { Args: { p_refund: string }; Returns: undefined }
       certificate_conditions: {
         Args: { p_enrollment: string }
@@ -2254,6 +2955,17 @@ export type Database = {
           checked_in_at: string
           session_id: string
         }[]
+      }
+      clone_program: {
+        Args: {
+          p_assignments: boolean
+          p_materials: boolean
+          p_objectives: boolean
+          p_source: string
+          p_title: string
+          p_units: boolean
+        }
+        Returns: string
       }
       course_outline: {
         Args: { p_course: string }
@@ -2291,6 +3003,13 @@ export type Database = {
           sessions: number
         }[]
       }
+      course_publish_blockers: {
+        Args: { p_course: string }
+        Returns: {
+          code: string
+          detail: string
+        }[]
+      }
       course_quizzes: {
         Args: { p_course: string }
         Returns: {
@@ -2310,8 +3029,45 @@ export type Database = {
           stars: number
         }[]
       }
+      course_sales: {
+        Args: { p_course: string }
+        Returns: {
+          avatar_path: string
+          commission_percent: number
+          confirmed_at: string
+          created_at: string
+          currency: string
+          discount_amount: number
+          discount_code: string
+          enrollment_id: string
+          enrollment_status: Database["public"]["Enums"]["enrollment_status"]
+          list_price: number
+          paid_at: string
+          payment_id: string
+          payment_method: string
+          payment_ref: string
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          price_paid: number
+          receipt_number: string
+          refund_amount: number
+          refund_decided_at: string
+          refund_reason: string
+          refund_status: Database["public"]["Enums"]["request_status"]
+          trainee_id: string
+          trainee_name: string
+          vat_amount: number
+        }[]
+      }
       course_seats_left: { Args: { p_course: string }; Returns: number }
       course_seats_taken: { Args: { c: string }; Returns: number }
+      create_course: {
+        Args: {
+          p_mode: Database["public"]["Enums"]["course_mode"]
+          p_program_version: string
+          p_title?: string
+        }
+        Returns: string
+      }
       create_payment: {
         Args: {
           p_enrollment: string
@@ -2320,6 +3076,7 @@ export type Database = {
         }
         Returns: string
       }
+      create_program: { Args: { p_title: string }; Returns: string }
       discover_courses: {
         Args: {
           p_categories?: string[]
@@ -2418,11 +3175,27 @@ export type Database = {
         Args: { b: string; k: string; l: string; t: string; u: string }
         Returns: undefined
       }
+      notify_course_trainees: {
+        Args: { p_body: string; p_course: string; p_title: string }
+        Returns: number
+      }
       open_dispute: {
         Args: { p_details: string; p_payment: string; p_reason: string }
         Returns: string
       }
+      owns_program: { Args: { p: string }; Returns: boolean }
+      platform_commission_percent: { Args: never; Returns: number }
+      program_missing_fields: { Args: { p: string }; Returns: string[] }
+      program_snapshot: { Args: { p: string }; Returns: Json }
       public_profile: { Args: { p_user: string }; Returns: Json }
+      publish_course: {
+        Args: { p_ack: boolean; p_course: string }
+        Returns: undefined
+      }
+      publish_new_content: {
+        Args: { p_ack: boolean; p_course: string; p_lessons: string[] }
+        Returns: number
+      }
       quiz_attempt_review: {
         Args: { p_attempt: string }
         Returns: {
@@ -2456,6 +3229,7 @@ export type Database = {
         }
         Returns: string
       }
+      record_course_view: { Args: { p_course: string }; Returns: undefined }
       record_lesson_progress: {
         Args: { p_lesson: string; p_position: number }
         Returns: {
@@ -2477,15 +3251,37 @@ export type Database = {
           window_ends_at: string
         }[]
       }
+      reorder_program_units: {
+        Args: { p_ids: string[]; p_program: string }
+        Returns: undefined
+      }
       request_account_deletion: { Args: never; Returns: undefined }
       request_refund: {
         Args: { p_details: string; p_enrollment: string; p_reason: string }
         Returns: string
       }
       require_user: { Args: never; Returns: string }
+      review_program: {
+        Args: {
+          p_decision: string
+          p_findings?: Json
+          p_note?: string
+          p_program: string
+          p_reason?: string
+        }
+        Returns: undefined
+      }
       sandbox_settle_payment: {
         Args: { p_payment: string; p_succeeded: boolean }
         Returns: Database["public"]["Enums"]["payment_status"]
+      }
+      save_course_sessions: {
+        Args: { p_course: string; p_sessions: Json }
+        Returns: number
+      }
+      set_course_sales_paused: {
+        Args: { p_course: string; p_paused: boolean }
+        Returns: undefined
       }
       settle_payment: {
         Args: {
@@ -2542,6 +3338,10 @@ export type Database = {
         }
         Returns: string
       }
+      submit_program_for_review: {
+        Args: { p_clauses: string[]; p_program: string }
+        Returns: string
+      }
       submit_quiz: {
         Args: { p_answers: Json; p_quiz: string }
         Returns: {
@@ -2564,6 +3364,14 @@ export type Database = {
           total: number
         }[]
       }
+      trainer_busy_days: {
+        Args: { p_days?: number; p_from: string; p_trainer: string }
+        Returns: {
+          busy: boolean
+          day: string
+        }[]
+      }
+      trainer_income_benchmarks: { Args: never; Returns: Json }
       trainer_public_stats: {
         Args: { p_trainer: string }
         Returns: {
@@ -2572,6 +3380,22 @@ export type Database = {
           rating: number
           ratings: number
         }[]
+      }
+      trainer_stats: { Args: never; Returns: Json }
+      update_course_session: {
+        Args: {
+          p_ends_at: string
+          p_location: string
+          p_module: string
+          p_session: string
+          p_starts_at: string
+          p_title: string
+        }
+        Returns: undefined
+      }
+      update_course_setup: {
+        Args: { p_course: string; p_patch: Json }
+        Returns: undefined
       }
       vat_rate: { Args: never; Returns: number }
       verify_certificate: {
@@ -2591,6 +3415,10 @@ export type Database = {
       withdraw_dispute: { Args: { p_dispute: string }; Returns: undefined }
       withdraw_enrollment: {
         Args: { p_enrollment: string; p_reason: string }
+        Returns: undefined
+      }
+      withdraw_program_review: {
+        Args: { p_program: string }
         Returns: undefined
       }
       withdraw_violation_report: {
@@ -2627,6 +3455,12 @@ export type Database = {
         | "failed"
         | "expired"
         | "refunded"
+      program_review_state:
+        | "draft"
+        | "under_review"
+        | "needs_changes"
+        | "rejected"
+        | "approved"
       program_status: "draft" | "published" | "archived"
       request_status: "under_review" | "approved" | "rejected"
       review_status: "pending" | "verified" | "needs_changes" | "rejected"
@@ -2794,6 +3628,13 @@ export const Constants = {
         "failed",
         "expired",
         "refunded",
+      ],
+      program_review_state: [
+        "draft",
+        "under_review",
+        "needs_changes",
+        "rejected",
+        "approved",
       ],
       program_status: ["draft", "published", "archived"],
       request_status: ["under_review", "approved", "rejected"],
