@@ -574,16 +574,17 @@ export function DefaultHome({
               {opportunities.length === 0 ? (
                 <MiniRow icon={Compass} title="لا توجد طلبات مطابقة الآن" caption="تظهر هنا طلبات الجهات فور نشرها." />
               ) : (
-                opportunities.slice(0, 2).map((op) => (
+                // 256:1242 / 256:1253: the best match is drawn in success, the next one in brand (icon tile + pill).
+                opportunities.slice(0, 2).map((op, i) => (
                   <li key={op.id}>
                     <Link href={`/trainer/opportunities/${op.id}/bid`} className="flex w-full items-start gap-2.5 rounded-12 bg-bg-page px-3 py-[11px] hover:bg-bg-brand-tint focus-ring">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface text-state-success">
+                      <span className={`flex size-9 shrink-0 items-center justify-center rounded-8 bg-bg-surface ${i === 0 ? "text-state-success" : "text-text-brand"}`}>
                         <Glyph icon={Compass} size={20} />
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
                         <span className="flex items-center gap-2">
                           <span className="min-w-0 flex-1 truncate type-small text-text-primary">{op.organizationName}</span>
-                          <span className="shrink-0 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption text-state-success">{`مطابقة ${toArabicDigits(op.score)}٪`}</span>
+                          <span className={`shrink-0 rounded-full bg-bg-surface px-2.5 py-[5px] type-caption ${i === 0 ? "text-state-success" : "text-text-brand"}`}>{`مطابقة ${toArabicDigits(op.score)}٪`}</span>
                         </span>
                         <span className="type-caption text-text-muted">{op.caption}</span>
                       </span>

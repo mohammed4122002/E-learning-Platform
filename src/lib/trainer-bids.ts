@@ -15,8 +15,13 @@ export const MATCH_WEIGHTS = { specialty: 40, rating: 25, availability: 20, loca
 export type BidStatus = "draft" | "submitted" | "shortlisted" | "accepted" | "rejected" | "withdrawn" | "expired";
 export type NegotiationStatus = "draft" | "awaiting_org" | "countered" | "agreed" | "rejected" | "declined" | "expired" | "withdrawn" | "cancelled";
 
-/** Contract step handed over to the contracts module (built separately). */
-export function contractHref(bidId: string): string {
+/**
+ * Contract step handed over to the contracts module (built separately). While a proposal waits for the organization
+ * or a counter-proposal waits for the trainer, the contract cannot be created yet: «أكمل التعاقد» opens the
+ * negotiation instead (the database refuses `negotiation_open`).
+ */
+export function contractHref(bidId: string, negotiation?: NegotiationStatus | null): string {
+  if (negotiation === "awaiting_org" || negotiation === "countered") return `/trainer/bids/${bidId}/negotiation`;
   return `/trainer/contracts/new?source=bid&id=${bidId}`;
 }
 

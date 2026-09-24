@@ -86,7 +86,7 @@ function noteLine(b: TrainerBid): string {
 function RowAction({ b }: { b: TrainerBid }) {
   if (b.status === "accepted")
     return (
-      <ButtonLink href={contractHref(b.id)} className="w-full sm:w-[120px] sm:px-3">
+      <ButtonLink href={contractHref(b.id, b.negotiationStatus)} className="w-full sm:w-[120px] sm:px-3">
         أكمل التعاقد
       </ButtonLink>
     );
