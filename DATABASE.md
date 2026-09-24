@@ -68,3 +68,30 @@ the next person on the waitlist.
 `…101000_seed_catalog.sql` adds the catalog shown in Figma: one provider, three trainer accounts
 (`@seed.invalid`, no usable password), 8 categories, 7 courses (one with 4 modules, 18 lessons and a
 quiz) and the discount code `WELCOME10`. Ratings and learner counts start at zero — nothing is faked.
+
+## Trainer affiliations, contracts and content reports (TRR-AFL / TRR-CTR / TRR-RPT)
+
+Migrations `20260924142000…142500`. RLS: the trainer reads their own rows, organization members read their
+organization's rows, admins read all; every write goes through a security-definer RPC.
+
+| Table | Purpose |
+| --- | --- |
+| `affiliation_invitations` | Organization → trainer invitation: commission %, scope, exclusivity, term, notice days, execution scope, `expires_at`, status `pending/accepted/declined/expired/withdrawn` (one pending per pair). |
+| `trainer_affiliations` | Accepted invitation: status `active → ending → ended`, `started_at`, `end_requested_at`, `end_effective_at` (notice period), `ended_by`/`ended_by_party`, `end_reason`, `end_message`. One live affiliation per pair. Trigger `courses_affiliation_guard`: no new course for the trainer under an organization whose affiliation is ending/ended; running courses are untouched. |
+| `trainer_contracts` | `CTR-YYYY-NNNNNN`, `source_type affiliation/bid` + `source_id` (no FK to bids), status `draft/sent/signed_by_trainer/active/terminated/expired`, `sign_deadline`. Trainers never see drafts. |
+| `trainer_contract_versions` | Immutable terms JSON per version once `sent_at` is set; `document_hash` = SHA-256 of `terms::text` (`contract_hash`). |
+| `trainer_contract_signatures` | Insert-only click-to-sign record: party, signer, typed name, consent text, `document_hash`, SHA-256 of IP and user agent, `signed_at`. No third-party e-sign provider. |
+| `violation_reports` (+ `report_number`, target `program`) | Existing reports; the trainer reads them only through `my_content_reports()` (no reporter identity). |
+| `report_responses` · `report_decisions` · `report_appeals` | Trainer reply (+ evidence), compliance decision (`appeal_deadline` = 7 days), one appeal per decision reviewed by a different admin. |
+
+RPCs — trainer: `accept_affiliation_invitation`, `decline_affiliation_invitation`, `end_affiliation`, `cancel_affiliation_end`,
+`start_org_conversation`, `sign_contract`, `start_bid_contract`, `respond_to_report`, `submit_report_appeal`,
+`accept_report_decision`; organization (owner/admin): `org_send_affiliation_invitation`, `org_withdraw_affiliation_invitation`,
+`org_end_affiliation`, `org_create_affiliation_contract`, `org_revise_contract`, `org_send_contract`, `org_countersign_contract`,
+`org_terminate_contract`; admin: `admin_decide_report`, `admin_decide_appeal`; read models: `my_affiliation_stats`,
+`organization_public_stats`, `my_content_reports`. Jobs: `affiliations-housekeeping`, `contracts-housekeeping` (every 15 min).
+
+Contract terms JSON (`trainer_contract_versions.terms`): `scope`, `value` (number) or `value_label`, `original_value`, `currency`,
+`duration` or `days`/`hours`, `dates` or `starts_on`/`ends_on`, `terms_source`, `negotiation_log`, `platform_commission_percent`,
+`hero {badge, summary}`, `items [{key?, label, negotiable, original?, agreed?, note?}]` (values: text, number for `price`,
+`[start, end]` ISO dates for `dates`), `history [{actor trainer|organization, kind proposal|counter|accept, text, at}]`.

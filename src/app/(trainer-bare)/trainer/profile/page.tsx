@@ -9,11 +9,12 @@ import { getPublicProfile, isProfileEmpty } from "@/lib/data/trainer-profile";
 export const metadata: Metadata = { title: "الملف المهني", description: "ملفك المهني كما تراه الجهات التدريبية" };
 
 /**
- * TRR-PRF-01 · الملف المهني — public view as organizations see it (289:7405, no sidebar) and the empty state of a new
- * trainer (290:8349, inside the workspace shell).
+ * TRR-PRF-01 · الملف المهني — public view as organizations see it (289:7405, no sidebar), the owner preview
+ * (4275:272, `?view=preview` from «عاين ملفي العام») and the empty state of a new trainer (290:8349, inside the shell).
  */
-export default async function TrainerProfilePage() {
+export default async function TrainerProfilePage({ searchParams }: PageProps<"/trainer/profile">) {
   const user = await requireTrainer("/trainer/profile");
+  const ownerPreview = (await searchParams).view === "preview";
   const o = await getTrainerOverview(user.id);
   if (isProfileEmpty(o)) {
     return (
@@ -23,5 +24,5 @@ export default async function TrainerProfilePage() {
     );
   }
   const data = await getPublicProfile(user.id);
-  return <PublicProfileView data={data} userId={user.id} />;
+  return <PublicProfileView data={data} userId={user.id} ownerPreview={ownerPreview} />;
 }

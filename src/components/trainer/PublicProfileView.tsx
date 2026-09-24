@@ -61,8 +61,11 @@ function Bar({ value }: { value: number }) {
   );
 }
 
-/** TRR-PRF-01 · الملف المهني — the public view as organizations see it (289:7405). */
-export function PublicProfileView({ data, userId }: { data: PublicProfileData; userId: string }) {
+/**
+ * TRR-PRF-01 · الملف المهني — the public view as organizations see it (289:7405). `ownerPreview` is the owner's
+ * preview (4275:272): a «وضع المعاينة» bar on top and the organization-only buttons shown disabled.
+ */
+export function PublicProfileView({ data, userId, ownerPreview = false }: { data: PublicProfileData; userId: string; ownerPreview?: boolean }) {
   const { o, visibility, courses, publishedPrograms, totalTrainees, reviews, days, portfolio } = data;
   const s = o.stats;
   const verified = o.identityStatus === "verified";
@@ -81,6 +84,15 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
 
   return (
     <div className="flex min-h-dvh flex-col bg-bg-page">
+      {ownerPreview && (
+        <div role="status" className="flex w-full flex-wrap items-center gap-4 border-b-2 border-state-warning bg-state-warning-bg px-4 py-[18px] sm:px-8">
+          <p className="text-[17px] leading-normal font-bold text-state-warning">وضع المعاينة — هكذا يظهر ملفك للجهات</p>
+          <span className="w-2.5" aria-hidden />
+          <Link href="/trainer/profile/edit" className="rounded-[10px] bg-action-primary px-[26px] py-[13px] text-[16px] leading-normal font-bold text-text-on-brand hover:bg-action-primary-hover focus-ring">
+            العودة إلى إدارة الملف
+          </Link>
+        </div>
+      )}
       <header className="flex w-full items-center gap-5 border-b border-border-divider bg-bg-surface px-4 py-5 sm:px-12">
         <Link href="/trainer" className="flex items-center gap-3 rounded-12 focus-ring">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-action-primary text-text-on-brand">
@@ -145,10 +157,10 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
               )}
             </ul>
             <div className="flex flex-col gap-3.5 pt-1 sm:flex-row">
-              <PreviewButton message={PREVIEW} className="w-full sm:w-[280px]">
+              <PreviewButton disabled={ownerPreview} message={PREVIEW} className="w-full sm:w-[280px]">
                 اطلب عرضًا تدريبيًا
               </PreviewButton>
-              <PreviewButton message={PREVIEW} variant="outline" className="w-full sm:w-[200px]">
+              <PreviewButton disabled={ownerPreview} message={PREVIEW} variant="outline" className="w-full sm:w-[200px]">
                 راسل المدرب
               </PreviewButton>
             </div>
@@ -337,7 +349,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
                     إشغاله هذا الشهر {formatPercent(busyPct)}
                   </p>
                 </div>
-                <PreviewButton message={PREVIEW} className="w-full font-bold sm:w-auto">
+                <PreviewButton disabled={ownerPreview} message={PREVIEW} className="w-full font-bold sm:w-auto">
                   احجز هذا الموعد
                 </PreviewButton>
               </div>
@@ -366,7 +378,7 @@ export function PublicProfileView({ data, userId }: { data: PublicProfileData; u
             <h2 className="type-h2 text-text-primary">هل يناسبك هذا المدرب؟</h2>
             <p className="type-body-lg text-text-secondary">أرسل طلب عرض تدريبي وحدّد احتياجك والتواريخ — يصلك رده خلال ٤٨ ساعة عمل. الطلب مجاني ولا يُلزمك بشيء.</p>
           </div>
-          <PreviewButton message={PREVIEW} className="w-full sm:w-[300px]">
+          <PreviewButton disabled={ownerPreview} message={PREVIEW} className="w-full sm:w-[300px]">
             اطلب عرضًا تدريبيًا
           </PreviewButton>
         </section>

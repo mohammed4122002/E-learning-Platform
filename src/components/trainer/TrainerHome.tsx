@@ -402,7 +402,7 @@ export function DefaultHome({
   return (
     <>
       <div className="flex w-full justify-end">
-        <Link href="/trainer/profile/edit#organizations" className="rounded-[10px] bg-action-primary px-7 py-[15px] text-[16px] font-bold text-text-on-brand hover:bg-action-primary-hover focus-ring">
+        <Link href="/trainer/affiliations" className="rounded-[10px] bg-action-primary px-7 py-[15px] text-[16px] font-bold text-text-on-brand hover:bg-action-primary-hover focus-ring">
           ارتباطاتي
         </Link>
       </div>
