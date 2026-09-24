@@ -56,7 +56,9 @@ const avatarSizes = { s: "size-8 text-[13px]", m: "size-10 text-[15px]", l: "siz
 export function initialsOf(name: string): string {
   const parts = name.replace(/^(م\.|د\.|أ\.)\s*/, "").trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "؟";
-  return parts.length === 1 ? parts[0].slice(0, 1) : `${parts[0].slice(0, 1)} ${parts[parts.length - 1].slice(0, 1)}`;
+  // Figma: «سالم الحارثي» → «س ح» — the definite article is not an initial.
+  const first = (w: string) => (w.length > 2 && w.startsWith("ال") ? w.slice(2, 3) : w.slice(0, 1));
+  return parts.length === 1 ? first(parts[0]) : `${first(parts[0])} ${first(parts[parts.length - 1])}`;
 }
 
 export function Avatar({ name, src, size = "m", className }: { name: string; src?: string | null; size?: keyof typeof avatarSizes; className?: string }) {

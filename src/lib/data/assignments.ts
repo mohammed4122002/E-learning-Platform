@@ -79,14 +79,14 @@ type Row = {
 const SELECT =
   "id, course_id, title, instructions, requirements, due_at, opens_at, max_score, max_attempts, weight_percent, pass_score, accepted_formats, max_file_mb, rubric, courses(id, title, trainer:profiles!courses_trainer_id_fkey(full_name)), course_modules(position, title)";
 
-function toRubric(v: unknown): RubricItem[] {
+export function toRubric(v: unknown): RubricItem[] {
   if (!Array.isArray(v)) return [];
   return v
     .filter((x): x is { id: string; label: string; max: number } => !!x && typeof x === "object" && "id" in x && "label" in x)
     .map((x) => ({ id: String(x.id), label: String(x.label), max: Number(x.max) || 0 }));
 }
 
-function toScores(v: unknown): Record<string, number> {
+export function toScores(v: unknown): Record<string, number> {
   if (!v || typeof v !== "object" || Array.isArray(v)) return {};
   return Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, n]) => [k, Number(n) || 0]));
 }

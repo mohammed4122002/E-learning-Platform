@@ -341,6 +341,15 @@ export async function getPrintableCertificate(userId: string, id: string): Promi
   return data ? toPlatform(data as unknown as CertRow) : null;
 }
 
+/** Issued certificates of one course for the trainer's «نزّل الشهادات PDF» (RLS: manages_course). */
+export async function getCourseCertificatesForPrint(courseId: string, enrollmentIds?: string[]): Promise<PlatformCertificate[]> {
+  const supabase = await createClient();
+  let q = supabase.from("certificates").select(CERT_SELECT).eq("course_id", courseId).eq("status", "issued").order("trainee_name");
+  if (enrollmentIds?.length) q = q.in("enrollment_id", enrollmentIds);
+  const { data } = await q;
+  return ((data ?? []) as unknown as CertRow[]).map(toPlatform);
+}
+
 export async function getExternalCertificate(userId: string, id: string): Promise<ExternalCertificate | null> {
   const supabase = await createClient();
   const { data } = await supabase.from("external_certificates").select(EXTERNAL_SELECT).eq("id", id).eq("trainee_id", userId).maybeSingle();

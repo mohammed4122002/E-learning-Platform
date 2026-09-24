@@ -3484,6 +3484,7 @@ export type Database = {
         }
         Returns: string
       }
+      course_dashboard: { Args: { p_course: string }; Returns: Json }
       course_outline: {
         Args: { p_course: string }
         Returns: {
