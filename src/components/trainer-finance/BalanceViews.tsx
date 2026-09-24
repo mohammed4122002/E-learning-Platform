@@ -180,13 +180,21 @@ export function BalanceView({ d }: { d: BalanceViewData }) {
   return (
     <>
       <BalanceHero balance={d.balance} />
+      {/* Figma 279:5729 order from the inline start: منذ انضمامك · عمولة المنصة · إجمالي الشهر · معلّق (W2-FIN-12). */}
       <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         <KpiTile
+          icon={Wallet}
+          label="منذ انضمامك"
+          value={sar(d.allTime.net)}
+          note={d.allTime.courses > 0 ? pluralAr(d.allTime.courses, ["دورة واحدة", "دورتان", "دورات", "دورة"]) : null}
+          noteClass="text-text-brand"
+        />
+        <KpiTile
           icon={Hourglass}
-          label="معلّق حتى انتهاء المهل"
-          value={sar(d.balance.pending)}
-          note={pendingCourses > 0 ? pluralAr(pendingCourses, ["دورة جارية واحدة", "دورتان جاريتان", "دورات جارية", "دورة جارية"]) : null}
-          noteClass="text-state-warning"
+          label="عمولة المنصة"
+          value={sar(d.month.commission)}
+          // «من الإجمالي» is the month total shown in the next tile (Figma 279:5729: ٧٢٠ is ١٢٪ of ٦٬١٢٠) — W2-FIN-13.
+          note={d.month.net > 0 ? `${formatPercent(pct(d.month.commission, d.month.net))} من الإجمالي` : null}
         />
         <KpiTile
           icon={TrendingUp}
@@ -197,16 +205,10 @@ export function BalanceView({ d }: { d: BalanceViewData }) {
         />
         <KpiTile
           icon={Hourglass}
-          label="عمولة المنصة"
-          value={sar(d.month.commission)}
-          note={d.month.gross > 0 ? `${formatPercent(pct(d.month.commission, d.month.gross))} من الإجمالي` : null}
-        />
-        <KpiTile
-          icon={Wallet}
-          label="منذ انضمامك"
-          value={sar(d.allTime.net)}
-          note={d.allTime.courses > 0 ? pluralAr(d.allTime.courses, ["دورة واحدة", "دورتان", "دورات", "دورة"]) : null}
-          noteClass="text-text-brand"
+          label="معلّق حتى انتهاء المهل"
+          value={sar(d.balance.pending)}
+          note={pendingCourses > 0 ? pluralAr(pendingCourses, ["دورة جارية واحدة", "دورتان جاريتان", "دورات جارية", "دورة جارية"]) : null}
+          noteClass="text-state-warning"
         />
       </div>
       <FinColumns
