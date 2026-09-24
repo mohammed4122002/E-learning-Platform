@@ -27,7 +27,14 @@ real screens backed by the database (no mock data), with loading, empty and erro
 | Account | profile, settings, notifications, messages, identity verification, terms | ✅ |
 | Discovery | search, program pages, compare | ✅ |
 
-## Wave 3 — Other workspaces (not started)
+## Wave 3 — Trainer workspace
+
+| Part | Screens | Status |
+| --- | --- | --- |
+| Wave 1 | onboarding, dashboard, queue, journey, profile, portfolio, calendar, help, programs + publishing, course builder (3 modes), course operations (trainees, seats, postpone/cancel, attendance, results, grading, certificates, ratings) | ✅ built, Figma-QA'd (see OPEN_QUESTIONS T1–T35 for open design points) |
+| Wave 2 | opportunities & bids & negotiation, finance & withdrawals, contracts, affiliations, content reports | not started |
+
+## Wave 4 — Other workspaces (not started)
 
 Trainer, training provider, studio, requester and admin workspaces. The schema already has the
 tables and policies they need (course management, sessions, attendance codes, approvals, refunds,
