@@ -6,7 +6,7 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { Glyph } from "@/components/ui/Icon";
 
 /** Screen-only toolbar of the print page; opens the browser print dialog (Save as PDF) once on load. */
-export function PrintControls({ backHref }: { backHref: string }) {
+export function PrintControls({ backHref, backLabel = "عد إلى الشهادة" }: { backHref: string; backLabel?: string }) {
   useEffect(() => {
     const t = setTimeout(() => window.print(), 600);
     return () => clearTimeout(t);
@@ -17,7 +17,7 @@ export function PrintControls({ backHref }: { backHref: string }) {
         احفظ PDF / اطبع
       </Button>
       <ButtonLink href={backHref} variant="outline">
-        عد إلى الشهادة
+        {backLabel}
       </ButtonLink>
       <p className="w-full text-center type-caption text-text-muted">اختر «حفظ بتنسيق PDF» في نافذة الطباعة — الحجم A4 أفقي.</p>
     </div>
