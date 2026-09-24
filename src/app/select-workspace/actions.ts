@@ -20,5 +20,5 @@ export async function chooseWorkspace(_: FormState, formData: FormData): Promise
   const supabase = await createClient();
   const { error } = await supabase.rpc("add_workspace", { p_kind: parsed.data.kind });
   if (error) return { status: "error", message: toArabicError(error) };
-  redirect("/onboarding");
+  redirect(parsed.data.kind === "trainer" ? "/trainer/onboarding" : "/onboarding");
 }

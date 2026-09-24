@@ -2,8 +2,9 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import type { ShellData } from "@/lib/data/shell";
+import type { ShellWorkspace } from "./nav";
 
-export type ShellUser = { fullName: string; email: string; avatarUrl: string | null; verified: boolean; roleLabel: string };
+export type ShellUser = { fullName: string; email: string; avatarUrl: string | null; verified: boolean; roleLabel: string; workspace: ShellWorkspace };
 
 type ShellContextValue = { user: ShellUser; data: ShellData; openMenu: () => void };
 

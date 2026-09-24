@@ -55,11 +55,21 @@ export async function requireTrainee(next?: string): Promise<CurrentUser> {
   return user;
 }
 
+export async function requireTrainer(next?: string): Promise<CurrentUser> {
+  const user = await requireUser(next);
+  if (!user.workspaces.some((w) => w.kind === "trainer")) redirect("/select-workspace");
+  return user;
+}
+
+/** Last workspace area the user visited (set by proxy.ts), used by the shared screens' shell. */
+export const WORKSPACE_COOKIE = "tg-ws";
+
 /** Path of the home page of the user's default workspace. */
 export function homePathFor(user: CurrentUser): string {
   const ws = user.workspaces.find((w) => w.isDefault) ?? user.workspaces[0];
   if (!ws) return "/select-workspace";
   if (ws.kind === "trainee") return "/trainee";
+  if (ws.kind === "trainer") return "/trainer";
   // Other workspaces ship in later waves (see IMPLEMENTATION_PLAN.md).
   return `/workspace/${ws.kind}`;
 }

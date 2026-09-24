@@ -7,21 +7,22 @@ import { Glyph } from "@/components/ui/Icon";
 import { toArabicDigits } from "@/lib/format";
 import { AccountMenu } from "./AccountMenu";
 import { useShell } from "./ShellContext";
-import { TRAINEE_NAV, isActive } from "./nav";
+import { WORKSPACE_SHELL, isActive } from "./nav";
 
-/** Figma "Nav / Sidebar — Trainee" (115:2492). */
+/** Figma "Nav / Sidebar — Trainee" (115:2492) / "— Trainer" (256:848); items come from WORKSPACE_SHELL. */
 export function Sidebar({ onCollapse }: { onCollapse?: () => void }) {
   const pathname = usePathname();
-  const { data } = useShell();
+  const { data, user } = useShell();
+  const ws = WORKSPACE_SHELL[user.workspace];
   return (
     <div className="flex min-h-full flex-col gap-2 bg-bg-sidebar px-4 py-6">
       <div className="flex w-full items-center gap-3 pb-2.5">
-        <Link href="/trainee" className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-action-primary text-text-on-brand focus-ring" aria-label="بوابة التدريب — الرئيسية">
+        <Link href={ws.home} className="flex size-11 shrink-0 items-center justify-center rounded-12 bg-action-primary text-text-on-brand focus-ring" aria-label="بوابة التدريب — الرئيسية">
           <Glyph icon={GraduationCap} size={20} />
         </Link>
         <div className="flex min-w-0 flex-1 flex-col">
           <p className="type-title text-text-primary">بوابة التدريب</p>
-          <p className="type-caption text-text-muted">مساحة المتدرب</p>
+          <p className="type-caption text-text-muted">{ws.label}</p>
         </div>
         <button
           type="button"
@@ -36,7 +37,7 @@ export function Sidebar({ onCollapse }: { onCollapse?: () => void }) {
       <div className="h-px w-full shrink-0 bg-border-sidebar" />
 
       <nav aria-label="القائمة الرئيسية" className="flex w-full flex-col gap-1.5">
-        {TRAINEE_NAV.map((item) => {
+        {ws.nav.map((item) => {
           const active = isActive(pathname, item);
           const badge = item.badgeKey ? data[item.badgeKey] : 0;
           return (

@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { REMEMBER_COOKIE, sessionCookieOptions } from "@/lib/supabase/cookies";
 
 /** Routes that need a signed-in user. Everything else (auth pages, course pages, verification) is public. */
-const PROTECTED = ["/trainee", "/account", "/notifications", "/messages", "/onboarding", "/select-workspace", "/checkout"];
+const PROTECTED = ["/trainee", "/trainer", "/account", "/notifications", "/messages", "/onboarding", "/select-workspace", "/checkout"];
 /** Auth pages a signed-in user should not see again. */
 const GUEST_ONLY = ["/login", "/register"];
 
@@ -50,6 +50,11 @@ export async function proxy(request: NextRequest) {
   if (signedIn && GUEST_ONLY.includes(pathname)) {
     const next = request.nextUrl.searchParams.get("next");
     return redirect(next && next.startsWith("/") && !next.startsWith("//") ? next : "/");
+  }
+  // Remember which workspace area was used last so shared screens (messages, account…) keep its shell.
+  const area = pathname.match(/^\/(trainee|trainer)(\/|$)/)?.[1];
+  if (signedIn && area && request.cookies.get("tg-ws")?.value !== area) {
+    response.cookies.set("tg-ws", area, { path: "/", sameSite: "lax", httpOnly: true, secure: true, maxAge: 60 * 60 * 24 * 365 });
   }
   return response;
 }

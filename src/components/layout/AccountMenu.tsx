@@ -8,9 +8,10 @@ import { Glyph } from "@/components/ui/Icon";
 import { signOut } from "@/app/(auth)/actions";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { useShell } from "./ShellContext";
+import { WORKSPACE_SHELL } from "./nav";
 
 const ITEMS: { href: string; label: string; hint: string; icon: LucideIcon }[] = [
-  { href: "/trainee/profile", label: "ملفي المهني", hint: "نبذتك ومؤهلاتك وتوفّرك", icon: CircleUserRound },
+  { href: "@profile", label: "ملفي المهني", hint: "نبذتك ومؤهلاتك وتوفّرك", icon: CircleUserRound },
   { href: "/account", label: "إعدادات الحساب", hint: "البريد · الهاتف · كلمة المرور · الأمان", icon: Settings },
   { href: "/account#language", label: "اللغة", hint: "العربية", icon: Languages },
   { href: "/account/privacy", label: "الخصوصية", hint: "بياناتك وتنزيلها", icon: Shield },
@@ -35,7 +36,7 @@ export function AccountMenu() {
             {ITEMS.map((item) => (
               <li key={item.href}>
                 <Link
-                  href={item.href}
+                  href={item.href === "@profile" ? WORKSPACE_SHELL[user.workspace].profile : item.href}
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-3 rounded-8 px-3 py-[11px] hover:bg-bg-page focus-ring"
                 >
